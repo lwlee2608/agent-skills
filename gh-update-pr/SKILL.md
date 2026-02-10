@@ -1,7 +1,7 @@
 ---
 name: gh-update-pr
 description: Use when updating GitHub PR title or body. Works around the gh pr edit GraphQL bug caused by GitHub's Projects Classic deprecation.
-user-invocable: false
+user-invocable: true
 ---
 
 # Update PR via REST API

@@ -1,7 +1,7 @@
 ---
 name: prefer-make
 description: Use when building, testing, linting, or running Go code in projects that have a Makefile. Prefer make targets over calling go commands directly.
-user-invocable: false
+user-invocable: true
 ---
 
 # Build with Make
