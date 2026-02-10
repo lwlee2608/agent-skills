@@ -16,6 +16,8 @@ npx skills add lwlee2608/agent-skills
 
 ## Included skills
 
+Repository layout: `skills/<skill-name>/SKILL.md`
+
 ### prefer-make
 
 Prefer `make` targets over raw Go commands in repositories that use a `Makefile`.
@@ -34,7 +36,7 @@ Update PR title/body through `gh api` REST calls when `gh pr edit` is unreliable
 
 ## Why trust these skills
 
-- Small and auditable: each skill is plain text in `*/SKILL.md`.
+- Small and auditable: each skill is plain text in `skills/*/SKILL.md`.
 - Narrow scope: each skill handles one workflow only.
 - Easy to review before install: inspect this repo and each skill definition directly.
 
