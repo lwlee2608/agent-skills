@@ -26,6 +26,14 @@ Prefer `make` targets over raw Go commands in repositories that use a `Makefile`
 - Falls back to raw `go` commands only when no relevant `make` target exists.
 - Recommended when you want consistent local and CI behavior.
 
+### gh-create-pr
+
+Create GitHub PRs with short, feature-focused descriptions.
+
+- Produces a `## Summary` section only — no test plan or co-author lines.
+- Bullet points proportional to PR size.
+- Uses imperative mood for titles.
+
 ### gh-update-pr
 
 Update PR title/body through `gh api` REST calls when `gh pr edit` is unreliable.
