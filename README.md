@@ -1,5 +1,8 @@
 # agent-skills
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Skills](https://img.shields.io/badge/Skills-4-blue.svg)]()
+
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
 ## Install
