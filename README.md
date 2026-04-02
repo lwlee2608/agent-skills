@@ -42,6 +42,14 @@ Update PR title/body through `gh api` REST calls when `gh pr edit` is unreliable
 - Uses `gh api repos/{owner}/{repo}/pulls/{number} -X PATCH` to update title/body.
 - Keeps `gh pr create` and `gh pr view` unchanged.
 
+### ascii-diagram
+
+Validate and fix alignment issues in ASCII diagrams.
+
+- Redraws diagrams from scratch with correct padding and border widths.
+- Supports both plain ASCII (`+`, `-`, `|`) and Unicode box-drawing characters.
+- Validates alignment with a quick `awk` one-liner after redrawing.
+
 ## Why trust these skills
 
 - Small and auditable: each skill is plain text in `skills/*/SKILL.md`.
