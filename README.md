@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-4-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-5-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -44,6 +44,14 @@ Update PR title/body through `gh api` REST calls when `gh pr edit` is unreliable
 - Uses `gh pr view` to detect PR context.
 - Uses `gh api repos/{owner}/{repo}/pulls/{number} -X PATCH` to update title/body.
 - Keeps `gh pr create` and `gh pr view` unchanged.
+
+### create-skill
+
+Guide the creation of new SKILL.md files that meet quality standards.
+
+- Covers naming, descriptions, rule structure, verification procedures, and common mistakes.
+- Includes a 7-point self-review checklist for validating newly created skills.
+- Enforces conciseness (under 4KB) and single-responsibility scope.
 
 ### ascii-diagram
 
