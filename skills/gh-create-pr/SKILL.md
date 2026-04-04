@@ -1,6 +1,6 @@
 ---
 name: gh-create-pr
-description: Use when creating a GitHub pull request. Produces short, feature-focused PR descriptions without a test plan section.
+description: Use when creating/raising/opening/submitting a GitHub PR. Produces short, feature-focused descriptions without a test plan.
 user-invocable: true
 ---
 
