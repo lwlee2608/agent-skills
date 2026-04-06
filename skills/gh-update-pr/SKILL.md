@@ -11,9 +11,10 @@ user-invocable: true
 ## Rules
 
 1. **Never use `gh pr edit`** to update PR title or body. It will fail with a GraphQL error.
-2. Use `gh api` with the REST endpoint:
+2. Use `gh api` with the REST endpoint. **Always pipe JSON via `jq --arg`** to avoid shell injection:
    ```bash
-   gh api repos/{owner}/{repo}/pulls/{number} -X PATCH -f title="..." -f body="..." --jq '.html_url'
+   jq -n --arg title "..." --arg body "..." '{title: $title, body: $body}' | \
+     gh api repos/{owner}/{repo}/pulls/{number} -X PATCH --input - --jq '.html_url'
    ```
 3. To get the current PR number and repo, use:
    ```bash
