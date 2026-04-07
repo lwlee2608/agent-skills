@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-5-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-6-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -52,6 +52,14 @@ Guide the creation of new SKILL.md files that meet quality standards.
 - Covers naming, descriptions, rule structure, verification procedures, and common mistakes.
 - Includes a 7-point self-review checklist for validating newly created skills.
 - Enforces conciseness (under 4KB) and single-responsibility scope.
+
+### linear
+
+Interact with Linear.app issues via its GraphQL API.
+
+- Read, search, create, and update issues using `curl` against `https://api.linear.app/graphql`.
+- Resolves human-readable identifiers (e.g., `ENG-123`) to UUIDs before mutations.
+- Requires a `LINEAR_API_KEY` environment variable.
 
 ### ascii-diagram
 
