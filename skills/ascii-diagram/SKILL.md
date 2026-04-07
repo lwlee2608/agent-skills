@@ -78,36 +78,42 @@ If any issue is found:
 
 - **Right border off by one.** An extra or missing space before `|` shifts the right border to a different column than the top/bottom `+`. Use the ruler to verify every row ends at the same column.
   ```
-  +----------+
-  | hello    |
-  | world     |
-  +----------+
+  WRONG:                        CORRECT:
+  +----------+                  +----------+
+  | hello    |                  | hello    |
+  | world     |  ← col 13      | world    |
+  +----------+   ← col 12      +----------+
   ```
 
 - **Bottom border width mismatch.** The bottom border has fewer or more dashes than the top, so the closing `+` lands in the wrong column. Count dashes with the ruler, not by eye.
   ```
-  +----------+
-  | content  |
-  +---------+
+  WRONG:                        CORRECT:
+  +----------+  ← col 12       +----------+
+  | content  |                  | content  |
+  +---------+   ← col 11       +----------+
   ```
 
 - **Side-by-side boxes with ragged gap.** The gap between adjacent boxes varies across rows, causing the second box to shift. Verify that the second box's `+` is in the same column on every row.
   ```
-  +-------+   +-------+
-  | box 1 |   | box 2 |
-  +-------+    +-------+
+  WRONG:                              CORRECT:
+  +-------+   +-------+              +-------+   +-------+
+  | box 1 |   | box 2 |              | box 1 |   | box 2 |
+  +-------+    +-------+  ← extra    +-------+   +-------+
   ```
 
 - **Mixed box-drawing styles.** Mixing ASCII (`+`, `-`, `|`) and Unicode (`┌`, `─`, `┐`) characters in the same diagram. Pick one style and use it consistently.
   ```
-  ┌──────────+
-  │ content  │
-  └──────────┘
+  WRONG:                        CORRECT:
+  ┌──────────+  ← ASCII +      ┌──────────┐
+  │ content  │                  │ content  │
+  └──────────┘                  └──────────┘
   ```
 
-- **Connectors with ambiguous gaps.** Arrows or connectors that float between boxes without clearly touching either border. Verify that connectors are intentional and visually unambiguous.
+- **Connector not touching box border.** Arrows or lines that float with a gap between them and the box they should connect to. Every connector must start and end at a border character.
   ```
-  +-------+    +-------+
-  | box 1 | -> | box 2 |
-  +-------+    +-------+
+  WRONG:                              CORRECT:
+  +-------+     +-------+            +-------+   +-------+
+  | box 1 |  -> | box 2 |            | box 1 |-->| box 2 |
+  +-------+     +-------+            +-------+   +-------+
+       gap ^  ^ gap                        no gaps
   ```
