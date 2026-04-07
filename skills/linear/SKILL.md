@@ -16,10 +16,10 @@ Interact with Linear.app issues via its GraphQL API. Covers reading, searching, 
    ```bash
    curl -s -X POST https://api.linear.app/graphql \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer $LINEAR_API_KEY" \
+     -H "Authorization: $LINEAR_API_KEY" \
      -d "$(jq -n --arg q 'QUERY_HERE' '{"query": $q}')" | jq .
    ```
-   Use `jq -n --arg` to safely inject the query — never string-interpolate into `-d` (injection risk).
+   Do **not** use `Bearer` prefix — Linear API keys are passed directly. Use `jq -n --arg` to safely inject the query — never string-interpolate into `-d` (injection risk).
 
 3. **Search issues by identifier** (e.g., `ENG-123`) with `issueSearch`:
    ```graphql
