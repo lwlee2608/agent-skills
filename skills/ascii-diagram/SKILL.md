@@ -10,9 +10,9 @@ ASCII diagrams produced by agents frequently have alignment issues — misaligne
 
 ## Rules
 
-1. **One style only.** Either plain ASCII (`+`, `-`, `|`) or Unicode (`┌`, `─`, `┐`, `│`, `└`, `┘`). Never mix.
+1. **Prefer Unicode box-drawing characters.** Use `┌`, `┐`, `└`, `┘` for corners, `─` for horizontal borders, `│` for vertical borders, and `┬`, `┴`, `├`, `┤`, `┼` for junctions. Only fall back to plain ASCII (`+`, `-`, `|`) if the user explicitly requests it or the target format cannot render Unicode. **Never mix styles** in the same diagram.
 2. **Every row of a box must be the exact same width** — top border, content rows, and bottom border.
-3. **Pad short content lines with spaces** so the right border `|` lands in the same column on every row.
+3. **Pad short content lines with spaces** so the right border `│` lands in the same column on every row.
 4. **Connectors and arrows** should clearly connect to the box borders they relate to. Verify gaps are intentional.
 5. **No tab characters.** Tabs render at unpredictable widths and silently break alignment. Use spaces only.
 6. **No trailing whitespace.** Invisible trailing spaces cause width mismatches that look correct but aren't.
@@ -61,14 +61,16 @@ Fix any findings before proceeding.
 ### Step 4: Visually inspect the ruler output
 
 Look at the printed output and check:
-- **Box width consistency**: For each box, does the right border (`|` or `+`) appear in the same column on every row? Read the column number off the ruler.
-- **Top/bottom border match**: Does the bottom `+` sit in the same column as the top `+`?
+
+- **Box width consistency**: For each box, does the right border (`│` or `┐`/`┘`) appear in the same column on every row? Read the column number off the ruler.
+- **Top/bottom border match**: Does the bottom corner (`└`/`┘`) sit in the same column as the top corner (`┌`/`┐`)?
 - **Side-by-side alignment**: Do adjacent boxes share consistent column positions?
 - **Connectors**: Do arrows actually touch the border characters?
 
 ### Step 5: Fix and repeat
 
 If any issue is found:
+
 1. Fix the diagram in the file where it lives (not the temp file).
 2. Write the updated diagram to `/tmp/diagram-UNIQUE.txt` again.
 3. Print with the ruler again.
@@ -76,44 +78,49 @@ If any issue is found:
 
 ## Common mistakes to watch for
 
-- **Right border off by one.** An extra or missing space before `|` shifts the right border to a different column than the top/bottom `+`. Use the ruler to verify every row ends at the same column.
+- **Right border off by one.** An extra or missing space before `│` shifts the right border to a different column than the top/bottom corner. Use the ruler to verify every row ends at the same column.
+
   ```
-  WRONG:                        CORRECT:
-  +----------+                  +----------+
-  | hello    |                  | hello    |
-  | world     |  ← col 13      | world    |
-  +----------+   ← col 12      +----------+
+  WRONG:                            CORRECT:
+  ┌──────────┐                      ┌──────────┐
+  │ hello    │                      │ hello    │
+  │ world     │  ← col 13           │ world    │
+  └──────────┘   ← col 12           └──────────┘
   ```
 
-- **Bottom border width mismatch.** The bottom border has fewer or more dashes than the top, so the closing `+` lands in the wrong column. Count dashes with the ruler, not by eye.
+- **Bottom border width mismatch.** The bottom border has fewer or more `─` than the top, so the closing corner lands in the wrong column. Count with the ruler, not by eye.
+
   ```
-  WRONG:                        CORRECT:
-  +----------+  ← col 12       +----------+
-  | content  |                  | content  |
-  +---------+   ← col 11       +----------+
+  WRONG:                            CORRECT:
+  ┌──────────┐  ← col 12            ┌──────────┐
+  │ content  │                      │ content  │
+  └─────────┘   ← col 11            └──────────┘
   ```
 
-- **Side-by-side boxes with ragged gap.** The gap between adjacent boxes varies across rows, causing the second box to shift. Verify that the second box's `+` is in the same column on every row.
+- **Side-by-side boxes with ragged gap.** The gap between adjacent boxes varies across rows, causing the second box to shift. Verify that the second box's corner is in the same column on every row.
+
   ```
-  WRONG:                              CORRECT:
-  +-------+   +-------+              +-------+   +-------+
-  | box 1 |   | box 2 |              | box 1 |   | box 2 |
-  +-------+    +-------+  ← extra    +-------+   +-------+
+  WRONG:                                  CORRECT:
+  ┌───────┐   ┌───────┐                   ┌───────┐   ┌───────┐
+  │ box 1 │   │ box 2 │                   │ box 1 │   │ box 2 │
+  └───────┘    └───────┘  ← extra         └───────┘   └───────┘
   ```
 
 - **Mixed box-drawing styles.** Mixing ASCII (`+`, `-`, `|`) and Unicode (`┌`, `─`, `┐`) characters in the same diagram. Pick one style and use it consistently.
+
   ```
-  WRONG:                        CORRECT:
-  ┌──────────+  ← ASCII +      ┌──────────┐
-  │ content  │                  │ content  │
-  └──────────┘                  └──────────┘
+  WRONG:                            CORRECT:
+  ┌──────────+  ← ASCII +           ┌──────────┐
+  │ content  │                      │ content  │
+  └──────────┘                      └──────────┘
   ```
 
 - **Connector not touching box border.** Arrows or lines that float with a gap between them and the box they should connect to. Every connector must start and end at a border character.
+
   ```
-  WRONG:                              CORRECT:
-  +-------+     +-------+            +-------+   +-------+
-  | box 1 |  -> | box 2 |            | box 1 |-->| box 2 |
-  +-------+     +-------+            +-------+   +-------+
-       gap ^  ^ gap                        no gaps
+  WRONG:                                  CORRECT:
+  ┌───────┐     ┌───────┐                 ┌───────┐   ┌───────┐
+  │ box 1 │  -> │ box 2 │                 │ box 1 │──>│ box 2 │
+  └───────┘     └───────┘                 └───────┘   └───────┘
+       gap ^  ^ gap                             no gaps
   ```
