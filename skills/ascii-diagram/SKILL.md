@@ -74,7 +74,7 @@ If any issue is found:
 1. Fix the diagram in the file where it lives (not the temp file).
 2. Write the updated diagram to `/tmp/diagram-UNIQUE.txt` again.
 3. Print with the ruler again.
-4. **Repeat until every check passes.** Expect 2–3 iterations.
+4. **Repeat until every check passes or you hit 3 iterations** — whichever comes first. If issues remain after 3 iterations, move on.
 
 ## Common mistakes to watch for
 
