@@ -23,9 +23,9 @@ ASCII diagrams produced by agents frequently have alignment issues — misaligne
 
 ### Step 0: Decide whether to delegate to a subagent
 
-Delegate the entire verification loop to a subagent (via the Agent tool) when the diagram is **both** (a) >15 lines AND (b) has multiple boxes or nested/connected layouts. The loop produces a lot of ruler output and iteration churn that is not useful to keep in the main context.
+Delegate the entire verification loop to a subagent (via the Agent tool) when the diagram is **both** (a) >6 lines AND (b) has multiple boxes or nested/connected layouts. The loop produces a lot of ruler output and iteration churn that is not useful to keep in the main context.
 
-For smaller diagrams (a single box, a short table, ≤15 lines), run the loop inline — spawning a subagent is slower than just doing it.
+For smaller diagrams (a single box, a short table, ≤6 lines), run the loop inline — spawning a subagent is slower than just doing it.
 
 When delegating, hand off with this template (the subagent does not have this skill loaded):
 
@@ -37,6 +37,7 @@ Report: PASS or FAIL, iteration count, and a one-line summary of fixes. Do not p
 ```
 
 After the subagent returns:
+
 - **Re-read the edited lines** to confirm the summary matches what actually changed — subagent reports describe intent, not necessarily the diff.
 - **On FAIL** (subagent hit the 3-iteration cap with issues remaining), decide whether to accept the partial fix, re-delegate with specific guidance, or finish inline. Do not silently treat FAIL as done.
 
