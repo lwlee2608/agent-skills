@@ -23,11 +23,11 @@ ASCII diagrams produced by agents frequently have alignment issues — misaligne
 
 ### Step 1: Write the diagram to a temp file
 
-Write the diagram to a temp file using the Write tool. Use a unique path (e.g., `/tmp/diagram-<context>.txt`) to avoid clobbering other sessions.
+Write the diagram to a temp file using the Write tool. Use a unique path like `/tmp/diagram-<context>.txt` (replace `<context>` with something specific to this session, e.g., `/tmp/diagram-auth-flow.txt`) to avoid clobbering other sessions. Use that same path in every command below.
 
 ### Step 2: Print with a column ruler
 
-Run this Bash command to display the diagram with column numbers:
+Run this Bash command to display the diagram with column numbers (replace `<path>` with your temp file path):
 
 ```bash
 awk 'BEGIN{
@@ -38,22 +38,21 @@ awk 'BEGIN{
   }
   print "     " ruler1
   print "     " ruler2
-  print "     " "----+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8----+----9----+----0----+----1----+----2"
 }
-{printf "%3d: %s\n", NR, $0}' /tmp/diagram-UNIQUE.txt
+{printf "%3d: %s\n", NR, $0}' <path>
 ```
 
-This prints every line with its row number and a column ruler across the top, making it trivial to check whether corners, borders, and connectors land in the right columns.
+This prints every line with its row number and a two-row column ruler (tens digit, ones digit) across the top, making it trivial to check whether corners, borders, and connectors land in the right columns. If your diagram is wider than 120 columns, bump the `120` in the loop.
 
 ### Step 3: Check for invisible problems
 
-Run these checks to catch issues that are invisible in normal output:
+Run these checks to catch issues that are invisible in normal output (replace `<path>` with your temp file path):
 
 ```bash
 # Tabs (will break alignment silently)
-grep -P '\t' /tmp/diagram-UNIQUE.txt && echo "FAIL: tabs found" || echo "OK: no tabs"
+grep -F $'\t' <path> && echo "FAIL: tabs found" || echo "OK: no tabs"
 # Trailing whitespace
-grep -P ' +$' /tmp/diagram-UNIQUE.txt && echo "FAIL: trailing spaces found" || echo "OK: no trailing whitespace"
+grep ' $' <path> && echo "FAIL: trailing spaces found" || echo "OK: no trailing whitespace"
 ```
 
 Fix any findings before proceeding.
@@ -72,7 +71,7 @@ Look at the printed output and check:
 If any issue is found:
 
 1. Fix the diagram in the file where it lives (not the temp file).
-2. Write the updated diagram to `/tmp/diagram-UNIQUE.txt` again.
+2. Write the updated diagram to the same temp file again.
 3. Print with the ruler again.
 4. **Repeat until every check passes or you hit 3 iterations** — whichever comes first. If issues remain after 3 iterations, move on.
 
@@ -81,20 +80,20 @@ If any issue is found:
 - **Right border off by one.** An extra or missing space before `│` shifts the right border to a different column than the top/bottom corner. Use the ruler to verify every row ends at the same column.
 
   ```
-  WRONG:                            CORRECT:
-  ┌──────────┐                      ┌──────────┐
-  │ hello    │                      │ hello    │
-  │ world     │  ← col 13           │ world    │
-  └──────────┘   ← col 12           └──────────┘
+  WRONG:                                  CORRECT:
+  ┌──────────┐                            ┌──────────┐
+  │ hello    │                            │ hello    │
+  │ world     │  ← col 13                 │ world    │
+  └──────────┘   ← col 12                 └──────────┘
   ```
 
 - **Bottom border width mismatch.** The bottom border has fewer or more `─` than the top, so the closing corner lands in the wrong column. Count with the ruler, not by eye.
 
   ```
-  WRONG:                            CORRECT:
-  ┌──────────┐  ← col 12            ┌──────────┐
-  │ content  │                      │ content  │
-  └─────────┘   ← col 11            └──────────┘
+  WRONG:                                  CORRECT:
+  ┌──────────┐  ← col 12                  ┌──────────┐
+  │ content  │                            │ content  │
+  └─────────┘   ← col 11                  └──────────┘
   ```
 
 - **Side-by-side boxes with ragged gap.** The gap between adjacent boxes varies across rows, causing the second box to shift. Verify that the second box's corner is in the same column on every row.
@@ -109,10 +108,10 @@ If any issue is found:
 - **Mixed box-drawing styles.** Mixing ASCII (`+`, `-`, `|`) and Unicode (`┌`, `─`, `┐`) characters in the same diagram. Pick one style and use it consistently.
 
   ```
-  WRONG:                            CORRECT:
-  ┌──────────+  ← ASCII +           ┌──────────┐
-  │ content  │                      │ content  │
-  └──────────┘                      └──────────┘
+  WRONG:                                  CORRECT:
+  ┌──────────+  ← ASCII +                 ┌──────────┐
+  │ content  │                            │ content  │
+  └──────────┘                            └──────────┘
   ```
 
 - **Connector not touching box border.** Arrows or lines that float with a gap between them and the box they should connect to. Every connector must start and end at a border character.
