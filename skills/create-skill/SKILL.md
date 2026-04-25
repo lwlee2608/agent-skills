@@ -12,10 +12,10 @@ Guide the creation of a new SKILL.md file that meets quality standards for agent
 
 1. **One skill, one job.** A skill should target exactly one workflow or domain. If you need the word "and" to describe what it does, split it into two skills.
 
-2. **Name for the domain, not one action.** Use lowercase hyphenated names (e.g., `ascii-diagram`, not `generate-ascii-diagram`). Avoid generic names like `utils` or `helpers`.
+2. **Prefer gerund form for names.** Per Anthropic's official guidance, use verb+ing: `processing-pdfs`, `analyzing-spreadsheets`, `writing-documentation`. Acceptable alternatives: noun phrases (`pdf-processing`) or action-oriented (`process-pdfs`). Avoid vague names (`utils`, `helpers`, `tools`) and overly generic ones (`documents`, `data`). Hard constraints from the spec: lowercase + numbers + hyphens only, max 64 chars, must not contain the reserved words `anthropic` or `claude`.
 
-3. **Write a trigger-oriented description.** The `description` field determines when the agent activates the skill. Start with "Use when..." and be specific enough to avoid false triggers but broad enough to catch the right moments.
-   - Bad: "Helps with diagrams."
+3. **Write a trigger-oriented description in third person.** The `description` field determines when the agent activates the skill. Start with "Use when..." and be specific enough to avoid false triggers but broad enough to catch the right moments. Always third person — Anthropic warns that `I can…` or `You can use this…` phrasing degrades discovery. Max 1024 chars.
+   - Bad: "Helps with diagrams." / "I can fix your ASCII art."
    - Good: "Use when creating or fixing ASCII box diagrams, tables, or monospace text art to ensure proper alignment."
 
 4. **Use this file structure:**
@@ -57,14 +57,14 @@ Guide the creation of a new SKILL.md file that meets quality standards for agent
 
 11. **Keep skills independent.** A skill must work without assuming other skills are loaded. Cross-skill dependencies create fragile setups where uninstalling one skill silently breaks another.
 
-12. **Keep it concise.** A good skill is under 4KB. The full SKILL.md is loaded into the agent's context window on activation — large skills consume tokens that the agent needs for reasoning about the actual task.
+12. **Keep it concise; split with progressive disclosure if needed.** Anthropic recommends SKILL.md body under **500 lines**. Aim shorter (under 4KB) when the skill fits. If content grows past that, move detail to sibling files (`reference.md`, `examples.md`, `forms.md`) and link from SKILL.md — Claude reads them on demand, so they cost zero context until needed. **Keep references one level deep** from SKILL.md; nested references can cause Claude to partial-read with `head` and miss content.
 
 ## Verification procedure
 
 After drafting the skill, verify:
 
-1. **Name check** — Is the name domain-scoped, lowercase, and hyphenated?
-2. **Description check** — Does it start with "Use when..." and clearly describe the trigger condition?
+1. **Name check** — Lowercase + hyphens, ≤64 chars, no `anthropic`/`claude`? Gerund form (preferred) or noun phrase / action-oriented (acceptable)?
+2. **Description check** — Third person, starts with "Use when...", ≤1024 chars, clearly describes the trigger condition?
 3. **Rule clarity** — Could two different agents follow each rule identically without ambiguity?
 4. **Syntax check** — Are all format-sensitive outputs shown with exact examples?
 5. **Rationale check** — Does every non-obvious rule have a "why"?
@@ -78,3 +78,5 @@ After drafting the skill, verify:
 - **Over-scoping**: Combining "create and validate and deploy" into one skill. Split them.
 - **Generic CoT padding**: "Think carefully before proceeding" wastes tokens. Use domain-specific reasoning steps instead (e.g., "Calculate box widths from content before drawing").
 - **No verification step**: The skill tells the agent what to do but never how to check if it did it right.
+- **Wrong naming form**: `helper`, `utils`, `my-skill`, or names containing `claude`/`anthropic` (the latter two are rejected by the spec). Default to gerund form (`writing-X`, `processing-X`) unless a noun phrase reads more naturally.
+- **First-person description**: `I can help you…` or `You can use this to…` degrades discovery. Always third person: `Processes X. Use when…`.
