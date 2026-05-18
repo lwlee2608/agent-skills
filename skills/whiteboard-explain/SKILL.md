@@ -1,6 +1,6 @@
 ---
 name: whiteboard-explain
-description: Use when the user asks to explain, teach, or break down a technical concept, system, algorithm, or architecture. Produces a whiteboard-style explanation using plain language and simple diagrams instead of long technical prose.
+description: Use when the user asks to explain or teach a technical concept. Replies in plain language with a simple diagram instead of a wall of jargon.
 user-invocable: true
 ---
 
