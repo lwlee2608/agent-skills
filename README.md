@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-6-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-8-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -68,6 +68,22 @@ Validate and fix alignment issues in ASCII diagrams.
 - Redraws diagrams from scratch with correct padding and border widths.
 - Supports both plain ASCII (`+`, `-`, `|`) and Unicode box-drawing characters.
 - Validates alignment with a quick `awk` one-liner after redrawing.
+
+### whiteboard-explain
+
+Explain technical concepts the way an engineer would at a whiteboard.
+
+- Plain English, short sentences, analogy before jargon.
+- Pairs the explanation with a small diagram whenever it adds clarity.
+- One concept per response, no preamble or recap.
+
+### writing-system-prompts
+
+Apply prompt-engineering and prompt-caching best practices when authoring LLM system prompts.
+
+- Orders content static-first, dynamic-last so cache prefixes stay reusable.
+- Marks explicit cache breakpoints and keeps churning content (timestamps, IDs, history) below them.
+- Uses structural delimiters and literal, scoped instructions instead of ALL-CAPS shouting.
 
 ## Why trust these skills
 
