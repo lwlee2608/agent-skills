@@ -25,7 +25,7 @@ A well-built system prompt steers behavior across the whole conversation and —
    ]
    ```
 
-4. **Never put churning content at the prefix.** Current time, request ID, user ID, or conversation summary at the top defeats caching for the whole prompt. Push them into the user turn or a post-breakpoint segment.
+4. **Never put churning content at the prefix.** Current time, request ID, user ID, or conversation summary at the top defeats caching for the whole prompt. Push them past the breakpoint — either a second system message (for authoritative facts like date/IDs) or the user turn (for task material like questions and documents). Both preserve cache reuse equally.
 
 5. **Use structural delimiters for distinct sections.** Wrap longform inputs and behavioral directives in clear delimiters — XML tags (`<documents><document>…</document></documents>`, `<default_to_action>…</default_to_action>`), markdown headers, or named JSON fields. **Why:** delimited sections survive long contexts better than walls of prose, and several model families (notably Claude) are explicitly trained on XML structure.
 
@@ -40,14 +40,14 @@ A well-built system prompt steers behavior across the whole conversation and —
 After drafting or editing, check each:
 
 1. **Role check** — One-sentence role at the very top of the system field?
-2. **Cache-order check** — List segments top-to-bottom. Is every segment before the breakpoint stable across requests? Move per-request values below the breakpoint or into the user turn.
+2. **Cache-order check** — List segments top-to-bottom. Is every segment before the breakpoint stable across requests? Move per-request values below the breakpoint (second system message or user turn).
 3. **Breakpoint check** — Is the breakpoint on the last static block? Is the cached prefix above the provider's minimum (e.g. 1024 tokens for Anthropic Opus/Sonnet, 2048 for Haiku, 1024 for OpenAI)? Below the minimum, breakpoints are silently ignored.
 4. **Structure check** — Longform docs wrapped in delimiters? Behavioral blocks in named tags or sections?
 5. **Literalism check** — If an instruction says "format the output" but means "format every section," rewrite with explicit scope.
 
 ## Common mistakes to watch for
 
-- **Timestamp at the top.** `Current date: {{today}}` in the role line invalidates the cache every request. Move to the user turn.
+- **Timestamp at the top.** `Current date: {{today}}` in the role line invalidates the cache every request. Move past the breakpoint — second system message or user turn.
 - **Caching a tiny prefix.** A short system prompt below the provider's minimum — breakpoint silently ignored and you still pay the write surcharge. Either grow the cached block or drop the breakpoint.
 - **Conversation history before the breakpoint.** History grows every request, so anything after it can never be cached. Put the breakpoint *before* the rolling history.
 - **Copy-pasted legacy `CRITICAL: YOU MUST…` shouting.** Causes over-triggering on recent models. Rewrite as plain imperatives.
