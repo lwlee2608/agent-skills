@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-9-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -84,6 +84,14 @@ Apply prompt-engineering and prompt-caching best practices when authoring LLM sy
 - Orders content static-first, dynamic-last so cache prefixes stay reusable.
 - Marks explicit cache breakpoints and keeps churning content (timestamps, IDs, history) below them.
 - Uses structural delimiters and literal, scoped instructions instead of ALL-CAPS shouting.
+
+### handoff
+
+Condense the current conversation into a handoff document for another agent to pick up.
+
+- Writes a summary to `/tmp` with a "Suggested skills" section.
+- References existing artifacts (PRDs, ADRs, commits) by path or URL rather than duplicating them.
+- Redacts API keys, passwords, and other sensitive information.
 
 ## Why trust these skills
 
