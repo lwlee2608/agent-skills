@@ -2,7 +2,7 @@
 name: linear
 description: Use when the user wants to interact with Linear.app — reading or searching issues/tickets.
 user-invocable: true
-argument-hint: [get <id> | search <query>]
+argument-hint: "[get <id> | search <query>]"
 ---
 
 # Linear Issue Management

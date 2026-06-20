@@ -2,7 +2,7 @@
 name: writing-system-prompts
 description: Use when writing or editing a system prompt for any LLM API or SDK (any code passing a `system=` / `system` role parameter, or a `.txt`/`.md` file holding such a prompt). Applies prompt-engineering and prompt-caching best practices.
 user-invocable: true
-argument-hint: [<file>]
+argument-hint: "[<file>]"
 ---
 
 # Writing LLM System Prompts

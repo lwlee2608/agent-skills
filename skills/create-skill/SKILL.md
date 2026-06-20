@@ -2,7 +2,7 @@
 name: create-skill
 description: Use when creating a new agent skill. Ensures the skill follows quality guidelines for SKILL.md files.
 user-invocable: true
-argument-hint: [<name or description>]
+argument-hint: "[<name or description>]"
 ---
 
 # Create an Agent Skill
