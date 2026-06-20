@@ -2,6 +2,7 @@
 name: ascii-diagram
 description: Use after generating or editing ASCII art, box diagrams, tables, or any monospace text art to ensure all lines, corners, and boxes are properly aligned.
 user-invocable: true
+argument-hint: [<file>]
 ---
 
 # Validate ASCII Diagram

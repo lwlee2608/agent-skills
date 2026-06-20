@@ -2,6 +2,7 @@
 name: whiteboard-explain
 description: Use when the user asks to explain or teach a technical concept. Replies in plain language with a simple diagram instead of a wall of jargon.
 user-invocable: true
+argument-hint: <concept>
 ---
 
 # Whiteboard Explain
