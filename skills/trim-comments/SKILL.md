@@ -2,6 +2,7 @@
 name: trim-comments
 description: Use when asked to trim, clean up, shorten, or remove code comments. Two levels — "normal" (default) shortens verbose comments; "aggressive" deletes comments that merely restate the code, keeping only workaround/why/non-obvious ones.
 user-invocable: true
+argument-hint: [normal|aggressive] [<target>]
 ---
 
 # Trim Comments
