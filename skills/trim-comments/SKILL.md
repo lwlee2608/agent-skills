@@ -7,7 +7,7 @@ argument-hint: "[normal|aggressive] [<target>]"
 
 # Trim Comments
 
-Reduce comment noise. **normal** (default) shortens wordy comments but keeps their meaning; **aggressive** deletes nearly every comment. Use aggressive only when the user says so ("aggressive", "strip", "remove all").
+Reduce comment noise. **normal** (default) shortens wordy comments but keeps their meaning — shorter, not cryptic; never deletes. **aggressive** deletes nearly every comment. Use aggressive only when the user says so ("aggressive", "strip", "remove all").
 
 Two rules always hold:
 
@@ -35,4 +35,3 @@ License / copyright headers           never touch         never touch
 
 - **Unusual workaround** = a non-obvious gotcha, a bug being worked around, a "must do X or Y breaks" note. Aggressive keeps these but trims to the shortest form that still conveys the reason.
 - **Tooling directives** (`//go:generate`, `//go:embed`, `# noqa`, `# type: ignore`, `// eslint-disable`, `// @ts-expect-error`, `// nolint`) and **license headers** look like comments but aren't noise — deleting them changes behavior or has legal weight. Never touch them at either level.
-- **Normal** shortens wordy comments without dropping meaning — shorter, not cryptic. It never deletes.
