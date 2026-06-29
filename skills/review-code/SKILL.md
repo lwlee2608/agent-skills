@@ -13,17 +13,8 @@ Review a target and report findings. Each finding is rated by **severity** (how 
 
 Pick the target from the argument. Default to `diff` when none is given.
 
-1. **`diff` (default)** — review local changes on the current branch.
-   - Run `git status --short` and `git diff` for uncommitted changes.
-   - For committed-but-unpushed work, find the base and diff against it:
-     ```
-     git merge-base HEAD origin/main   # try main, then master, then the upstream branch
-     git diff <merge-base>...HEAD
-     ```
-   - Review uncommitted + unpushed changes together.
-2. **`pr <number>`** (or a PR URL) — review a GitHub PR.
-   - `gh pr diff <number>` for the diff; `gh pr view <number> --json title,body,headRefName,baseRefName` for context.
-   - If `gh` is unavailable, say so and fall back to `diff`.
+1. **`diff` (default)** — review local work on the current branch. The change can live in three places at once — uncommitted edits in the working tree, local commits not yet pushed, and commits already pushed to the branch — and is usually a mix. Gather and review all three together. Anchor the comparison on where the branch forked from its base branch, **not** on the branch's own remote — otherwise commits drop out of the diff once they are pushed. Include new untracked files, which a plain diff omits.
+2. **`pr <number>`** (or a PR URL) — review a GitHub PR: its diff plus enough PR context (title, description, base branch) to judge intent. If the GitHub CLI is unavailable, say so and fall back to `diff`.
 3. **`all` / `codebase`** — review the whole repository. State the scope you can realistically cover and prioritize entry points, core logic, and recently changed files. Note anything skipped.
 4. **`<path>`** — a file or directory argument scopes the review to that path.
 
@@ -115,4 +106,6 @@ Before sending the report, check:
 - **Padding with style nits.** Low/Low findings drown the real issues. Fold them into the one-line "not worth fixing" list.
 - **Writing fixes as full patches.** Keep fixes high-level; the user asked for findings, not edits.
 - **Silently capping a codebase review.** If you could not cover everything, say what you skipped and why.
-- **Guessing PR/diff state.** If `git`/`gh` returns nothing or errors, report that instead of reviewing an empty target.
+- **Missing changes that were already pushed.** Comparing against the branch's own remote hides commits once they are pushed. Anchor on the base-branch fork point so committed, pushed, and uncommitted work are all reviewed.
+- **Forgetting untracked files.** Brand-new files often fall outside a plain diff — pull them in or they go unreviewed.
+- **Guessing the target state.** If the tools return nothing or error out, report that instead of reviewing an empty target.
