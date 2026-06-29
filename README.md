@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-10-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-11-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -100,6 +100,14 @@ Remove comment noise from code at two levels.
 - **normal** (default) shortens verbose comments while keeping their meaning.
 - **aggressive** deletes comments that merely restate the code.
 - Always preserves "why"/workaround comments, TODO/FIXME, license headers, and linter directives.
+
+### review-code
+
+Review a local diff, a GitHub PR, or a whole codebase and report findings.
+
+- Target is passed as an argument: `diff` (default), `pr <number>`, `all`, or a path.
+- Each finding gets a severity, a likelihood, a worth-fixing verdict, and a high-level fix.
+- Reports only — never edits code.
 
 ## Why trust these skills
 
