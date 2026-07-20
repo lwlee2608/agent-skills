@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: Use when asked to review a local diff, a GitHub PR, or a whole codebase. Reports each finding with severity, likelihood, a worth-fixing verdict, and a high-level fix.
+description: Use when asked to review a local diff, a GitHub PR, or a whole codebase. Reports rated findings; never edits code.
 user-invocable: true
 argument-hint: "[diff|pr <number>|all|<path>]"
 ---
@@ -58,7 +58,13 @@ Low          Judgment    No          No
 - **Judgment call** — explain the trade-off (fix effort vs. payoff) and give a recommendation; include a fix.
 - **No** — note it for awareness; omit the fix or keep it to one line.
 
-Bump a Judgment call to **Yes** when the fix is trivial; drop toward **No** when the fix is large/risky relative to payoff. State the reason when you override the matrix.
+**Fix effort** — rate whenever a fix is included (Yes / Judgment call); omit for No:
+- **Trivial** — a few lines, one file, no design change.
+- **Small** — localized change, under an hour of work.
+- **Medium** — touches several files or needs new tests.
+- **Large** — refactor, design change, or risky migration.
+
+Bump a Judgment call to **Yes** when the fix effort is Trivial; drop toward **No** when it is Large or risky relative to payoff. State the reason when you override the matrix.
 
 ## Report format
 
@@ -68,10 +74,10 @@ Lead with a one-line summary and a table sorted by worth-fixing (Yes first), the
 **Reviewed:** <target> — <N files, what was covered>
 **Summary:** <one line: overall health + count of must-fix findings>
 
-| # | Finding | Severity | Likelihood | Worth fixing |
-|---|---------|----------|------------|--------------|
-| 1 | <short title> | High | High | Yes |
-| 2 | <short title> | Low | Medium | No |
+| # | Finding | Severity | Likelihood | Worth fixing | Fix effort |
+|---|---------|----------|------------|--------------|------------|
+| 1 | <short title> | High | High | Yes | Small |
+| 2 | <short title> | Low | Medium | No | — |
 ```
 
 Then for each:
@@ -85,6 +91,7 @@ Then for each:
 - **Worth fixing:** Yes
 - **Issue:** <what is wrong and what goes wrong as a result>
 - **Fix:** <high-level approach, not a full patch — omit or keep to one line if Worth fixing = No>
+- **Fix effort:** Trivial | Small | Medium | Large — <one clause on what the fix touches; omit if Worth fixing = No>
 ```
 
 End with: `**Not worth fixing right now:** <one-line list>` if any No/low items were folded out, so nothing is silently dropped.
@@ -95,7 +102,7 @@ Before sending the report, check:
 1. **Every finding cites a real location** (`file:line`) you actually inspected — no hypothetical line numbers.
 2. **Severity and likelihood are independent** — do not collapse them ("it's bad so it's likely"). A Critical-but-Low and a Low-but-High are both valid and common.
 3. **The worth-fixing verdict matches the matrix**, or you stated why you overrode it.
-4. **Every "Yes" and "Judgment call" has a concrete fix**; every fix is high-level (approach, not a finished diff).
+4. **Every "Yes" and "Judgment call" has a concrete fix and a fix-effort rating**; every fix is high-level (approach, not a finished diff).
 5. **No fix was applied** to the working tree — this skill reports only.
 6. **Clean code is reported as clean.** If you found nothing worth fixing, say that plainly instead of manufacturing Low findings.
 
