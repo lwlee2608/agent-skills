@@ -3,6 +3,7 @@ name: handoff
 description: Use when the user wants to condense the current conversation into a handoff document for another agent to pick up.
 argument-hint: "What will the next session be used for?"
 user-invocable: true
+disable-model-invocation: true
 ---
 
 # Handoff
