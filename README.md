@@ -53,14 +53,6 @@ Guide the creation of new SKILL.md files that meet quality standards.
 - Includes a 7-point self-review checklist for validating newly created skills.
 - Enforces conciseness (under 4KB) and single-responsibility scope.
 
-### linear
-
-Interact with Linear.app issues via its GraphQL API.
-
-- Read, search, create, and update issues using `curl` against `https://api.linear.app/graphql`.
-- Resolves human-readable identifiers (e.g., `ENG-123`) to UUIDs before mutations.
-- Requires a `LINEAR_API_KEY` environment variable.
-
 ### ascii-diagram
 
 Validate and fix alignment issues in ASCII diagrams.
@@ -108,6 +100,14 @@ Review a local diff, a GitHub PR, or a whole codebase and report findings.
 - Target is passed as an argument: `diff` (default), `pr <number>`, `all`, or a path.
 - Each finding gets a severity, a likelihood, a worth-fixing verdict, and a high-level fix.
 - Reports only — never edits code.
+
+### opencode-review
+
+Get a second-opinion review from a non-Claude model via `opencode`.
+
+- Runs a fresh `opencode` session on `velocirouter/gpt-5.6-sol` (override with any `opencode models` entry).
+- Delegates the rubric to the `review-code` skill rather than duplicating it.
+- Runs inside a subagent and relays the review verbatim, keeping the transcript out of the main session.
 
 ## Why trust these skills
 
