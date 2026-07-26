@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-6-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-11-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -68,6 +68,46 @@ Validate and fix alignment issues in ASCII diagrams.
 - Redraws diagrams from scratch with correct padding and border widths.
 - Supports both plain ASCII (`+`, `-`, `|`) and Unicode box-drawing characters.
 - Validates alignment with a quick `awk` one-liner after redrawing.
+
+### whiteboard-explain
+
+Explain technical concepts the way an engineer would at a whiteboard.
+
+- Plain English, short sentences, analogy before jargon.
+- Pairs the explanation with a small diagram whenever it adds clarity.
+- One concept per response, no preamble or recap.
+
+### writing-system-prompts
+
+Apply prompt-engineering and prompt-caching best practices when authoring LLM system prompts.
+
+- Orders content static-first, dynamic-last so cache prefixes stay reusable.
+- Marks explicit cache breakpoints and keeps churning content (timestamps, IDs, history) below them.
+- Uses structural delimiters and literal, scoped instructions instead of ALL-CAPS shouting.
+
+### handoff
+
+Condense the current conversation into a handoff document for another agent to pick up.
+
+- Writes a summary to `/tmp` with a "Suggested skills" section.
+- References existing artifacts (PRDs, ADRs, commits) by path or URL rather than duplicating them.
+- Redacts API keys, passwords, and other sensitive information.
+
+### trim-comments
+
+Remove comment noise from code at two levels.
+
+- **normal** (default) shortens verbose comments while keeping their meaning.
+- **aggressive** deletes comments that merely restate the code.
+- Always preserves "why"/workaround comments, TODO/FIXME, license headers, and linter directives.
+
+### review-code
+
+Review a local diff, a GitHub PR, or a whole codebase and report findings.
+
+- Target is passed as an argument: `diff` (default), `pr <number>`, `all`, or a path.
+- Each finding gets a severity, a likelihood, a worth-fixing verdict, and a high-level fix.
+- Reports only — never edits code.
 
 ## Why trust these skills
 
