@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-11-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-12-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -108,6 +108,14 @@ Get a second-opinion review from a non-Claude model via `opencode`.
 - Runs a fresh `opencode` session on `velocirouter/gpt-5.6-sol` (override with any `opencode models` entry).
 - Delegates the rubric to the `review-code` skill rather than duplicating it.
 - Runs inside a subagent and relays the review verbatim, keeping the transcript out of the main session.
+
+### linear-issues
+
+Read, create, update, and comment on Linear issues through the Linear MCP server.
+
+- Routes everything through `mcp__linear__*` tools — never the web UI or raw GraphQL.
+- Resolves team/state/label/assignee names to IDs before writing.
+- Keeps ticket comments to 1–3 sentences: outcome first, link the PR, no filler.
 
 ## Why trust these skills
 
