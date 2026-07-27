@@ -1,6 +1,6 @@
 ---
 name: linear-issues
-description: Use when reading, searching, creating, updating, or commenting on Linear issues. Routes every Linear operation through the installed Linear MCP server, including short-form ticket comments.
+description: Use when reading, searching, creating, updating, or commenting on Linear issues. Routes every Linear operation through the installed Linear MCP server and keeps ticket comments to a few sentences.
 user-invocable: true
 argument-hint: "[<issue ID or request>]"
 ---
@@ -13,7 +13,7 @@ Do all Linear work through the installed Linear MCP server.
 
 1. **Use the Linear MCP tools** (`mcp__linear__*`: `list_issues`, `get_issue`, `create_issue`, `update_issue`, `list_comments`, `create_comment`, …). Read the actual schemas before calling — Linear renames tools without notice.
 
-2. **Never fall back to the GraphQL API or web UI.** If no Linear MCP server is connected, stop and tell the user to install it:
+2. **Never fall back to the GraphQL API or web UI.** If no Linear MCP server is connected, stop and tell the user to add `https://mcp.linear.app/mcp` (HTTP transport) to their agent. In Claude Code:
    ```bash
    claude mcp add --transport http linear https://mcp.linear.app/mcp
    ```
@@ -25,7 +25,7 @@ Do all Linear work through the installed Linear MCP server.
    Root cause: config loader reads `retry_count` but the YAML key is `retryCount`, so it binds 0. Fixed in #482.
    ```
 
-5. **Confirm before any write.** Issues, status changes, and comments are visible to the whole team.
+5. **Confirm before writes the user did not ask for.** Issues, status changes, and comments are visible to the whole team. If they asked for the write, just do it.
 
 ## Verification
 
