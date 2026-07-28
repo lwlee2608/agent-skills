@@ -38,12 +38,14 @@ Assume `opencode` is installed and the `review-code` skill is available to it. D
    >   --title "review: <target>" \
    >   "Use the review-code skill to review <target> in this repo. Do not modify any files." \
    >   | tee "$OUT"
-   > status=$?
-   > echo "raw output: $OUT (exit $status)"
-   > exit $status
+   > rc=$?
+   > echo "raw output: $OUT (exit $rc)"
+   > exit $rc
    > ```
    >
    > `set -o pipefail` is load-bearing: without it the pipeline reports `tee`'s exit status and an opencode failure looks like success.
+   >
+   > Do not rename `rc` to `status` — `status` is read-only in zsh, so the assignment aborts the script after opencode has already run, making a successful review look like a failure.
    >
    > If the exit status is non-zero, return the error output and nothing else. Otherwise return two things: the path printed on the last line, and the review itself copied verbatim — findings, ratings, and `path:line` citations exactly as opencode wrote them. Drop only the surrounding tool logs and reasoning chatter.
 
