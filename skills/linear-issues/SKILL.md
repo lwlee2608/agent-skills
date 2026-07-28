@@ -25,7 +25,9 @@ Do all Linear work through the installed Linear MCP server.
    Root cause: config loader reads `retry_count` but the YAML key is `retryCount`, so it binds 0. Fixed in #482.
    ```
 
-5. **Confirm before writes the user did not ask for.** Issues, status changes, and comments are visible to the whole team. If they asked for the write, just do it.
+5. **Don't hand-move a PR-linked issue to Done.** A linked PR (branch name, or `Fixes ENG-482` in the title/body) moves the issue to Done on merge. Set it by hand only when no PR is linked, or the user asks.
+
+6. **Confirm before writes the user did not ask for.** Issues, status changes, and comments are visible to the whole team. If they asked for the write, just do it.
 
 ## Verification
 

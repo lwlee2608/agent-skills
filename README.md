@@ -116,6 +116,7 @@ Read, create, update, and comment on Linear issues through the Linear MCP server
 - Routes everything through `mcp__linear__*` tools — never the web UI or raw GraphQL.
 - Resolves team/state/label/assignee names to IDs before writing.
 - Keeps ticket comments to 1–3 sentences: outcome first, link the PR, no filler.
+- Leaves PR-linked issues alone — the GitHub integration moves them to Done on merge.
 
 ## Why trust these skills
 
