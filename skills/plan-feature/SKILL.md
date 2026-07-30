@@ -3,6 +3,7 @@ name: plan-feature
 description: Use when planning a project too big to hold in one session. Plans it as a map issue plus child decision tickets on the issue tracker, resolved one session at a time.
 argument-hint: "[<feature description>]"
 user-invocable: true
+disable-model-invocation: true
 ---
 
 # Plan a Feature
@@ -36,25 +37,36 @@ Detect the tracker first: use the Linear MCP tools if present, otherwise `gh iss
 
 3. **One ticket, one question.** Body is a single `## Question` section, answerable in one session. If you cannot state the question sharply, it belongs in "Not yet specified" instead.
 
-4. **Wire blocking after creating.** Create the tickets first, then set blocked-by relations in a second pass — the relations need issue IDs that do not exist yet.
+4. **Label the research tickets.** A question you can answer alone — from docs, the codebase, a third-party API — gets the label `plan-feature:research`. Everything else needs the user's judgment and is resolved in conversation with them.
 
-5. **Work the frontier.** The frontier is open tickets that are unblocked and unassigned. Take the one the user named, else the first on the frontier. Assign it to yourself immediately so parallel sessions do not collide.
+5. **Wire blocking after creating.** Create the tickets first, then set blocked-by relations in a second pass — the relations need issue IDs that do not exist yet.
 
-6. **Resolve one ticket per session.** Post the answer as a comment, close the ticket, add a line to "Decisions so far". Then add any tickets the answer surfaced, and promote fog that just got sharp out of "Not yet specified".
+6. **Work the frontier.** The frontier is open tickets that are unblocked and unassigned. Take the one the user named, else the first on the frontier. Assign it to whoever is driving the map immediately so parallel sessions do not collide.
 
-7. **Rule out, don't resolve.** A ticket that turns out to be beyond the destination gets closed into "Out of scope", not answered.
+7. **Resolve one ticket per session** — research is the exception. Post the answer as a comment, close the ticket, add a line to "Decisions so far". Then add any tickets the answer surfaced, and promote fog that just got sharp out of "Not yet specified".
 
-8. **Never implement.** Planning ends when no blocking question is left open. Building is a separate request.
+8. **Ask before fanning out.** Unblocked research tickets can run as parallel subagents, one ticket per subagent. Name the tickets you intend to dispatch, then:
+   - one or two: just run them.
+   - three or more: ask the user first, with the list and the count. Do not launch until they agree.
+
+   Each subagent gets the question plus the map's Notes, and returns findings only — it never decides, never edits the tracker, never implements. This session posts the comments, closes the tickets and updates the map, so the map has one writer.
+
+9. **Rule out, don't resolve.** A ticket that turns out to be beyond the destination gets closed into "Out of scope", not answered.
+
+10. **Never implement.** Planning ends when no blocking question is left open. Building is a separate request.
 
 ## Verification procedure
 
 1. Does every ticket ask exactly one answerable question?
 2. Is the map body free of open-ticket listings?
-3. After closing a ticket: comment posted, issue closed, map updated, new tickets wired?
+3. Is every ticket the agent can answer alone labelled `plan-feature:research`?
+4. Before dispatching three or more subagents: did the user agree to the list?
+5. After closing a ticket: comment posted, issue closed, map updated, new tickets wired?
 
 ## Common mistakes to watch for
 
 - **Tickets that are tasks.** "Add the retry handler" is work; "Where should retries live?" is a decision.
-- **Answering your own question.** Decisions needing the user's judgment must be asked, not assumed.
+- **Answering your own question.** Decisions needing the user's judgment must be asked, not assumed. A subagent that answers one has broken this.
+- **Fanning out on judgment calls.** Only research tickets go to subagents; a decision ticket dispatched in parallel comes back as a guess.
 - **Burning the map down in one go.** One ticket per session keeps each decision reviewable.
 - **Fog dumped into tickets.** Vague questions produce vague answers; leave them in "Not yet specified".
