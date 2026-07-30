@@ -12,6 +12,8 @@ Big features stall because the unknowns are unknown. Rather than guess at a task
 
 Detect the tracker first: Linear MCP tools if present, otherwise `gh issue`. If neither exists, ask before writing anything.
 
+**Refer to maps and tickets by title, never by bare ID.** Anywhere a human reads — narration, the map's "Decisions so far" — write the title and hang the link off it. A wall of `#42, #43, #44` is illegible; titles read at a glance.
+
 ## Rules
 
 0. **Chart or resume — decide before writing.** If the user named a map, or an open `plan-feature:map` issue already covers this feature, load it and work the frontier (rules 6-10). Chart a new map (rules 1-5) only when none exists.
@@ -27,7 +29,7 @@ Detect the tracker first: Linear MCP tools if present, otherwise `gh issue`. If 
    <domain context, constraints, standing preferences>
 
    ## Decisions so far
-   <one line per closed ticket, with a link>
+   - [<closed ticket title>](link) — <one-line gist of the answer>
 
    ## Not yet specified
    <suspected decisions not yet sharp enough to ticket>
@@ -37,7 +39,7 @@ Detect the tracker first: Linear MCP tools if present, otherwise `gh issue`. If 
    ```
    Open tickets are child issues — find them by query, never list them in the body.
 
-3. **One ticket, one question.** Body is a single `## Question` section, answerable in one session. If you cannot state the question sharply, it belongs in "Not yet specified" instead.
+3. **One ticket, one question.** Body is a single `## Question` section, sized to one agent session — roughly 100K tokens of context. A question that needs more than that is two tickets. If you cannot state the question sharply, it belongs in "Not yet specified" instead.
 
 4. **Label the research tickets.** A question you can answer alone — from docs, the codebase, a third-party API — gets the label `plan-feature:research`. Everything else needs the user's judgment: resolve it in conversation.
 
@@ -58,11 +60,12 @@ Detect the tracker first: Linear MCP tools if present, otherwise `gh issue`. If 
 ## Verification procedure
 
 1. Before creating a map: did you query for an existing one?
-2. Does every ticket ask exactly one answerable question?
-3. Is the map body free of open-ticket listings?
-4. Is every ticket the agent can answer alone labelled `plan-feature:research`?
-5. Before dispatching three or more subagents: did the user agree to the list?
-6. After closing a ticket: comment posted, issue closed, map updated, new tickets wired?
+2. Does every ticket ask exactly one question, resolvable within a single session?
+3. Is every map and ticket referred to by title rather than bare ID?
+4. Is the map body free of open-ticket listings?
+5. Is every ticket the agent can answer alone labelled `plan-feature:research`?
+6. Before dispatching three or more subagents: did the user agree to the list?
+7. After closing a ticket: comment posted, issue closed, map updated, new tickets wired?
 
 ## Common mistakes to watch for
 
