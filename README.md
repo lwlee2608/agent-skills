@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-12-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-13-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -117,6 +117,15 @@ Read, create, update, and comment on Linear issues through the Linear MCP server
 - Resolves team/state/label/assignee names to IDs before writing.
 - Keeps ticket comments to 1–3 sentences: outcome first, link the PR, no filler.
 - Leaves PR-linked issues alone — the GitHub integration moves them to Done on merge.
+
+### plan-feature
+
+Plan work too big for one session as a map issue plus child decision tickets.
+
+- Tickets are questions, not tasks — resolved one per session until nothing is left to decide.
+- Detects the tracker: Linear MCP if present, otherwise `gh issue`.
+- Fans research tickets out to parallel subagents, asking first when there are three or more.
+- Plans only — never implements.
 
 ## Why trust these skills
 
