@@ -65,7 +65,8 @@ Validate and fix alignment issues in ASCII diagrams.
 
 Explain technical concepts the way an engineer would at a whiteboard.
 
-- Plain English, short sentences, analogy before jargon.
+- Writes in ASD-STE100 Simplified Technical English: active voice, simple tenses, one word per meaning.
+- Analogy before jargon; short sentences capped at 20 words.
 - Pairs the explanation with a small diagram whenever it adds clarity.
 - One concept per response, no preamble or recap.
 
