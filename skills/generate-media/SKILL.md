@@ -79,7 +79,7 @@ A full-bleed hero from a 1536×2752 still, cut from 2.2 MB to 35 KB on a phone:
 2. **File check** — every file in `generations/` is non-empty: `find generations -size -1k -type f`. A base64 decode that silently failed leaves a 0-byte file.
 3. **Log check** — the line count of `log.jsonl` equals the number of generation attempts, and `jq -s 'map(.cost) | add' generations/log.jsonl` is at or under the agreed budget.
 4. **Video check** — the job status reached `completed` and the downloaded `.mp4` plays as a file, not a JSON error body: `file generations/00X-*.mp4`.
-5. **Gallery check** — `generations/index.html` exists and its card count matches the log: `grep -c 'class="card' generations/index.html`.
+5. **Gallery check** — read the line `build_gallery.py` printed: `generations/index.html — 12/13 ok, $1.42 (photos 11, videos 2, pages 1)`. The total must equal the line count of `log.jsonl` and the dollar figure must match step 3. Never count cards with `grep -c` — it counts matching lines, not matches, and the page tiles are not log rows.
 6. **Size check** — nothing about to be committed is oversized. Stills and clips have different thresholds, so check them separately:
    ```bash
    find generations -type f -not -path '*/raw/*' \

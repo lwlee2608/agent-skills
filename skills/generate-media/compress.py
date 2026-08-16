@@ -49,6 +49,7 @@ def shrink_image(path, max_edge, quality, raw_dir):
 
 
 def shrink_video(path, max_width, crf, raw_dir):
+    """Re-encode a clip, but keep the original whenever the encode does not win."""
     dims = probe(path, "width", "height")
     width = int(dims[0]) if dims else 0
     rate = probe(path, "bit_rate")
@@ -66,18 +67,27 @@ def shrink_video(path, max_width, crf, raw_dir):
          "-c:a", "aac", "-b:a", "96k", tmp],
         check=True,
     )
+    # Dense clips can encode no smaller than they started. Replacing then costs a
+    # generation of quality and re-runs the encode on every later pass.
+    if dest == path and kb(tmp) >= before * 0.9:
+        os.remove(tmp)
+        return None
     stash(path, raw_dir)
     os.replace(tmp, dest)
     return before, kb(dest), dest
 
 
 def stash(path, raw_dir):
-    """Keep the untouched original, or drop it."""
-    if raw_dir:
-        os.makedirs(raw_dir, exist_ok=True)
-        shutil.move(path, os.path.join(raw_dir, os.path.basename(path)))
-    else:
+    """Keep the untouched original, or drop it. An earlier original always wins."""
+    if not raw_dir:
         os.remove(path)
+        return
+    os.makedirs(raw_dir, exist_ok=True)
+    keep = os.path.join(raw_dir, os.path.basename(path))
+    if os.path.exists(keep):
+        os.remove(path)
+    else:
+        shutil.move(path, keep)
 
 
 def relog(log_path, renames):
@@ -96,9 +106,11 @@ def relog(log_path, renames):
                 row["file"] = os.path.join(os.path.dirname(row["file"]), new)
                 hits += 1
             rows.append(row)
-    with open(log_path, "w", encoding="utf-8") as fh:
+    tmp = log_path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
         for row in rows:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+    os.replace(tmp, log_path)
     return hits
 
 
