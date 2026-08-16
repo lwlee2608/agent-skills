@@ -43,7 +43,27 @@ Pricing fields, in order of usefulness:
 | `pricing.image_output` | USD per **output token**. Not per image. Cannot be converted without the token count. |
 | `pricing.prompt` | USD per input text token. |
 
-⚠ Video models report `"prompt": "0", "completion": "0"` and carry no per-second field. The real rate is only on the web model page (for example `kwaivgi/kling-v3.0-std` is $0.126/second). Get the true figure from `usage.cost` in the response.
+⚠ Video models report `"prompt": "0", "completion": "0"` and carry no per-second field. The API cannot tell you what a clip costs. Use the table below for planning, then take the true figure from `usage.cost` in the response.
+
+### Video price per second
+
+Rates are floors — every ByteDance model bills on
+`(width * height * duration * 24) / 1024` tokens, so 1080p costs far more than 480p at the
+same duration. Kling bills a flat per-second rate.
+
+| Model | From | Notes |
+|---|---|---|
+| `bytedance/seedance-2.0-mini` | $0.01345/s | 4–15 s, 480p and 720p only. Cheapest draft. |
+| `bytedance/seedance-2.0-fast` | $0.04035/s | Speed and cost first. |
+| `bytedance/seedance-2.0` | $0.06726/s | Best character, style, and camera consistency. |
+| `kwaivgi/kling-v3.0-std` | $0.126/s | Flat rate, 3–15 s. |
+
+A 6-second 720p clip: about **$0.08** on seedance-2.0-mini, **$0.40** on seedance-2.0,
+**$0.76** on kling-v3.0-std.
+
+The Seedance 2.x family accepts `text+image+audio+video` input — first **and** last frame
+control, plus reference-to-video from an existing clip. Kling v3.0 takes text and images
+only.
 
 Per-provider detail and uptime for one model:
 
@@ -194,5 +214,7 @@ Verify with the discovery call — this list ages.
 | Cheap image draft | `openai/gpt-image-1-mini`, `krea/krea-2-medium-turbo` |
 | Photoreal / editing | `google/gemini-3-pro-image`, `bytedance-seed/seedream-4.5` |
 | Vector / SVG output | `recraft/recraft-v4.1-vector` |
-| Video, low cost | `kwaivgi/kling-v3.0-std`, `google/veo-3.1-fast` |
+| Video draft, cheapest | `bytedance/seedance-2.0-mini` |
+| Video, style and character consistency | `bytedance/seedance-2.0` |
+| Video, flat predictable price | `kwaivgi/kling-v3.0-std` |
 | Video, high quality | `google/veo-3.1`, `openai/sora-2-pro` |

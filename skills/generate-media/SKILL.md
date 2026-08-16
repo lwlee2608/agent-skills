@@ -30,21 +30,23 @@ Exact endpoints, fields, and curl commands: [openrouter-api.md](openrouter-api.m
 
 6. **Pick the cheapest model that meets the stated need**, unless the user named a model. Sort the list from rule 5 by price. Two exceptions worth stating to the user: `openai/gpt-image-2` for legible text inside an image, and a `-pro` tier when the user asked for final production quality.
 
-7. **Write each result to `generations/` with a numbered, slugged name** — `generations/001-green-apple-hero.png`. Never leave a result only in the API response or in a temp directory. The point of this skill is that the user owns the files.
+7. **Draft video on a cheap model before paying for the final.** Video costs 10× to 50× an image, and the failure is usually the motion, not the pixels. Generate at `bytedance/seedance-2.0-mini` 480p first — about $0.05 for 6 seconds — and only re-run the approved motion on the final model. Video price scales with `width × height × duration`, so halving the resolution is the cheapest way to test an idea. See [openrouter-api.md](openrouter-api.md) for the rate table.
 
-8. **Append one JSON line to `generations/log.jsonl` after every generation**, including failures:
+8. **Write each result to `generations/` with a numbered, slugged name** — `generations/001-green-apple-hero.png`. Never leave a result only in the API response or in a temp directory. The point of this skill is that the user owns the files.
+
+9. **Append one JSON line to `generations/log.jsonl` after every generation**, including failures:
    ```json
    {"n":1,"file":"generations/001-green-apple-hero.png","model":"openai/gpt-image-2","prompt":"...","size":"2K","aspect_ratio":"1:1","cost":0.032,"status":"ok"}
    ```
    Use the `cost` value the API returned. Never estimate it into the log.
 
-9. **Rebuild the gallery after every batch**, so the user can compare results side by side instead of opening files one at a time:
+10. **Rebuild the gallery after every batch**, so the user can compare results side by side instead of opening files one at a time:
    ```bash
    python3 <skill-dir>/build_gallery.py generations
    ```
    The script reads `log.jsonl` and overwrites `generations/index.html`. It needs no arguments beyond the directory and no third-party packages. Never hand-write the HTML.
 
-10. **Report the real total when done**: number of files, the path to `generations/index.html`, and the summed `cost` from the log. If you stopped early because of the budget, say so and say what is left undone.
+11. **Report the real total when done**: number of files, the path to `generations/index.html`, and the summed `cost` from the log. If you stopped early because of the budget, say so and say what is left undone.
 
 ## Verification procedure
 
