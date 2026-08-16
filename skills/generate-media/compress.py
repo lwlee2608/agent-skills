@@ -24,6 +24,10 @@ def probe(path, *fields):
     return out.stdout.split()
 
 
+def has_alpha(im):
+    return im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info)
+
+
 def shrink_image(path, max_edge, quality, raw_dir):
     from PIL import Image
 
@@ -32,7 +36,7 @@ def shrink_image(path, max_edge, quality, raw_dir):
     dest = os.path.splitext(path)[0] + ".webp"
     if path.lower().endswith(".webp") and max(w, h) <= max_edge:
         return None
-    im = im.convert("RGB")
+    im = im.convert("RGBA" if has_alpha(im) else "RGB")
     if max(w, h) > max_edge:
         s = max_edge / max(w, h)
         im = im.resize((round(w * s), round(h * s)), Image.LANCZOS)
@@ -52,7 +56,8 @@ def shrink_video(path, max_width, crf, raw_dir):
     if width and width <= max_width and 0 < bitrate < 1_500_000:
         return None
     before = kb(path)
-    tmp = path + ".tmp.mp4"
+    dest = os.path.splitext(path)[0] + ".mp4"
+    tmp = dest + ".tmp.mp4"
     subprocess.run(
         ["ffmpeg", "-v", "error", "-y", "-i", path,
          "-vf", f"scale='min({max_width},iw)':-2",
@@ -62,8 +67,8 @@ def shrink_video(path, max_width, crf, raw_dir):
         check=True,
     )
     stash(path, raw_dir)
-    os.replace(tmp, path)
-    return before, kb(path), path
+    os.replace(tmp, dest)
+    return before, kb(dest), dest
 
 
 def stash(path, raw_dir):
@@ -113,7 +118,16 @@ def main():
     raw_dir = os.path.join(a.outdir, "raw") if a.keep_raw else None
 
     names = sorted(os.listdir(a.outdir))
-    renames, done, before, after = {}, [], 0.0, 0.0
+    lows = [n.lower() for n in names]
+    if any(n.endswith(IMAGE_EXT) for n in lows):
+        try:
+            import PIL  # noqa: F401
+        except ImportError:
+            sys.exit("images found but Pillow is missing — pip install Pillow")
+    if any(n.endswith(VIDEO_EXT) for n in lows) and not shutil.which("ffmpeg"):
+        sys.exit("videos found but ffmpeg is missing — install ffmpeg")
+
+    renames, done, failed, before, after = {}, [], 0, 0.0, 0.0
     for name in names:
         path = os.path.join(a.outdir, name)
         if not os.path.isfile(path):
@@ -128,6 +142,7 @@ def main():
                 continue
         except Exception as exc:
             print(f"skip {name}: {exc}", file=sys.stderr)
+            failed += 1
             continue
         if not res:
             continue
@@ -141,13 +156,15 @@ def main():
 
     if not done:
         print("nothing to compress")
-        return
+        sys.exit(1 if failed else 0)
     hits = relog(os.path.join(a.outdir, "log.jsonl"), renames)
     print(f"{'TOTAL':48} {before:8.0f}K -> {after:7.0f}K "
           f"({100 * (1 - after / before):.0f}% smaller, {len(done)} files, {hits} log rows repointed)")
     if raw_dir:
         print(f"originals kept in {raw_dir} — add it to .gitignore")
     print("now rebuild the gallery: python3 <skill-dir>/build_gallery.py " + a.outdir)
+    if failed:
+        sys.exit(f"{failed} file(s) failed — see the skip lines above")
 
 
 if __name__ == "__main__":

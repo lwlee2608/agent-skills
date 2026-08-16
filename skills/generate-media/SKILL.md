@@ -80,7 +80,12 @@ A full-bleed hero from a 1536×2752 still, cut from 2.2 MB to 35 KB on a phone:
 3. **Log check** — the line count of `log.jsonl` equals the number of generation attempts, and `jq -s 'map(.cost) | add' generations/log.jsonl` is at or under the agreed budget.
 4. **Video check** — the job status reached `completed` and the downloaded `.mp4` plays as a file, not a JSON error body: `file generations/00X-*.mp4`.
 5. **Gallery check** — `generations/index.html` exists and its card count matches the log: `grep -c 'class="card' generations/index.html`.
-6. **Size check** — nothing about to be committed is oversized: `find generations -type f -size +500k -not -path '*/raw/*'`. A still over 500 KB or a 6-second clip over 1 MB means the compression step was skipped. `generations/raw/` is exempt because it is gitignored.
+6. **Size check** — nothing about to be committed is oversized. Stills and clips have different thresholds, so check them separately:
+   ```bash
+   find generations -type f -not -path '*/raw/*' \
+     \( \( -size +500k \! -name '*.mp4' \) -o \( -size +1M -name '*.mp4' \) \)
+   ```
+   Any hit means the compression step was skipped. `generations/raw/` is exempt because it is gitignored.
 7. **Link check** — every `file` in the log exists after compression: `jq -r 'select(.status=="ok").file' generations/log.jsonl | xargs -r ls >/dev/null`. This catches a rename that never reached the log.
 
 ## Common mistakes to watch for
