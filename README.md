@@ -135,7 +135,8 @@ Generate and edit images and videos through the OpenRouter API, pay-as-you-go in
 - Picks the cheapest model that fits by querying `/api/v1/models`, never a hardcoded list.
 - Enforces an agreed dollar budget: probes with one generation, reads the real `usage.cost`, then extrapolates.
 - Writes every file to `generations/` and appends prompt, model, and cost to `generations/log.jsonl`.
-- Needs `OPENROUTER_API_KEY` only.
+- Rebuilds `generations/index.html`, a grid of every image and video with its model, prompt, and cost.
+- Needs `OPENROUTER_API_KEY` only. The gallery script is stdlib Python, no dependencies.
 
 ## Why trust these skills
 

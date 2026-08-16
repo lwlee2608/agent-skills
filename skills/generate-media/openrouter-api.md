@@ -11,6 +11,7 @@ Base URL `https://openrouter.ai/api/v1`. Every request needs `Authorization: Bea
               \---> POST /videos    (async, 202 + polling_url)
  4. save      ----> generations/NNN-slug.png|mp4
  5. log       ----> generations/log.jsonl      (append one line)
+ 6. gallery   ----> generations/index.html     (build_gallery.py, rebuilt)
 ```
 
 ## 1. Key and credit check
@@ -124,7 +125,19 @@ curl -s -X POST "https://openrouter.ai/api/v1/videos" \
   }' > job.json
 ```
 
-Extra fields beyond the image set: `duration` (seconds), `frame_images` (first/last frame for image-to-video), `generate_audio` (boolean), `callback_url`.
+Extra fields beyond the image set: `duration` (seconds), `generate_audio` (boolean), `callback_url`, plus two image inputs:
+
+`frame_images` — image-to-video. Each entry needs a `frame_type` of `first_frame` or `last_frame`. Omitting `frame_type` is rejected:
+
+```json
+"frame_images": [
+  { "type": "image_url",
+    "image_url": { "url": "data:image/png;base64,iVBORw0..." },
+    "frame_type": "first_frame" }
+]
+```
+
+`input_references` — style guidance, not exact frames. Same shape, no `frame_type`.
 
 Submission response is `202`:
 

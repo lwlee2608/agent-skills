@@ -38,7 +38,13 @@ Exact endpoints, fields, and curl commands: [openrouter-api.md](openrouter-api.m
    ```
    Use the `cost` value the API returned. Never estimate it into the log.
 
-9. **Report the real total when done**: number of files, path, and the summed `cost` from the log. If you stopped early because of the budget, say so and say what is left undone.
+9. **Rebuild the gallery after every batch**, so the user can compare results side by side instead of opening files one at a time:
+   ```bash
+   python3 <skill-dir>/build_gallery.py generations
+   ```
+   The script reads `log.jsonl` and overwrites `generations/index.html`. It needs no arguments beyond the directory and no third-party packages. Never hand-write the HTML.
+
+10. **Report the real total when done**: number of files, the path to `generations/index.html`, and the summed `cost` from the log. If you stopped early because of the budget, say so and say what is left undone.
 
 ## Verification procedure
 
@@ -46,6 +52,7 @@ Exact endpoints, fields, and curl commands: [openrouter-api.md](openrouter-api.m
 2. **File check** — every file in `generations/` is non-empty: `find generations -size -1k -type f`. A base64 decode that silently failed leaves a 0-byte file.
 3. **Log check** — the line count of `log.jsonl` equals the number of generation attempts, and `jq -s 'map(.cost) | add' generations/log.jsonl` is at or under the agreed budget.
 4. **Video check** — the job status reached `completed` and the downloaded `.mp4` plays as a file, not a JSON error body: `file generations/00X-*.mp4`.
+5. **Gallery check** — `generations/index.html` exists and its card count matches the log: `grep -c 'class="card' generations/index.html`.
 
 ## Common mistakes to watch for
 
