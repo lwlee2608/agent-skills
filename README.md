@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-13-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-14-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -127,6 +127,15 @@ Plan work too big for one session as a map issue plus child decision tickets.
 - Detects the tracker: Linear MCP if present, otherwise `gh issue`.
 - Fans research tickets out to parallel subagents, asking first when there are three or more.
 - Plans only — never implements.
+
+### generate-media
+
+Generate and edit images and videos through the OpenRouter API, pay-as-you-go instead of a subscription.
+
+- Picks the cheapest model that fits by querying `/api/v1/models`, never a hardcoded list.
+- Enforces an agreed dollar budget: probes with one generation, reads the real `usage.cost`, then extrapolates.
+- Writes every file to `generations/` and appends prompt, model, and cost to `generations/log.jsonl`.
+- Needs `OPENROUTER_API_KEY` only.
 
 ## Why trust these skills
 
