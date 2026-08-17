@@ -130,12 +130,12 @@ Plan work too big for one session as a map issue plus child decision tickets.
 
 ### generate-media
 
-Generate or edit one image or video through the OpenRouter API, pay-as-you-go instead of a subscription.
+Generate or edit one image or video through a provider API — OpenRouter today, one file per provider under `providers/`.
 
 - Picks the cheapest model that fits by querying `/api/v1/models`, never a hardcoded list.
 - Quotes the model and rough cost before spending, and waits when the call is not cheap.
 - Drafts video cheap before paying for the final — Seedance 2.0 Mini at 480p costs ~5% of a Kling clip.
-- Saves the file to `generations/` and reports the real `usage.cost` from the response.
+- Saves outside the repo to `~/.cache/generate-media/` and reports the real `usage.cost` from the response.
 - Needs `OPENROUTER_API_KEY` only. No scripts, no dependencies.
 
 ## Why trust these skills
