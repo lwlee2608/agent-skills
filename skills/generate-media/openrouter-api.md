@@ -9,9 +9,8 @@ Base URL `https://openrouter.ai/api/v1`. Every request needs `Authorization: Bea
  2. discover  ----> GET  /models?output_modalities=image|video
  3. generate  ----> POST /images    (sync, returns base64)
               \---> POST /videos    (async, 202 + polling_url)
- 4. save      ----> generations/NNN-slug.png|mp4
- 5. log       ----> generations/log.jsonl      (append one line)
- 6. gallery   ----> generations/index.html     (build_gallery.py, rebuilt)
+ 4. save      ----> generations/slug.png|mp4
+ 5. report    ----> file path + usage.cost
 ```
 
 ## 1. Key and credit check
@@ -26,7 +25,7 @@ curl -s https://openrouter.ai/api/v1/key \
             "usage": 12.4, "usage_daily": 0.8, "is_free_tier": false } }
 ```
 
-`limit_remaining` is `null` when the key has no cap. `usage` is all-time spend, so it is not a per-run counter — track the run total from `log.jsonl` instead.
+`limit_remaining` is `null` when the key has no cap. `usage` is all-time spend, so it is not a per-run counter — take the cost of this generation from `usage.cost` in the generation response.
 
 ## 2. Model discovery
 
@@ -43,7 +42,7 @@ Pricing fields, in order of usefulness:
 | `pricing.image_output` | USD per **output token**. Not per image. Cannot be converted without the token count. |
 | `pricing.prompt` | USD per input text token. |
 
-⚠ Video models report `"prompt": "0", "completion": "0"` and carry no per-second field. The API cannot tell you what a clip costs. Use the table below for planning, then take the true figure from `usage.cost` in the response.
+⚠ Video models report `"prompt": "0", "completion": "0"` and carry no per-second field. The API cannot tell you what a clip costs. Use the table below to quote the user a rough figure, then take the true one from `usage.cost` in the response.
 
 ### Video price per second
 
@@ -57,9 +56,15 @@ same duration. Kling bills a flat per-second rate.
 | `bytedance/seedance-2.0-fast` | $0.04035/s | Speed and cost first. |
 | `bytedance/seedance-2.0` | $0.06726/s | Best character, style, and camera consistency. |
 | `kwaivgi/kling-v3.0-std` | $0.126/s | Flat rate, 3–15 s. |
+| `google/veo-3.1` | no published rate | Ask the user before calling. |
+| `openai/sora-2-pro` | no published rate | Ask the user before calling. |
 
 A 6-second 720p clip: about **$0.08** on seedance-2.0-mini, **$0.40** on seedance-2.0,
 **$0.76** on kling-v3.0-std.
+
+A model missing from this table has no obtainable price — the API returns `0` for every
+field and publishes no per-second rate. Never guess one. Say the cost is unknown and let
+the user decide, as the unrated models are the premium tiers.
 
 The Seedance 2.x family accepts `text+image+audio+video` input — first **and** last frame
 control, plus reference-to-video from an existing clip. Kling v3.0 takes text and images
@@ -126,7 +131,7 @@ Response:
 Save and read the true cost:
 
 ```bash
-jq -r '.data[0].b64_json' resp.json | base64 -d > generations/001-hero.png
+jq -r '.data[0].b64_json' resp.json | base64 -d > generations/hero.png
 jq -r '.usage.cost' resp.json
 ```
 
@@ -186,22 +191,7 @@ Download:
 ```bash
 curl -sL "https://openrouter.ai/api/v1/videos/$JOB/content?index=0" \
   -H "Authorization: Bearer $OPENROUTER_API_KEY" \
-  --output generations/002-bottle-push-in.mp4
-```
-
-## 4. Log format
-
-One JSON object per line in `generations/log.jsonl`, appended after every attempt:
-
-```json
-{"n":1,"file":"generations/001-hero.png","model":"openai/gpt-image-2","prompt":"product photo of ...","size":"2K","aspect_ratio":"1:1","cost":0.032,"status":"ok"}
-{"n":2,"file":null,"model":"kwaivgi/kling-v3.0-std","prompt":"slow push in ...","cost":0,"status":"failed","error":"job status failed"}
-```
-
-Run total:
-
-```bash
-jq -s 'map(.cost) | add' generations/log.jsonl
+  --output generations/bottle-push-in.mp4
 ```
 
 ## Useful model IDs
@@ -217,4 +207,4 @@ Verify with the discovery call — this list ages.
 | Video draft, cheapest | `bytedance/seedance-2.0-mini` |
 | Video, style and character consistency | `bytedance/seedance-2.0` |
 | Video, flat predictable price | `kwaivgi/kling-v3.0-std` |
-| Video, high quality | `google/veo-3.1`, `openai/sora-2-pro` |
+| Video, high quality | `google/veo-3.1`, `openai/sora-2-pro` — unpriced, confirm with the user first |
