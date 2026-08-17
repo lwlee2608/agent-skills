@@ -24,9 +24,14 @@ Exact endpoints, fields, and curl commands: [openrouter-api.md](openrouter-api.m
 
 3. **Pick the cheapest model that meets the stated need**, unless the user named a model. Sort the list from rule 2 by price. Two exceptions worth stating to the user: `openai/gpt-image-2` for legible text inside an image, and a `-pro` tier when the user asked for final production quality.
 
-4. **Say the model and the rough cost before calling, and wait if it is above about $0.50.** OpenRouter charges per generation with no monthly cap, and video runs 10× to 50× an image. A cheap draft at `bytedance/seedance-2.0-mini` 480p — about $0.05 for 6 seconds — settles the motion before anything expensive gets paid for. Price scales with `width × height × duration`, so halving the resolution is the cheapest way to test an idea.
+4. **Quote the cost before calling, and only quote a figure you can source.** OpenRouter charges per generation with no monthly cap, and video runs 10× to 50× an image.
+   - **Video** — read the figure off the per-second rate table in [openrouter-api.md](openrouter-api.md). A model with no row there has no published rate anywhere: the pricing fields all return `0`, so say the cost is unknown and wait for the user. The unrated models are the expensive ones.
+   - **Image** — the API cannot price an image before the call: `pricing.image_output` is per output token, not per image. Name the model and say the cost is unknown until the response returns. Never invent a figure. A still normally lands within a few cents, so go ahead without waiting.
+   - **Wait for the user** when a sourced figure is above about $0.50, or when a video's cost is unknown.
 
-5. **Write the result to `generations/` with a slugged name** — `generations/green-apple-hero.png`. Never leave a result only in the API response or in a temp directory, and never overwrite an existing file: add a suffix instead. The point of this skill is that the user owns the files.
+   A cheap draft at `bytedance/seedance-2.0-mini` 480p — about $0.05 for 6 seconds — settles the motion before anything expensive gets paid for. Price scales with `width × height × duration`, so halving the resolution is the cheapest way to test an idea.
+
+5. **Write the result to `generations/` with a slugged name** — `generations/green-apple-hero.png`. Never leave a result only in the API response or in a temp directory, and never overwrite an existing file: add a suffix instead. The point of this skill is that the user owns the files. If `generations/` sits inside a git repository, add it to `.gitignore` before writing the first file — see the size warning below.
 
 6. **Report the file path and the real cost** from `usage.cost` in the response. Never estimate it — see the pricing trap below.
 
@@ -34,7 +39,7 @@ Exact endpoints, fields, and curl commands: [openrouter-api.md](openrouter-api.m
 
 `generations/` is an archive, not a web asset directory. Never point a page at a file in it. Copy the chosen generation out to the site's own directory and derive sized versions there, so the archive and the shipped asset can change independently.
 
-Model output is raw — image models return 2000–2800 px stills at 2–3.5 MB each and video models return 6 Mbps clips. Committing that puts it in git history for good, and getting it out later needs a history rewrite and a force push. Resize before it reaches git or a page.
+Model output is raw — image models return 2000–2800 px stills at 2–3.5 MB each and video models return 6 Mbps clips. Committing that puts it in git history for good, and getting it out later needs a history rewrite and a force push. Keep `generations/` out of git entirely, and resize on the way to a page.
 
 A full-bleed hero from a 1536×2752 still, cut from 2.2 MB to 35 KB on a phone:
 
@@ -65,4 +70,4 @@ A full-bleed hero from a 1536×2752 still, cut from 2.2 MB to 35 KB on a phone:
 - **Piping base64 straight into a file.** The image arrives as `data[0].b64_json`. It must be decoded: `jq -r '.data[0].b64_json' resp.json | base64 -d > out.png`.
 - **Overwriting an earlier result.** Check `generations/` for the name first. Re-running the skill must not destroy what is already there.
 - **Sending a local file path as a reference image.** `input_references` takes an HTTP(S) URL or a base64 data URL. A bare path fails.
-- **Committing the raw output.** A 2–3.5 MB still or a 6 Mbps clip in git is permanent. Resize first, or leave it out of the commit.
+- **Committing the raw output.** A 2–3.5 MB still or a 6 Mbps clip in git is permanent. Gitignore `generations/`, and resize anything copied out of it.
