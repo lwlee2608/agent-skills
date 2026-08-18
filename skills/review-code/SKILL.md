@@ -13,7 +13,7 @@ Review a target and report findings. Each finding is rated by **severity** (how 
 
 Pick the target from the argument, ignoring any flags. Default to `diff` when no target is given.
 
-1. **`diff` (default)** — review local work on the current branch. The change can live in three places at once — uncommitted edits in the working tree, local commits not yet pushed, and commits already pushed to the branch — and is usually a mix. Gather and review all three together. Anchor the comparison on where the branch forked from its base branch, **not** on the branch's own remote — otherwise commits drop out of the diff once they are pushed. Include new untracked files, which a plain diff omits.
+1. **`diff` (default)** — local work on the current branch: uncommitted edits, unpushed commits, and already-pushed commits, reviewed together. Anchor on the base-branch fork point, **not** the branch's own remote — otherwise commits drop out of the diff once they are pushed. Include untracked files, which a plain diff omits.
 2. **`pr <number>`** (or a PR URL) — review a GitHub PR: its diff plus enough PR context (title, description, base branch) to judge intent. If the GitHub CLI is unavailable, say so and fall back to `diff`.
 3. **`all` / `codebase`** — review the whole repository. State the scope you can realistically cover and prioritize entry points, core logic, and recently changed files. Note anything skipped.
 4. **`<path>`** — a file or directory argument scopes the review to that path.
@@ -104,19 +104,12 @@ End with: `**Not worth fixing right now:** <one-line list>` if any No/low items 
 
 Before sending the report, check:
 1. **Every finding cites a real location** (`file:line`) you actually inspected — no hypothetical line numbers.
-2. **Severity and likelihood are independent** — do not collapse them ("it's bad so it's likely"). A Critical-but-Low and a Low-but-High are both valid and common.
-3. **The worth-fixing verdict matches the matrix**, or you stated why you overrode it.
-4. **Every "Yes" and "Judgment call" has a concrete fix and a fix-effort rating**; every fix is high-level (approach, not a finished diff).
-5. **No fix was applied** to the working tree — this skill reports only.
-6. **Clean code is reported as clean.** If you found nothing worth fixing, say that plainly instead of manufacturing Low findings.
+2. **The worth-fixing verdict matches the matrix**, or you stated why you overrode it.
+3. **Every "Yes" and "Judgment call" has a concrete fix and a fix-effort rating**; every fix is high-level (approach, not a finished diff), and none was applied to the working tree.
+4. **Clean code is reported as clean.** If you found nothing worth fixing, say that plainly instead of manufacturing Low findings.
 
 ## Common mistakes to watch for
 
 - **Conflating severity with likelihood.** A SQL injection reachable only by an admin is High severity / Low likelihood — rate the two axes separately.
 - **Reviewing only changed lines.** A diff can introduce a bug whose root cause is in unchanged code a caller away; read enough context to judge it.
-- **Padding with style nits.** Low/Low findings drown the real issues. Fold them into the one-line "not worth fixing" list.
-- **Writing fixes as full patches.** Keep fixes high-level; the user asked for findings, not edits.
-- **Silently capping a codebase review.** If you could not cover everything, say what you skipped and why.
-- **Missing changes that were already pushed.** Comparing against the branch's own remote hides commits once they are pushed. Anchor on the base-branch fork point so committed, pushed, and uncommitted work are all reviewed.
-- **Forgetting untracked files.** Brand-new files often fall outside a plain diff — pull them in or they go unreviewed.
 - **Guessing the target state.** If the tools return nothing or error out, report that instead of reviewing an empty target.
