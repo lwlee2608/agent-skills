@@ -2,7 +2,7 @@
 name: review-code
 description: Use when asked to review a local diff, a GitHub PR, or a whole codebase. Reports rated findings; never edits code.
 user-invocable: true
-argument-hint: "[diff|pr <number>|all|<path>]"
+argument-hint: "[diff|pr <number>|all|<path>] [--sub]"
 ---
 
 # Review Code
@@ -11,7 +11,7 @@ Review a target and report findings. Each finding is rated by **severity** (how 
 
 ## Resolve the target
 
-Pick the target from the argument. Default to `diff` when none is given.
+Pick the target from the argument, ignoring any flags. Default to `diff` when no target is given.
 
 1. **`diff` (default)** — review local work on the current branch. The change can live in three places at once — uncommitted edits in the working tree, local commits not yet pushed, and commits already pushed to the branch — and is usually a mix. Gather and review all three together. Anchor the comparison on where the branch forked from its base branch, **not** on the branch's own remote — otherwise commits drop out of the diff once they are pushed. Include new untracked files, which a plain diff omits.
 2. **`pr <number>`** (or a PR URL) — review a GitHub PR: its diff plus enough PR context (title, description, base branch) to judge intent. If the GitHub CLI is unavailable, say so and fall back to `diff`.
@@ -19,6 +19,10 @@ Pick the target from the argument. Default to `diff` when none is given.
 4. **`<path>`** — a file or directory argument scopes the review to that path.
 
 For a diff/PR, review the changed lines **plus enough surrounding context** to judge them (callers, related functions). A bug is in scope even if the changed line only exposes it.
+
+## Where to run the review
+
+Default is inline. With `--sub`, run the whole review in a subagent and relay its report verbatim — use it for `all`/`codebase` or a large diff, where reading the files would bloat the session. Never re-review or paste back what the subagent returns. If the harness has no subagents, say so and review inline.
 
 ## Review lens (in priority order)
 
