@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-14-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-15-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -137,6 +137,16 @@ Generate or edit one image or video through a provider API — OpenRouter today,
 - Drafts video cheap before paying for the final — Seedance 2.0 Mini at 480p costs ~5% of a Kling clip.
 - Saves outside the repo to `~/.cache/generate-media/` and reports the real `usage.cost` from the response.
 - Needs `OPENROUTER_API_KEY` only. No scripts, no dependencies.
+
+### codebase-design
+
+Shared vocabulary and principles for designing deep modules — a lot of behaviour behind a small interface.
+
+- Glossary of exact terms: module, interface, implementation, depth, seam, adapter, leverage, locality.
+- The deletion test, seam discipline, and designing interfaces for testability.
+- `DEEPENING.md` classifies dependencies (in-process, local-substitutable, remote-owned, true external) and picks the testing strategy.
+- `DESIGN-IT-TWICE.md` fans out parallel sub-agents to design the same interface several radically different ways, then compares them.
+- Adapted from [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design).
 
 ## Why trust these skills
 
