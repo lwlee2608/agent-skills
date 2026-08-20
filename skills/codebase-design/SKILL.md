@@ -25,7 +25,7 @@ Use these terms exactly: don't substitute "component," "service," "API," or "bou
 
 **Adapter**: a concrete thing that satisfies an interface at a seam. Describes *role* (what slot it fills), not substance (what's inside).
 
-**Port**: an interface at a seam that exists specifically so adapters can be swapped across it (Ports & Adapters). A port is a **seam** plus the expectation of at least two **adapters**, typically production and test.
+**Port**: an interface at a seam that exists specifically so adapters can be swapped across it (Ports & Adapters). A port is a **seam** plus the expectation of at least two **adapters**, typically production and test. A port may be a language-level `interface`, but not every seam needs one.
 
 **Leverage**: what callers get from depth. More capability per unit of interface they learn. One implementation pays back across N call sites and M tests.
 
@@ -109,7 +109,7 @@ Good interfaces make testing natural:
 ## Rejected framings
 
 - **Depth as ratio of implementation-lines to interface-lines** (Ousterhout): rewards padding the implementation. We use depth-as-leverage instead.
-- **"Interface" as the TypeScript `interface` keyword or a class's public methods**: too narrow: interface here includes every fact a caller must know.
+- **"Interface" as a language keyword** (Go's or TypeScript's `interface`) **or a class's public methods**: too narrow: interface here includes every fact a caller must know. A concrete Go struct already has one. Declare a Go `interface` only for a **port**; with a single adapter it adds surface, not depth.
 - **"Boundary"**: overloaded with DDD's bounded context. Say **seam** or **interface**.
 
 ## Going deeper
