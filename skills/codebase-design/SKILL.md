@@ -66,7 +66,7 @@ When designing an interface, ask:
 - **Depth is a property of the interface, not the implementation.** A deep module can be internally composed of small, mockable, swappable parts; they just aren't part of the interface. A module can have **internal seams** (private to its implementation, used by its own tests) as well as the **external seam** at its interface.
 - **The deletion test.** Imagine deleting the module. If complexity vanishes, it was a pass-through. If complexity reappears across N callers, it was earning its keep.
 - **The interface is the test surface.** Callers and tests cross the same seam. If you want to test *past* the interface, the module is probably the wrong shape.
-- **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a seam unless something actually varies across it.
+- **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a seam unless something actually varies across it. A test double counts as the second adapter only when the real dependency cannot run in the test.
 
 ## Designing for testability
 
@@ -98,6 +98,20 @@ Good interfaces make testing natural:
 
 3. **Small surface area.** Fewer methods = fewer tests needed. Fewer params = simpler test setup.
 
+4. **Don't declare an interface just so a test can mock it.** "I need to mock this" is not a reason for a port. It's a reason to ask whether the dependency can run in the test:
+
+   ```
+   Can the real dependency run inside the test?
+     yes → use it. No interface.
+           (pure logic, in-memory state, temp files,
+            Postgres/Redis/Kafka in a container)
+     no  → port + two adapters, production and test.
+           (third-party APIs, another team's service
+            across a network seam)
+   ```
+
+   Injecting the dependency (rule 1) is what makes a module testable. Declaring an interface over it is a separate decision, and only the "no" branch earns it. Mocking what you could have run tests that the code calls what you told it to call: it cannot catch a wrong query, a wrong endpoint, or a schema that drifted, which are the failures that actually happen.
+
 ## Relationships
 
 - A **Module** has exactly one **Interface** (the surface it presents to callers and tests).
@@ -111,6 +125,7 @@ Good interfaces make testing natural:
 - **Depth as ratio of implementation-lines to interface-lines** (Ousterhout): rewards padding the implementation. We use depth-as-leverage instead.
 - **"Interface" as a language keyword** (Go's or TypeScript's `interface`) **or a class's public methods**: too narrow: interface here includes every fact a caller must know. A concrete Go struct already has one. Declare a Go `interface` only for a **port**; with a single adapter it adds surface, not depth.
 - **"Boundary"**: overloaded with DDD's bounded context. Say **seam** or **interface**.
+- **Mockability as a reason to declare an interface**: it makes every dependency look like it needs a port. Ask whether the real dependency can run in the test first; see [DEEPENING.md](DEEPENING.md) for the categories.
 
 ## Going deeper
 
