@@ -68,49 +68,26 @@ When designing an interface, ask:
 - **The interface is the test surface.** Callers and tests cross the same seam. If you want to test *past* the interface, the module is probably the wrong shape.
 - **One adapter means a hypothetical seam. Two adapters means a real one.** Don't introduce a seam unless something actually varies across it. A test double counts as the second adapter only when the real dependency cannot run in the test.
 
-## Designing for testability
+## Testability
 
-Good interfaces make testing natural:
+Testability is a consequence of shape, not a separate goal. Two rules produce it:
 
-1. **Accept dependencies, don't create them.**
+1. **Accept dependencies, don't create them.** A module that constructs its own dependencies fixes them for every caller. Take them as parameters.
+2. **Return results, don't mutate.** A module that reports what it computed leaves the decision to act with the caller.
 
-   ```typescript
-   // Testable
-   function processOrder(order, paymentGateway) {}
+**Don't declare an interface just so something can be mocked.** "I need to mock this" is not a reason for a port:
 
-   // Hard to test
-   function processOrder(order) {
-     const gateway = new StripeGateway();
-   }
-   ```
+```
+Can the real dependency run inside the test?
+  yes -> use it. No interface.
+        (pure logic, in-memory state, temp files,
+         Postgres/Redis/Kafka in a container)
+  no  -> port + two adapters, production and test.
+        (third-party APIs, another team's service
+         across a network seam)
+```
 
-2. **Return results, don't produce side effects.**
-
-   ```typescript
-   // Testable
-   function calculateDiscount(cart): Discount {}
-
-   // Hard to test
-   function applyDiscount(cart): void {
-     cart.total -= discount;
-   }
-   ```
-
-3. **Small surface area.** Fewer methods = fewer tests needed. Fewer params = simpler test setup.
-
-4. **Don't declare an interface just so a test can mock it.** "I need to mock this" is not a reason for a port. It's a reason to ask whether the dependency can run in the test:
-
-   ```
-   Can the real dependency run inside the test?
-     yes → use it. No interface.
-           (pure logic, in-memory state, temp files,
-            Postgres/Redis/Kafka in a container)
-     no  → port + two adapters, production and test.
-           (third-party APIs, another team's service
-            across a network seam)
-   ```
-
-   Injecting the dependency (rule 1) is what makes a module testable. Declaring an interface over it is a separate decision, and only the "no" branch earns it. Mocking what you could have run tests that the code calls what you told it to call: it cannot catch a wrong query, a wrong endpoint, or a schema that drifted, which are the failures that actually happen.
+Injecting a dependency is what makes a module testable. Declaring an interface over it is a separate decision, and only the "no" branch earns it. Mocking what you could have run proves the code calls what you told it to call: it cannot catch a wrong query, a wrong endpoint, or a schema that drifted, which are the failures that actually happen.
 
 ## Relationships
 
@@ -129,7 +106,7 @@ Good interfaces make testing natural:
 
 ## Going deeper
 
-- **Deepening a cluster given its dependencies**, see [DEEPENING.md](DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer testing.
+- **Deepening a cluster given its dependencies**, see [DEEPENING.md](DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer.
 - **Exploring alternative interfaces**, see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.
 
 ## Credit
