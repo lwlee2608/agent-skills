@@ -121,11 +121,12 @@ Read, create, update, and comment on Linear issues through the Linear MCP server
 
 ### plan-feature
 
-Plan work too big for one session as a map issue plus child decision tickets.
+Plan work too big for one session as a single markdown file under `plans/`.
 
-- Tickets are questions, not tasks — resolved one per session until nothing is left to decide.
-- Detects the tracker: Linear MCP if present, otherwise `gh issue`.
-- Fans research tickets out to parallel subagents, asking first when there are three or more.
+- Settles every open decision first, asking the user in batches of up to four questions.
+- Reads the codebase to answer what it can, so it never asks what it could look up.
+- Cuts the work into phases the user can run and see, each one a vertical slice — never a backend phase followed by a frontend phase.
+- Every phase carries a demo line and unchecked task boxes.
 - Plans only — never implements.
 
 ### generate-media
