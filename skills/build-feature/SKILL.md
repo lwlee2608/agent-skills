@@ -15,9 +15,9 @@ for each phase in the plan:
 
   branch  →  do the phase's tasks  →  demo passes  →  push  →  open PR
                                                                   |
-                        review #1 (subagent)  →  fix worth-fixing  |
+                        review #1 (subagent)  →  fix worth-fixing |
                                                                   |
-                        review #2 (subagent)  →  fix worth-fixing  |
+                        review #2 (subagent)  →  fix worth-fixing |
                                                                   v
                         merge (merge commit)  →  back to base  →  next phase
 ```
@@ -34,15 +34,15 @@ for each phase in the plan:
 
 5. **Open the PR with a short, feature-focused body.** Imperative title, a `## Summary` of what this phase gives the user with bullets proportional to the diff, and a line naming the phase number and plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 10 — do not fake a review cycle.
 
-6. **Review the PR in a subagent, never inline.** Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
+6. Review the PR in a subagent, Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
 
 7. **Fix only what is worth fixing.** Not everything a review prints deserves a commit:
 
-   | Verdict in the report | Action |
-   |---|---|
-   | Worth fixing: Yes | Fix it in this PR |
-   | Judgment call | Fix if the effort is Trivial or Small **and** it lives in this phase's scope; otherwise log it in the plan's `## Notes` |
-   | Worth fixing: No / Low severity nits | Leave it — say you left it |
+   | Verdict in the report                | Action                                                                                                                  |
+   | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+   | Worth fixing: Yes                    | Fix it in this PR                                                                                                       |
+   | Judgment call                        | Fix if the effort is Trivial or Small **and** it lives in this phase's scope; otherwise log it in the plan's `## Notes` |
+   | Worth fixing: No / Low severity nits | Leave it — say you left it                                                                                              |
 
    Push fixes as their own commits so the second review can see what changed. Then say in one line which findings you skipped and why; a silently dropped finding reads as a finding that never existed.
 
@@ -62,15 +62,8 @@ Before merging any phase's PR, check:
 2. **The demo was actually run** after the last fix commit — not just before the first review.
 3. **Two review rounds happened on this PR**, both in a subagent, the second after the fix commits.
 4. **No `Yes` finding is unfixed**, and every skipped `Judgment call` has a one-line reason recorded.
-5. **The diff contains only this phase's work** — no next-phase head start, no drive-by refactor.
-6. **CI is green**, and the merge is a merge commit.
 
 ## Common mistakes to watch for
 
 - **Batching phases into one PR.** It defeats the point of the plan: the user cannot try phase 1 until phase 4 is written.
-- **Merging after one review.** The fixes from round 1 are the least-reviewed code in the PR.
-- **Fixing every line the review printed.** Low-severity nits balloon the diff and bury the phase's real change. The matrix verdict decides, not the fact that a reviewer mentioned it.
-- **Reviewing the PR inline "to be sure".** It doubles token cost, and self-review of code you just wrote finds less than an independent pass.
-- **Ticking task boxes ahead of the work** so the plan reports progress that does not exist.
-- **Letting a review finding drag in the next phase's scope.** If the real fix belongs to a later phase, note it there instead.
 - **Squash-merging.** The per-phase history is the record of how the feature was built.
