@@ -28,29 +28,32 @@ this session holds the plan and the reports — never the diff
 
 1. **Start from the plan file, never from memory.** Take the path from the argument; otherwise look under `plans/` and ask which one if more than one matches. Re-read it at the start of every phase — it may have changed. If any decision is still `_open_`, stop and send the user back to planning: code written around an open decision is code they will throw away.
 
-2. **One phase, one branch, one PR.** Build the first phase that still has unchecked boxes. Never pull work forward from a later phase, even when it is three lines and "right there" — the phase boundary is what makes the PR reviewable and the demo meaningful. Branch from an up-to-date base, naming the branch after the plan and phase number.
+2. **One phase, one branch, one PR.** Build the first phase that still has unchecked boxes. Never pull work forward from a later phase, even when it is three lines and "right there" — the phase boundary is what makes the PR reviewable and the demo meaningful, and batching phases means the user cannot try phase 1 until phase 4 is written. Branch from an up-to-date base, naming the branch after the plan and phase number.
 
-3. **Delegate the phase's implementation to a subagent.** Cut the branch yourself, then hand the whole phase to one subagent and keep its diff out of this session — the same reason the reviews are delegated. Give it the plan path, the phase number, its task list, its Demo line, and the repo's check commands, and tell it to follow rules 4 and 5. It returns only:
+3. **Every code change goes to a subagent — the build and the review fixes alike.** Cut the branch yourself, then hand the whole phase to one subagent and keep its diff out of this session. Give it the plan path, the phase number, its task list, its Demo line, and the repo's check commands, and tell it to follow rules 4 and 5. It returns only:
 
    - the commit sha and the files it touched
    - what it ran for the Demo and what it saw
    - the build, test, and lint results
    - anything it could not do, and why
 
-   **It has nobody to ask, so it must never ask.** On an open decision, a Demo it cannot run locally, or a locked decision the code disproves, it stops and says so in its report — you raise that with the user (rules 1, 5, 12). Delegate the review fixes the same way, handing the findings over verbatim.
+   Delegate the fixes after each review the same way, handing the findings over verbatim, and the fix subagent re-runs the Demo before it reports.
 
-   Do not read the diff it produced. The PR body comes from its report; correctness comes from the two reviews. If you find yourself opening the changed files, the delegation has failed and this session is carrying the phase after all.
+   **A subagent has nobody to ask, so it must never ask.** On an open decision, a Demo it cannot run locally, or a locked decision the code disproves, it stops and says so in its report — you raise that with the user (rules 1, 5, 12).
+
+   Do not read the diff any of them produced. The PR body comes from the build report; correctness comes from the two reviews. If you find yourself opening the changed files, the delegation has failed and this session is carrying the phase after all — which costs the next phase its context.
+
 4. **Do the phase's tasks and nothing else.** Unrelated bugs, stale code, and tempting refactors go under `## Notes` in the plan as one line each — not into this PR. Tick each task box and update the `## Progress` line as the work lands, in the same commit as the work, so an interrupted session knows exactly where it stopped.
 
-5. **Prove the Demo line before opening the PR.** Run the exact command, URL, or click path the phase names. If it does not do what the phase promised, the phase is not done. Run the repo's own checks too — `make build` / `make test` / `make lint` when a Makefile has those targets, otherwise the project's native commands.
+5. **Prove the Demo line before opening the PR.** The subagent runs the exact command, URL, or click path the phase names, plus the repo's own checks — `make build` / `make test` / `make lint` when a Makefile has those targets, otherwise the project's native commands. If the Demo does not do what the phase promised, the phase is not done.
 
-   **A deferred Demo is not a demo to invent.** When the phase says `**Demo:** deferred`, run the repo's checks, report that this phase's verification is deferred to the feature's end-to-end check, and move on — do not substitute a production run for the missing proof. After the last phase merges, hand the user the plan's `## Rollout` steps and that end-to-end check to run themselves. If a phase names no Demo at all and no deferral, ask the user how they want it verified before opening the PR.
+   **Prove it locally, and stop before anything shared.** The demo runs against a local or disposable environment — a dev server, a test database, a scratch account. If it needs a host, database, or account nobody can throw away — a deployed URL, a shared or production database, an admin login — stop and ask the user first, naming what it would change. Never open a credential file (`.env*`, `prod.env`, a secrets store) to make a demo runnable: an unset `DATABASE_URL` is a stop sign, not a puzzle, and sourcing production config turns a pre-review proof into an unreviewed production change. The plan's rollout steps are the user's to run after merge, not yours to run as proof.
 
-   **Prove it locally, and stop before anything shared.** The demo runs against a local or disposable environment — a dev server, a test database, a scratch account. If it needs a host, database, or account nobody can throw away — a deployed URL, a shared or production database, an admin login — stop and ask the user first, naming what it would change. Never open a credential file (`.env*`, `prod.env`, a secrets store) to make a demo runnable: a missing credential is the environment telling you this demo is not yours to run. A plan's rollout steps are the user's to run after merge, not yours to run as proof — and a demo that cannot run locally is a planning bug, so say so instead of working around it.
+   **A deferred Demo is not a demo to invent.** When the phase says `**Demo:** deferred`, run the repo's checks, report that this phase's verification is deferred to the feature's end-to-end check, and move on. After the last phase merges, hand the user the plan's `## Rollout` steps and that check to run themselves. If a phase names no Demo at all and no deferral, ask the user how they want it verified before opening the PR — a demo that cannot run locally is a planning bug, so say so instead of working around it.
 
 6. **Open the PR with a short, feature-focused body.** Imperative title, a `## Summary` of what this phase gives the user with bullets proportional to what the subagent reported, and a line naming the phase number and plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 11 — do not fake a review cycle.
 
-7. Review the PR in a subagent, Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
+7. **Review the PR in a subagent.** Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
 
 8. **Fix only what is worth fixing.** Not everything a review prints deserves a commit:
 
@@ -60,11 +63,11 @@ this session holds the plan and the reports — never the diff
    | Judgment call                        | Fix if the effort is Trivial or Small **and** it lives in this phase's scope; otherwise log it in the plan's `## Notes` |
    | Worth fixing: No / Low severity nits | Leave it — say you left it                                                                                              |
 
-   Push fixes as their own commits so the second review can see what changed. Then say in one line which findings you skipped and why; a silently dropped finding reads as a finding that never existed.
+   Fixes land as their own commits so the second review can see what changed. Then say in one line which findings you skipped and why; a silently dropped finding reads as a finding that never existed.
 
-9. **Always run the second review, even when the first was clean.** Fixes are new, unreviewed code, and that is exactly where the next bug is. Point round 2 at the same PR after the fix commits land, and apply rule 8 to its findings the same way. Re-run the Demo line after fixing. Stop at two rounds — if round 2 still surfaces must-fix findings after fixing, the phase is too big; say so and let the user decide rather than looping a third time.
+9. **Always run the second review, even when the first was clean.** Fixes are new, unreviewed code, and that is exactly where the next bug is. Point round 2 at the same PR after the fix commits land, and apply rule 8 to its findings the same way. Stop at two rounds — if round 2 still surfaces must-fix findings after fixing, the phase is too big; say so and let the user decide rather than looping a third time.
 
-10. **Merge only when all four hold:** the demo passes, both review rounds ran, no `Yes` finding is left unfixed, and CI is green. Merge with a merge commit — never squash — delete the branch, and return to an up-to-date base before the next phase.
+10. **Merge only when all four hold:** the demo passes, both review rounds ran, no `Yes` finding is left unfixed, and CI is green. Merge with a merge commit — never squash, because the per-phase history is the record of how the feature was built — then delete the branch and return to an up-to-date base before the next phase.
 
 11. **Report the phase in one short block, then start the next one.** PR link, tasks completed, findings fixed, findings deliberately skipped, and the demo the user can run themselves. Continue to the next phase without asking, unless the user said to stop or rule 12 fired.
 
@@ -78,12 +81,5 @@ Before merging any phase's PR, check:
 2. **The demo was actually run** after the last fix commit — not just before the first review — or the phase's Demo says `deferred` and you said so in the report.
 3. **Two review rounds happened on this PR**, both in a subagent, the second after the fix commits.
 4. **No `Yes` finding is unfixed**, and every skipped `Judgment call` has a one-line reason recorded.
-5. **The phase was built in a subagent** and this session never read the diff — only the subagent's report and the review reports.
+5. **Every code change was made in a subagent** and this session never read the diff — only the subagent reports.
 6. **Nothing shared was touched** — the demo ran locally, and no production database, deployed host, or credential file was read or written without the user saying yes first.
-
-## Common mistakes to watch for
-
-- **Batching phases into one PR.** It defeats the point of the plan: the user cannot try phase 1 until phase 4 is written.
-- **Building the phase in this session "just this once".** Every phase you keep costs the next phase its context. The plan file and the phase reports are the handoff; the diff is not.
-- **Escalating to production to make a demo pass.** An unset `DATABASE_URL` is a stop sign, not a puzzle. Sourcing `prod.env` to finish the demo turns a pre-review proof into an unreviewed production change — the one thing the phase-per-PR loop exists to prevent.
-- **Squash-merging.** The per-phase history is the record of how the feature was built.

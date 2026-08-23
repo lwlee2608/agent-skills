@@ -11,17 +11,19 @@ Big features go wrong two ways: the agent guesses at decisions that were the use
 
 The plan lives at `plans/<feature-slug>.md`, unless the repo already keeps design docs elsewhere or the user names a directory. If a plan already covers this feature, resume it — don't re-chart.
 
-Planning runs in two stages, in order. Never start stage 2 while a question in stage 1 is open.
+Planning runs in two stages, in order. Never start stage 2 while a stage 1 question is open — a task list written around an open decision gets thrown away.
 
 ## Stage 1 — Settle every decision
 
-1. **Read the code before asking anything.** Find the files the feature touches, the existing patterns it must match, and the libraries already available. An option you offer must be one the codebase can actually take.
+1. **Read the code before asking anything.** Find the files the feature touches, the patterns it must match, and the libraries already available. An option you offer must be one the codebase can actually take.
 
 2. **Answer for yourself whatever the codebase or docs can answer.** Library support, existing schema, current endpoints, how a neighbouring feature did it — these are research, not decisions. Never ask the user something you could have read. Mark them `` `research` `` in the plan so the user can see what you settled alone.
 
-3. **Ask the user everything else, in batches.** `AskUserQuestion` takes up to 4 questions per call — use full batches instead of one question per turn. Each question gets 2-4 concrete candidate answers, the recommended one first, labelled `(Recommended)`. Put the real trade-off in each option's description, not marketing.
+3. **Ask the user everything else, in batches.** `AskUserQuestion` takes up to 4 questions per call — use full batches, because a drip of one question per turn makes settling a plan feel like an interrogation. Each question gets 2-4 concrete candidate answers, the recommended one first, labelled `(Recommended)`. Put the real trade-off in each option's description, not marketing.
 
-4. **Keep asking until nothing is open.** After each batch, new questions usually appear — the answer to one exposes the next. Loop until you have no open question worth asking, then say so plainly.
+   Ask about decisions, not work. "Where do retries belong?" is a decision. "Add the retry handler" is a task, and tasks belong in stage 2.
+
+4. **Keep asking until nothing is open.** Each answer usually exposes the next question. Loop until you have nothing left worth asking, then say so plainly.
 
    Write the plan file as you go, not at the end. Record answers as they land and open questions with no answer, so an interrupted session resumes from the file instead of re-researching:
 
@@ -34,13 +36,15 @@ Planning runs in two stages, in order. Never start stage 2 while a question in s
 
 ## Stage 2 — Cut the work into testable phases
 
-6. **Every phase must be something the user can run and see.** A phase ends with new behaviour they can exercise themselves. If you cannot write the **Demo** line — the exact command, URL, or click path that proves it works — it is not a phase.
+6. **Every phase must be something the user can run and see.** A phase ends with new behaviour they can exercise themselves. If you cannot write the **Demo** line — the exact command, URL, or click path that proves it works — it is not a phase. "Unit tests pass" is not a demo; only a developer can read it.
 
-   **A Demo must be runnable locally.** It runs against a dev server, a test database, a scratch account — something the user can re-run, get wrong, and run again. A Demo naming a shared database, a deployed URL, or production credentials is not a demo, it is a rollout step: put it under `## Rollout`, where nobody can mistake it for a proof. If a phase has no local demo, it needs a seed script or a fixture, not a production target.
+7. **A Demo must run locally.** It runs against a dev server, a test database, a scratch account — something the user can re-run, get wrong, and run again. A Demo naming a shared database, a deployed URL, or production credentials is not a proof, it is a rollout step: put it under `## Rollout`, where nobody can mistake it for one. Write it as a Demo instead and the agent building the phase will run it before the code is even reviewed. If a phase has no local demo, it needs a seed script or a fixture, not a production target.
 
-   **Some work can only be proven at the end, and that is allowed.** When a phase has no local surface of its own — a migration that only matters against real data, an integration you cannot exercise without the third party — write `**Demo:** deferred — <why>` and cover it in the feature's `## Rollout` block, which names the one end-to-end check the user runs in staging or production after every phase merges. Deferral is the exception, not the pattern: two deferred phases in a row means the slices are wrong. And when you cannot tell whether a phase is provable locally, that is a stage 1 question — ask the user how they want to verify it rather than guessing.
+8. **Some work can only be proven at the end, and that is allowed.** When a phase has no local surface of its own — a migration that only matters against real data, an integration you cannot exercise without the third party — write `**Demo:** deferred — <why>` and cover it in the feature's `## Rollout` block, which names the one end-to-end check the user runs after every phase merges.
 
-7. **Never split phases by layer.** `Backend`, `Frontend`, `Database`, `API`, `Tests`, `Refactor` as phase names are all the same bug: the user is blind until the final phase, and integration problems surface last. Slice vertically — each phase cuts through every layer it needs.
+   Deferral is for work with no local surface, never for work you have not thought through. Two deferred phases in a row means the slices are wrong. And when you cannot tell whether a phase is provable locally, that is a stage 1 question — ask the user how they want to verify it rather than guessing.
+
+9. **Never split phases by layer.** `Backend`, `Frontend`, `Database`, `API`, `Tests`, `Refactor` as phase names are all the same bug: the user is blind until the final phase, and integration problems surface last. A `foundations` or `setup` first phase is that bug wearing a different name — scaffolding with nothing to see, so fold it into the first real feature slice. Slice vertically instead: each phase cuts through every layer it needs.
 
    ```
    Bad — layer slices, nothing usable until the end
@@ -53,17 +57,17 @@ Planning runs in two stages, in order. Never start stage 2 while a question in s
      Phase 3  Animate it        [db][api][ui]   user makes a clip
    ```
 
-8. **Name a phase by what the user gains.** "Log in and see an empty library" is a phase name. "Auth layer" is not.
+10. **Name a phase by what the user gains.** "Log in and see an empty library" is a phase name. "Auth layer" is not.
 
-9. **Order phases so the earliest is the smallest visible thing.** Each later phase builds on what already runs. Prefer 3-6 phases; if you have more than 8, the slices are too thin.
+11. **Order phases so the earliest is the smallest visible thing.** Each later phase builds on what already runs. Prefer 3-6 phases; if you have more than 8, the slices are too thin.
 
-10. **Check whether any phases can run in parallel — and only raise it when it actually pays.** A pair qualifies only if both hold:
+12. **Raise parallelism only when it pays.** A pair of phases qualifies only if both hold:
     - **No dependency.** Neither phase needs the other's schema, API, types, or new files. If B builds on what A introduces, B waits — starting it early means guessing at A's shape and rewriting later.
     - **Little overlap.** They touch mostly different files. Two phases editing the same modules will collide on merge, and reconciling the branches costs more than the parallel run saved.
 
     If no pair clears both bars, say the phases are sequential and move on — do not ask. When a pair does, ask with `AskUserQuestion` whether to run them side by side, naming the pair and any files they share.
 
-    If the user agrees, split the phase numbers (`2a`, `2b`), give each branch its own Demo, and record the flow as a diagram in the plan:
+    If the user agrees, split the phase numbers (`2a`, `2b`), give each branch its own Demo, and record the flow as a diagram that names the merge point — Phase 3 starts only after both branches land:
 
     ```
     Phase 1 ──┬── Phase 2a  Generate an image ──┬── Phase 3  Animate an image
@@ -72,11 +76,9 @@ Planning runs in two stages, in order. Never start stage 2 while a question in s
                             internal/library
     ```
 
-    Name the merge point: Phase 3 starts only after both branches land.
+13. **Tasks are work, and start unchecked.** Imperative, one sitting each, naming the file where it is known: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking them is the build — a separate request, handled by `build-feature`.
 
-11. **Tasks are work, not questions, and start unchecked.** Imperative, one sitting each, naming the file where it is known: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking them is the build — a separate request.
-
-12. **Locked decisions stay locked.** If building proves one wrong, amend the Decisions section explicitly and note which phases it invalidates. Never quietly re-plan around a decision the user made.
+14. **Locked decisions stay locked.** If building proves one wrong, amend the Decisions section explicitly and note which phases it invalidates. Never quietly re-plan around a decision the user made.
 
 ## Plan file format
 
@@ -122,23 +124,10 @@ Phase 1 of 3 · 0/11 tasks
 
 Before handing the plan over, check:
 
-1. **No open questions** — no `_open_` entry is left under Decisions, and no answer is `TBD`, "to be confirmed", or hedged. An `_open_` entry is fine mid-session; it is not fine when handing the plan over.
+1. **No open questions** — no `_open_` entry is left under Decisions, and no answer is `TBD`, "to be confirmed", or hedged. An `_open_` entry is fine mid-session; it is not fine at handover.
 2. **Nothing decided that was the user's to decide** — every `research` mark is a fact you read, not a preference you picked.
-3. **Demo line per phase** — each one names a command, URL, or click path a person can follow without reading the code, or says `deferred` with a reason and is covered by the `## Rollout` end-to-end check.
-4. **No layer names** — no phase is called backend, frontend, database, API, tests, or refactor.
-5. **Vertical cut** — each phase's tasks touch the layers that phase needs, not one layer across all phases.
+3. **A Demo line per phase** — each names a command, URL, or click path a person can follow without reading the code, or says `deferred` with a reason and is covered by the `## Rollout` end-to-end check. No two consecutive phases defer.
+4. **Every Demo runs locally** — none names a production host, a shared database, or a credential the user would have to hand over.
+5. **No layer names, and a vertical cut** — no phase is called backend, frontend, database, API, tests, refactor, foundations, or setup, and each phase's tasks touch the layers that phase needs rather than one layer across all phases.
 6. **Counts match** — the Progress line matches the actual task boxes.
-7. **Every Demo runs locally, or says it cannot** — no Demo line names a production host, a shared database, or a credential the user would have to hand over. Anything that does is either `deferred` or belongs under `## Rollout`, and no two consecutive phases defer.
-8. **Parallelism is earned or absent** — if the plan branches, the branches share no dependency and no meaningful files, and the diagram names where they merge. Otherwise there is no Parallelism section at all.
-
-## Common mistakes to watch for
-
-- **Asking one question per turn.** Batch up to 4. A drip of single questions makes settling a plan feel like an interrogation.
-- **Asking what the code already answers.** "Does the library support X?" is something to go and read, then report.
-- **A "foundations" or "setup" first phase.** Scaffolding with nothing to see is a layer slice wearing a different name. Fold it into the first real feature slice.
-- **Tasks disguised as decisions.** "Add the retry handler" is a task. "Where do retries belong?" is a decision.
-- **Phases that only a developer can verify.** "Unit tests pass" is not a demo. The user must be able to see the behaviour.
-- **Deferring because writing the Demo is hard.** Deferral is for work with no local surface, not for work you have not thought through. If you are unsure, ask the user how they will verify it — that is a decision, and stage 1 is where it belongs.
-- **A Demo that points at production.** "Run the migration on prod, then load the site" proves nothing safely — it is a one-way change dressed as a check, and an agent building the phase will run it before the code is even reviewed.
-- **Offering parallelism that does not pay.** Two phases where one waits on the other's schema, or that edit the same modules, are sequential work with merge pain bolted on. Raise it only when both branches can land clean.
-- **Writing tasks while a decision is still open.** The task list will be wrong, and rewriting it costs more than waiting.
+7. **Parallelism is earned or absent** — if the plan branches, the branches share no dependency and no meaningful files, and the diagram names where they merge. Otherwise there is no Parallelism section at all.
