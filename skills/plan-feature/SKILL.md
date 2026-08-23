@@ -54,9 +54,26 @@ Planning runs in two stages, in order. Never start stage 2 while a question in s
 
 9. **Order phases so the earliest is the smallest visible thing.** Each later phase builds on what already runs. Prefer 3-6 phases; if you have more than 8, the slices are too thin.
 
-10. **Tasks are work, not questions, and start unchecked.** Imperative, one sitting each, naming the file where it is known: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking them is the build — a separate request.
+10. **Check whether any phases can run in parallel — and only raise it when it actually pays.** A pair qualifies only if both hold:
+    - **No dependency.** Neither phase needs the other's schema, API, types, or new files. If B builds on what A introduces, B waits — starting it early means guessing at A's shape and rewriting later.
+    - **Little overlap.** They touch mostly different files. Two phases editing the same modules will collide on merge, and reconciling the branches costs more than the parallel run saved.
 
-11. **Locked decisions stay locked.** If building proves one wrong, amend the Decisions section explicitly and note which phases it invalidates. Never quietly re-plan around a decision the user made.
+    If no pair clears both bars, say the phases are sequential and move on — do not ask. When a pair does, ask with `AskUserQuestion` whether to run them side by side, naming the pair and any files they share.
+
+    If the user agrees, split the phase numbers (`2a`, `2b`), give each branch its own Demo, and record the flow as a diagram in the plan:
+
+    ```
+    Phase 1 ──┬── Phase 2a  Generate an image ──┬── Phase 3  Animate an image
+              │             internal/gen        │
+              └── Phase 2b  Browse the images ──┘
+                            internal/library
+    ```
+
+    Name the merge point: Phase 3 starts only after both branches land.
+
+11. **Tasks are work, not questions, and start unchecked.** Imperative, one sitting each, naming the file where it is known: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking them is the build — a separate request.
+
+12. **Locked decisions stay locked.** If building proves one wrong, amend the Decisions section explicitly and note which phases it invalidates. Never quietly re-plan around a decision the user made.
 
 ## Plan file format
 
@@ -73,6 +90,9 @@ Planning runs in two stages, in order. Never start stage 2 while a question in s
 
 ## Progress
 Phase 1 of 3 · 0/11 tasks
+
+## Parallelism
+<only when the user agreed — a diagram of which phases branch, and where they merge back>
 
 ### Phase 1 — <what the user gains>
 <one line: what they can do after this that they could not before>
@@ -101,6 +121,7 @@ Before handing the plan over, check:
 4. **No layer names** — no phase is called backend, frontend, database, API, tests, or refactor.
 5. **Vertical cut** — each phase's tasks touch the layers that phase needs, not one layer across all phases.
 6. **Counts match** — the Progress line matches the actual task boxes.
+7. **Parallelism is earned or absent** — if the plan branches, the branches share no dependency and no meaningful files, and the diagram names where they merge. Otherwise there is no Parallelism section at all.
 
 ## Common mistakes to watch for
 
@@ -109,4 +130,5 @@ Before handing the plan over, check:
 - **A "foundations" or "setup" first phase.** Scaffolding with nothing to see is a layer slice wearing a different name. Fold it into the first real feature slice.
 - **Tasks disguised as decisions.** "Add the retry handler" is a task. "Where do retries belong?" is a decision.
 - **Phases that only a developer can verify.** "Unit tests pass" is not a demo. The user must be able to see the behaviour.
+- **Offering parallelism that does not pay.** Two phases where one waits on the other's schema, or that edit the same modules, are sequential work with merge pain bolted on. Raise it only when both branches can land clean.
 - **Writing tasks while a decision is still open.** The task list will be wrong, and rewriting it costs more than waiting.
