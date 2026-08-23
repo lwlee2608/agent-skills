@@ -1,6 +1,6 @@
 ---
 name: plan-feature
-description: Use when planning a feature too big to hold in one session. Settles every open decision up front by asking the user, locks the answers into one markdown plan file, then breaks the work into phases of user-testable slices with task checkboxes.
+description: Use when planning a feature too big to hold in one session. Settles every open decision up front by asking the user, locks the answers into one markdown plan file, then breaks the work into phases of verifiable slices with task checkboxes.
 argument-hint: "[<feature description> | <path to plan file>]"
 user-invocable: true
 ---
@@ -36,13 +36,15 @@ Planning runs in two stages, in order. Never start stage 2 while a stage 1 quest
 
 ## Stage 2 — Cut the work into testable phases
 
-6. **Every phase must be something the user can run and see.** A phase ends with new behaviour they can exercise themselves. If you cannot write the **Demo** line — the exact command, URL, or click path that proves it works — it is not a phase. "Unit tests pass" is not a demo; only a developer can read it.
+6. **Every phase must be something you can prove works.** Aim for new behaviour the user can exercise themselves — that is what makes a slice worth cutting — but the proof does not have to be a click path. Each phase carries a **Verify** line naming exactly what shows the phase works: a command, a URL, a click path, or a test that fails without this phase's code. If you cannot write that line, it is not a phase. "Checks pass" is not a Verify line — name the command and what it should show.
 
-7. **A Demo must run locally.** It runs against a dev server, a test database, a scratch account — something the user can re-run, get wrong, and run again. A Demo naming a shared database, a deployed URL, or production credentials is not a proof, it is a rollout step: put it under `## Rollout`, where nobody can mistake it for one. Write it as a Demo instead and the agent building the phase will run it before the code is even reviewed. If a phase has no local demo, it needs a seed script or a fixture, not a production target.
+   Save the demo for the end. There is one demo per feature, once every phase has merged, and `build-feature` asks the user how they want it done. Do not stage a demo per phase.
 
-8. **Some work can only be proven at the end, and that is allowed.** When a phase has no local surface of its own — a migration that only matters against real data, an integration you cannot exercise without the third party — write `**Demo:** deferred — <why>` and cover it in the feature's `## Rollout` block, which names the one end-to-end check the user runs after every phase merges.
+7. **Verification must run locally.** It runs against a dev server, a test database, a scratch account — something the user can re-run, get wrong, and run again. A Verify line naming a shared database, a deployed URL, or production credentials is not a proof, it is a rollout step: put it under `## Rollout`, where nobody can mistake it for one. Write it as a Verify line instead and the agent building the phase will run it before the code is even reviewed. If a phase has no local proof, it needs a seed script or a fixture, not a production target.
 
-   Deferral is for work with no local surface, never for work you have not thought through. Two deferred phases in a row means the slices are wrong. And when you cannot tell whether a phase is provable locally, that is a stage 1 question — ask the user how they want to verify it rather than guessing.
+8. **Some work can only be proven at the end, and that is allowed.** When a phase has no local surface of its own — a migration that only matters against real data, an integration you cannot exercise without the third party — write `**Verify:** deferred — <why>` and cover it in the feature's `## Rollout` block, which names the one end-to-end check the user runs after every phase merges.
+
+   Deferral is for work with no local surface, never for work you have not thought through. Two deferred phases in a row means the slices are wrong. And when you cannot tell whether a phase is provable locally, that is a stage 1 question — ask the user how they want to verify it rather than guessing. The same goes for the feature as a whole: if you cannot see how the finished feature would ever be demonstrated, ask in stage 1, not after four phases have merged.
 
 9. **Never split phases by layer.** `Backend`, `Frontend`, `Database`, `API`, `Tests`, `Refactor` as phase names are all the same bug: the user is blind until the final phase, and integration problems surface last. A `foundations` or `setup` first phase is that bug wearing a different name — scaffolding with nothing to see, so fold it into the first real feature slice. Slice vertically instead: each phase cuts through every layer it needs.
 
@@ -67,7 +69,7 @@ Planning runs in two stages, in order. Never start stage 2 while a stage 1 quest
 
     If no pair clears both bars, say the phases are sequential and move on — do not ask. When a pair does, ask with `AskUserQuestion` whether to run them side by side, naming the pair and any files they share.
 
-    If the user agrees, split the phase numbers (`2a`, `2b`), give each branch its own Demo, and record the flow as a diagram that names the merge point — Phase 3 starts only after both branches land:
+    If the user agrees, split the phase numbers (`2a`, `2b`), give each branch its own Verify line, and record the flow as a diagram that names the merge point — Phase 3 starts only after both branches land:
 
     ```
     Phase 1 ──┬── Phase 2a  Generate an image ──┬── Phase 3  Animate an image
@@ -104,7 +106,7 @@ Phase 1 of 3 · 0/11 tasks
 - [ ] <task>
 - [ ] <task>
 - [ ] <task>
-**Demo:** <exact command, URL, or click path that proves it>
+**Verify:** <exact command, URL, click path, or test that proves it — or `deferred — <why>`>
 
 ### Phase 2 — <what the user gains>
 ...
@@ -113,8 +115,8 @@ Phase 1 of 3 · 0/11 tasks
 <domain context, constraints, standing preferences>
 
 ## Rollout
-<steps against shared or production systems, for the user to run after merge — never part of a Demo>
-<the end-to-end check covering any phase whose Demo was deferred>
+<steps against shared or production systems, for the user to run after merge — never part of a Verify line>
+<the end-to-end check covering any phase whose Verify line was deferred>
 
 ## Out of scope
 <ruled out, with a one-line reason>
@@ -126,8 +128,8 @@ Before handing the plan over, check:
 
 1. **No open questions** — no `_open_` entry is left under Decisions, and no answer is `TBD`, "to be confirmed", or hedged. An `_open_` entry is fine mid-session; it is not fine at handover.
 2. **Nothing decided that was the user's to decide** — every `research` mark is a fact you read, not a preference you picked.
-3. **A Demo line per phase** — each names a command, URL, or click path a person can follow without reading the code, or says `deferred` with a reason and is covered by the `## Rollout` end-to-end check. No two consecutive phases defer.
-4. **Every Demo runs locally** — none names a production host, a shared database, or a credential the user would have to hand over.
+3. **A Verify line per phase** — each names a specific command, URL, click path, or test, or says `deferred` with a reason and is covered by the `## Rollout` end-to-end check. No two consecutive phases defer.
+4. **Every Verify line runs locally** — none names a production host, a shared database, or a credential the user would have to hand over.
 5. **No layer names, and a vertical cut** — no phase is called backend, frontend, database, API, tests, refactor, foundations, or setup, and each phase's tasks touch the layers that phase needs rather than one layer across all phases.
 6. **Counts match** — the Progress line matches the actual task boxes.
 7. **Parallelism is earned or absent** — if the plan branches, the branches share no dependency and no meaningful files, and the diagram names where they merge. Otherwise there is no Parallelism section at all.

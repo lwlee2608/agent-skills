@@ -125,18 +125,19 @@ Plan work too big for one session as a single markdown file under `plans/`.
 
 - Settles every open decision first, asking the user in batches of up to four questions.
 - Reads the codebase to answer what it can, so it never asks what it could look up.
-- Cuts the work into phases the user can run and see, each one a vertical slice — never a backend phase followed by a frontend phase.
-- Every phase carries a demo line and unchecked task boxes.
+- Cuts the work into phases you can prove work, each one a vertical slice — never a backend phase followed by a frontend phase.
+- Every phase carries a verify line and unchecked task boxes.
 - Plans only — never implements.
 
 ### build-feature
 
 Implement a phased plan file one phase at a time, one PR per phase.
 
-- Builds only the phase's tasks, ticks its boxes, and proves the phase's demo line before opening the PR.
+- Builds only the phase's tasks, ticks its boxes, and proves the phase's verify line before opening the PR.
 - Reviews each PR twice in a subagent, fixing between rounds so the fixes are reviewed too.
 - Fixes only findings the review rates worth fixing, and says which it skipped.
-- Merges with a merge commit once the demo passes and CI is green, then starts the next phase.
+- Merges with a merge commit once verification passes and CI is green, then starts the next phase.
+- Demos the whole feature after the last phase, asking the user how they want it shown, then leaves the final merge to `main` to them.
 
 ### generate-media
 
