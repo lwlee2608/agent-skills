@@ -32,6 +32,10 @@ for each phase in the plan:
 
 4. **Prove the Demo line before opening the PR.** Run the exact command, URL, or click path the phase names. If it does not do what the phase promised, the phase is not done. Run the repo's own checks too — `make build` / `make test` / `make lint` when a Makefile has those targets, otherwise the project's native commands.
 
+   **A deferred Demo is not a demo to invent.** When the phase says `**Demo:** deferred`, run the repo's checks, report that this phase's verification is deferred to the feature's end-to-end check, and move on — do not substitute a production run for the missing proof. After the last phase merges, hand the user the plan's `## Rollout` steps and that end-to-end check to run themselves. If a phase names no Demo at all and no deferral, ask the user how they want it verified before opening the PR.
+
+   **Prove it locally, and stop before anything shared.** The demo runs against a local or disposable environment — a dev server, a test database, a scratch account. If it needs a host, database, or account nobody can throw away — a deployed URL, a shared or production database, an admin login — stop and ask the user first, naming what it would change. Never open a credential file (`.env*`, `prod.env`, a secrets store) to make a demo runnable: a missing credential is the environment telling you this demo is not yours to run. A plan's rollout steps are the user's to run after merge, not yours to run as proof — and a demo that cannot run locally is a planning bug, so say so instead of working around it.
+
 5. **Open the PR with a short, feature-focused body.** Imperative title, a `## Summary` of what this phase gives the user with bullets proportional to the diff, and a line naming the phase number and plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 10 — do not fake a review cycle.
 
 6. Review the PR in a subagent, Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
@@ -59,11 +63,13 @@ for each phase in the plan:
 Before merging any phase's PR, check:
 
 1. **Every task box for this phase is ticked** and the `## Progress` line matches the real count.
-2. **The demo was actually run** after the last fix commit — not just before the first review.
+2. **The demo was actually run** after the last fix commit — not just before the first review — or the phase's Demo says `deferred` and you said so in the report.
 3. **Two review rounds happened on this PR**, both in a subagent, the second after the fix commits.
 4. **No `Yes` finding is unfixed**, and every skipped `Judgment call` has a one-line reason recorded.
+5. **Nothing shared was touched** — the demo ran locally, and no production database, deployed host, or credential file was read or written without the user saying yes first.
 
 ## Common mistakes to watch for
 
 - **Batching phases into one PR.** It defeats the point of the plan: the user cannot try phase 1 until phase 4 is written.
+- **Escalating to production to make a demo pass.** An unset `DATABASE_URL` is a stop sign, not a puzzle. Sourcing `prod.env` to finish the demo turns a pre-review proof into an unreviewed production change — the one thing the phase-per-PR loop exists to prevent.
 - **Squash-merging.** The per-phase history is the record of how the feature was built.

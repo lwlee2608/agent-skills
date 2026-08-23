@@ -37,6 +37,10 @@ Planning runs in two stages, in order. Never start stage 2 while a question in s
 
 6. **Every phase must be something the user can run and see.** A phase ends with new behaviour they can exercise themselves. If you cannot write the **Demo** line — the exact command, URL, or click path that proves it works — it is not a phase.
 
+   **A Demo must be runnable locally.** It runs against a dev server, a test database, a scratch account — something the user can re-run, get wrong, and run again. A Demo naming a shared database, a deployed URL, or production credentials is not a demo, it is a rollout step: put it under `## Rollout`, where nobody can mistake it for a proof. If a phase has no local demo, it needs a seed script or a fixture, not a production target.
+
+   **Some work can only be proven at the end, and that is allowed.** When a phase has no local surface of its own — a migration that only matters against real data, an integration you cannot exercise without the third party — write `**Demo:** deferred — <why>` and cover it in the feature's `## Rollout` block, which names the one end-to-end check the user runs in staging or production after every phase merges. Deferral is the exception, not the pattern: two deferred phases in a row means the slices are wrong. And when you cannot tell whether a phase is provable locally, that is a stage 1 question — ask the user how they want to verify it rather than guessing.
+
 7. **Never split phases by layer.** `Backend`, `Frontend`, `Database`, `API`, `Tests`, `Refactor` as phase names are all the same bug: the user is blind until the final phase, and integration problems surface last. Slice vertically — each phase cuts through every layer it needs.
 
    ```
@@ -107,6 +111,10 @@ Phase 1 of 3 · 0/11 tasks
 ## Notes
 <domain context, constraints, standing preferences>
 
+## Rollout
+<steps against shared or production systems, for the user to run after merge — never part of a Demo>
+<the end-to-end check covering any phase whose Demo was deferred>
+
 ## Out of scope
 <ruled out, with a one-line reason>
 ```
@@ -117,11 +125,12 @@ Before handing the plan over, check:
 
 1. **No open questions** — no `_open_` entry is left under Decisions, and no answer is `TBD`, "to be confirmed", or hedged. An `_open_` entry is fine mid-session; it is not fine when handing the plan over.
 2. **Nothing decided that was the user's to decide** — every `research` mark is a fact you read, not a preference you picked.
-3. **Demo line per phase** — each one names a command, URL, or click path a person can follow without reading the code.
+3. **Demo line per phase** — each one names a command, URL, or click path a person can follow without reading the code, or says `deferred` with a reason and is covered by the `## Rollout` end-to-end check.
 4. **No layer names** — no phase is called backend, frontend, database, API, tests, or refactor.
 5. **Vertical cut** — each phase's tasks touch the layers that phase needs, not one layer across all phases.
 6. **Counts match** — the Progress line matches the actual task boxes.
-7. **Parallelism is earned or absent** — if the plan branches, the branches share no dependency and no meaningful files, and the diagram names where they merge. Otherwise there is no Parallelism section at all.
+7. **Every Demo runs locally, or says it cannot** — no Demo line names a production host, a shared database, or a credential the user would have to hand over. Anything that does is either `deferred` or belongs under `## Rollout`, and no two consecutive phases defer.
+8. **Parallelism is earned or absent** — if the plan branches, the branches share no dependency and no meaningful files, and the diagram names where they merge. Otherwise there is no Parallelism section at all.
 
 ## Common mistakes to watch for
 
@@ -130,5 +139,7 @@ Before handing the plan over, check:
 - **A "foundations" or "setup" first phase.** Scaffolding with nothing to see is a layer slice wearing a different name. Fold it into the first real feature slice.
 - **Tasks disguised as decisions.** "Add the retry handler" is a task. "Where do retries belong?" is a decision.
 - **Phases that only a developer can verify.** "Unit tests pass" is not a demo. The user must be able to see the behaviour.
+- **Deferring because writing the Demo is hard.** Deferral is for work with no local surface, not for work you have not thought through. If you are unsure, ask the user how they will verify it — that is a decision, and stage 1 is where it belongs.
+- **A Demo that points at production.** "Run the migration on prod, then load the site" proves nothing safely — it is a one-way change dressed as a check, and an agent building the phase will run it before the code is even reviewed.
 - **Offering parallelism that does not pay.** Two phases where one waits on the other's schema, or that edit the same modules, are sequential work with merge pain bolted on. Raise it only when both branches can land clean.
 - **Writing tasks while a decision is still open.** The task list will be wrong, and rewriting it costs more than waiting.
