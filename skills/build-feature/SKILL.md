@@ -46,7 +46,11 @@ this session holds the plan and the reports — never the diff
    - the build, test, and lint results
    - anything it could not do, and why
 
+   Ask for that report as plain prose. Do not attach an output schema to the spawn — a malformed one fails the task before any work starts, and the report is for you to read, not to parse.
+
    Delegate the fixes after each review the same way, handing the findings over verbatim, and the fix subagent re-runs the Demo before it reports.
+
+   **Hand off, then wait once — never poll.** Spawn the subagent and block on the runtime's own wait or yield until it settles. A one-second wait, or a loop of waits that each come back "still running", learns nothing and re-sends this entire session on every turn; a phase costs more in polling than in building. If you need a progress check, send the subagent one message and let the reply wake you — do not go back to a timer.
 
    **A subagent has nobody to ask, so it must never ask.** On an open decision, a Demo it cannot run locally, or a locked decision the code disproves, it stops and says so in its report — you raise that with the user (rules 1, 5, 12).
 
@@ -55,6 +59,8 @@ this session holds the plan and the reports — never the diff
 4. **Do the phase's tasks and nothing else.** Unrelated bugs, stale code, and tempting refactors go under `## Notes` in the plan as one line each — not into this PR. Tick each task box and update the `## Progress` line as the work lands, in the same commit as the work, so an interrupted session knows exactly where it stopped.
 
 5. **Prove the Demo line before opening the PR.** The subagent runs the exact command, URL, or click path the phase names, plus the repo's own checks — `make build` / `make test` / `make lint` when a Makefile has those targets, otherwise the project's native commands. If the Demo does not do what the phase promised, the phase is not done.
+
+   Set the demo environment up in as few turns as possible: batch the independent commands, and free the ports the demo needs before starting anything on them rather than diagnosing the collision afterwards.
 
    **Prove it locally, and stop before anything shared.** The demo runs against a local or disposable environment — a dev server, a test database, a scratch account. If it needs a host, database, or account nobody can throw away — a deployed URL, a shared or production database, an admin login — stop and ask the user first, naming what it would change. Never open a credential file (`.env*`, `prod.env`, a secrets store) to make a demo runnable: an unset `DATABASE_URL` is a stop sign, not a puzzle, and sourcing production config turns a pre-review proof into an unreviewed production change. The plan's rollout steps are the user's to run after merge, not yours to run as proof.
 
