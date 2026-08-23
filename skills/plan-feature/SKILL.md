@@ -3,7 +3,6 @@ name: plan-feature
 description: Use when planning a feature too big to hold in one session. Settles every open decision up front by asking the user, locks the answers into one markdown plan file, then breaks the work into phases of user-testable slices with task checkboxes.
 argument-hint: "[<feature description> | <path to plan file>]"
 user-invocable: true
-disable-model-invocation: true
 ---
 
 # Plan a Feature
