@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-15-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-16-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -128,6 +128,15 @@ Plan work too big for one session as a single markdown file under `plans/`.
 - Cuts the work into phases the user can run and see, each one a vertical slice — never a backend phase followed by a frontend phase.
 - Every phase carries a demo line and unchecked task boxes.
 - Plans only — never implements.
+
+### build-feature
+
+Implement a phased plan file one phase at a time, one PR per phase.
+
+- Builds only the phase's tasks, ticks its boxes, and proves the phase's demo line before opening the PR.
+- Reviews each PR twice in a subagent, fixing between rounds so the fixes are reviewed too.
+- Fixes only findings the review rates worth fixing, and says which it skipped.
+- Merges with a merge commit once the demo passes and CI is green, then starts the next phase.
 
 ### generate-media
 
