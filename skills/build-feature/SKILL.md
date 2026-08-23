@@ -1,6 +1,6 @@
 ---
 name: build-feature
-description: Use when implementing a feature plan file that is split into phases with task checkboxes. Builds one phase per branch, opens a PR, reviews it twice in a subagent, fixes only what is worth fixing, then merges before starting the next phase.
+description: Use when implementing a feature plan file that is split into phases with task checkboxes. Builds one phase per branch, opens a PR against a feature-wide integration branch, reviews it twice in a subagent, fixes only what is worth fixing, then merges before starting the next phase and leaves the final merge to main to the user.
 argument-hint: "[<path to plan file>]"
 user-invocable: true
 disable-model-invocation: true
@@ -8,18 +8,27 @@ disable-model-invocation: true
 
 # Build a Feature, Phase by Phase
 
-Turn a phased plan into merged code. One phase is one PR, reviewed twice and fixed twice before it merges — because a plan built in one giant branch cannot be tested by the user, and code merged after a single review pass merges the fixes unreviewed.
+Turn a phased plan into merged code. One phase is one PR, reviewed twice and fixed twice before it merges — because a plan built in one giant branch cannot be tested by the user, and code merged after a single review pass merges the fixes unreviewed. Every phase merges into one feature-wide integration branch, and only the user merges that branch into `main`.
+
+```
+main
+ └─ integrate/<plan>                         cut once, before the first phase
+     ├─ <plan>-phase-1 ──PR──▶ integrate     build, demo, review x2, fix, merge
+     ├─ <plan>-phase-2 ──PR──▶ integrate
+     ├─ <plan>-phase-N ──PR──▶ integrate
+     └──────────────────PR──▶ main           the user verifies and merges this one
+```
 
 ```
 for each phase in the plan:
 
-  branch  →  a subagent builds it  →  demo passes  →  push  →  open PR
-                                                                  |
-                        review #1 (subagent)  →  fix worth-fixing |
-                                                                  |
-                        review #2 (subagent)  →  fix worth-fixing |
-                                                                  v
-                        merge (merge commit)  →  back to base  →  next phase
+  branch off integrate  →  a subagent builds it  →  demo passes  →  push  →  PR
+                                                                             |
+                        review #1 (subagent)  →  fix worth-fixing            |
+                                                                             |
+                        review #2 (subagent)  →  fix worth-fixing            |
+                                                                             v
+                        merge (merge commit)  →  back to integrate  →  next phase
 
 this session holds the plan and the reports — never the diff
 ```
@@ -28,7 +37,7 @@ this session holds the plan and the reports — never the diff
 
 1. **Start from the plan file, never from memory.** Take the path from the argument; otherwise look under `plans/` and ask which one if more than one matches. Re-read it at the start of every phase — it may have changed. If any decision is still `_open_`, stop and send the user back to planning: code written around an open decision is code they will throw away.
 
-2. **One phase, one branch, one PR.** Build the first phase that still has unchecked boxes. Never pull work forward from a later phase, even when it is three lines and "right there" — the phase boundary is what makes the PR reviewable and the demo meaningful, and batching phases means the user cannot try phase 1 until phase 4 is written. Branch from an up-to-date base, naming the branch after the plan and phase number.
+2. **One feature, one integration branch; one phase, one branch, one PR.** Before the first phase, cut `integrate/<plan-name>` from an up-to-date `main` and push it — reuse it if it already exists. Every phase branches from it and every phase PR targets it, so `main` never holds half a feature. Build the first phase that still has unchecked boxes. Never pull work forward from a later phase, even when it is three lines and "right there" — the phase boundary is what makes the PR reviewable and the demo meaningful, and batching phases means the user cannot try phase 1 until phase 4 is written. Branch from an up-to-date integration branch, naming the branch after the plan and phase number.
 
 3. **Every code change goes to a subagent — the build and the review fixes alike.** Cut the branch yourself, then hand the whole phase to one subagent and keep its diff out of this session. Give it the plan path, the phase number, its task list, its Demo line, and the repo's check commands, and tell it to follow rules 4 and 5. It returns only:
 
@@ -51,7 +60,7 @@ this session holds the plan and the reports — never the diff
 
    **A deferred Demo is not a demo to invent.** When the phase says `**Demo:** deferred`, run the repo's checks, report that this phase's verification is deferred to the feature's end-to-end check, and move on. After the last phase merges, hand the user the plan's `## Rollout` steps and that check to run themselves. If a phase names no Demo at all and no deferral, ask the user how they want it verified before opening the PR — a demo that cannot run locally is a planning bug, so say so instead of working around it.
 
-6. **Open the PR with a short, feature-focused body.** Imperative title, a `## Summary` of what this phase gives the user with bullets proportional to what the subagent reported, and a line naming the phase number and plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 11 — do not fake a review cycle.
+6. **Open the PR against the integration branch, with a short, feature-focused body.** Base it explicitly (`gh pr create --base integrate/<plan-name>`) — a phase PR never targets `main`. Imperative title, a `## Summary` of what this phase gives the user with bullets proportional to what the subagent reported, and a line naming the phase number and plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 11 — do not fake a review cycle.
 
 7. **Review the PR in a subagent.** Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
 
@@ -67,11 +76,13 @@ this session holds the plan and the reports — never the diff
 
 9. **Always run the second review, even when the first was clean.** Fixes are new, unreviewed code, and that is exactly where the next bug is. Point round 2 at the same PR after the fix commits land, and apply rule 8 to its findings the same way. Stop at two rounds — if round 2 still surfaces must-fix findings after fixing, the phase is too big; say so and let the user decide rather than looping a third time.
 
-10. **Merge only when all four hold:** the demo passes, both review rounds ran, no `Yes` finding is left unfixed, and CI is green. Merge with a merge commit — never squash, because the per-phase history is the record of how the feature was built — then delete the branch and return to an up-to-date base before the next phase.
+10. **Merge only when all four hold:** the demo passes, both review rounds ran, no `Yes` finding is left unfixed, and CI is green. Merge it into the integration branch with a merge commit — never squash, because the per-phase history is the record of how the feature was built — then delete the phase branch and return to an up-to-date integration branch before the next phase.
 
-11. **Report the phase in one short block, then start the next one.** PR link, tasks completed, findings fixed, findings deliberately skipped, and the demo the user can run themselves. Continue to the next phase without asking, unless the user said to stop or rule 12 fired.
+11. **Report the phase in one short block, then start the next one.** PR link, tasks completed, findings fixed, findings deliberately skipped, and the demo the user can run themselves. Continue to the next phase without asking, unless the user said to stop or rule 12 fired. After the last phase, go to rule 13.
 
 12. **When the build proves a locked decision wrong, stop and say so.** Name the decision, what the code showed, and which later phases it invalidates. The user amends the plan; you do not quietly re-plan around their choice.
+
+13. **The last merge is the user's.** When every phase has merged into the integration branch, open one PR from it to `main` — a summary of the feature, the phase PRs it contains, and the exact commands or click paths the user can run to verify it, ending with the plan's `## Rollout` steps. If `main` has moved since the integration branch was cut, merge `main` into the integration branch (merge commit, never squash) and re-run the repo's checks before handing it over. Then stop: do not review it, do not merge it. The user verifies the feature end to end and merges that PR themselves.
 
 ## Verification procedure
 
@@ -82,4 +93,5 @@ Before merging any phase's PR, check:
 3. **Two review rounds happened on this PR**, both in a subagent, the second after the fix commits.
 4. **No `Yes` finding is unfixed**, and every skipped `Judgment call` has a one-line reason recorded.
 5. **Every code change was made in a subagent** and this session never read the diff — only the subagent reports.
-6. **Nothing shared was touched** — the demo ran locally, and no production database, deployed host, or credential file was read or written without the user saying yes first.
+6. **The PR targeted the integration branch**, not `main` — the only PR into `main` is the final one, and the user merges that.
+7. **Nothing shared was touched** — the demo ran locally, and no production database, deployed host, or credential file was read or written without the user saying yes first.
