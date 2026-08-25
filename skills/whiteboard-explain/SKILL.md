@@ -29,7 +29,6 @@ Write the reply in ASD-STE100 Simplified Technical English.
 ## Whiteboard rules
 
 - Make a small diagram when the diagram is more clear than the words.
-- Give a simple analogy first, then the technical term. Keep the analogy short. Do not use an idiom for the analogy.
 - Explain one concept in one reply. Do not write an introduction or a summary.
 
 ## Worked example
@@ -39,7 +38,6 @@ User: *"Explain how a load balancer works."*
 Good:
 
 ```
-A load balancer is like a person who sends cars into different lanes.
 The load balancer sends each request to one server.
 
          ┌──────────┐
