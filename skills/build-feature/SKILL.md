@@ -1,6 +1,6 @@
 ---
 name: build-feature
-description: Use when implementing a feature plan file split into phases with task checkboxes. Builds one phase per branch, opens a PR against a feature-wide integration branch, reviews it twice in a subagent, fixes what is worth fixing, then merges before the next phase. Demos the whole feature at the end and leaves the final merge to main to the user.
+description: Use when implementing a feature plan file split into phases with task checkboxes. Builds one phase per branch, opens a PR against a feature-wide integration branch, reviews it twice in a subagent, fixes what is worth fixing, then merges before the next phase. Runs the plan's demo once at the end and leaves the final merge to main to the user.
 argument-hint: "[<path to plan file>]"
 user-invocable: true
 disable-model-invocation: true
@@ -19,7 +19,7 @@ main
      └──────────────────PR──▶ main           demo the feature, then the user merges
 ```
 
-**Start from the plan file, never from memory.** Take the path from the argument, else look under `plans/` and ask if several match. Re-read it at the start of every phase. If any decision is still `_open_`, stop and send the user back to planning. Read every Verify line before phase 1 — a phase naming no proof and no deferral is a planning bug, cheapest to raise before any code exists.
+**Start from the plan file, never from memory.** Take the path from the argument, else look under `plans/` and ask if several match. Re-read it at the start of every phase. If any decision is still `_open_`, stop and send the user back to planning. Read every Verify line and the `## Demo` section before phase 1 — a phase naming no proof and no deferral is a planning bug, cheapest to raise before any code exists.
 
 **One feature, one integration branch; one phase, one branch, one PR.** Before the first phase, cut `integrate/<plan-name>` from an up-to-date `main` and push it, reusing it if it exists. Every phase branches from it and every phase PR targets it, so `main` never holds half a feature. Build the first phase with unchecked boxes, and never pull work forward from a later one even when it is three lines and right there — the phase boundary is what makes the PR reviewable and its verification meaningful.
 
@@ -41,12 +41,12 @@ Run the second round even when the first was clean — fixes are new, unreviewed
 
 **Fix only what is worth fixing.** Findings marked worth fixing get fixed in this PR. Judgment calls get fixed if they are trivial or small *and* in this phase's scope, otherwise logged in the plan. Nits get left. Fixes land as their own commits so round 2 can see them, and you say in one line what you skipped and why — a silently dropped finding reads as one that never existed.
 
-**Merge only when all four hold:** verification passes, both rounds ran, no must-fix finding is unfixed, CI is green. Merge into the integration branch with a merge commit — never squash, the per-phase history is the record of how the feature was built — then delete the phase branch and return to an up-to-date integration branch.
+**Merge only when all four hold:** verification passes *after the last fix commit* — not just before the first review, since the fixes are code too — both rounds ran, no must-fix finding is unfixed, CI is green. Merge into the integration branch with a merge commit — never squash, the per-phase history is the record of how the feature was built — then delete the phase branch and return to an up-to-date integration branch.
 
 **Report the phase in one short block, then start the next.** PR link, tasks done, findings fixed, findings skipped, what you ran to verify. Continue without asking unless the user said to stop.
 
 **When the build proves a locked decision wrong, stop and say so.** Name the decision, what the code showed, and which later phases it invalidates. The user amends the plan; you do not quietly re-plan around their choice.
 
-**Demo once, at the end, then hand the last merge over.** When every phase has merged, ask the user with `AskUserQuestion` how they want the feature demonstrated, offering concrete options from the plan — a local run they drive with your steps, a scripted walkthrough you run and report, or the plan's end-to-end check. Do not pick for them. Whatever they choose must cover every phase whose verification was deferred. Run it and report what you saw; if it breaks, the fix belongs to the phase that owns it, through the same branch-review-merge cycle.
+**Demo once, at the end, exactly as the plan says.** When every phase has merged, run the plan's `## Demo` and report what you saw. The plan decides this, not you: if it says `none`, skip straight to the final PR, and if it names something you cannot run yourself, give the user the steps and wait. Do not invent a demo, and do not stage one per phase. If a plan is silent on it — older ones will be — ask the user what they want and record the answer in the plan before running anything. If the demo breaks, the fix belongs to the phase that owns it, through the same branch-review-merge cycle.
 
-Then open one PR from the integration branch to `main`: a feature summary, the phase PRs it contains, the demo and its result, the commands the user can run themselves, and any steps the plan leaves for them to run against shared systems after merge. If `main` has moved, merge it into the integration branch and re-run the repo's checks. Then stop — the user merges that PR.
+Then open one PR from the integration branch to `main`: a feature summary, the phase PRs it contains, the demo and its result if the plan called for one, the commands the user can run themselves, and any steps the plan leaves for them to run against shared systems after merge. If `main` has moved, merge it into the integration branch and re-run the repo's checks. Then stop — the user merges that PR.

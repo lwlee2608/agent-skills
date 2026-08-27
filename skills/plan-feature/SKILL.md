@@ -21,6 +21,8 @@ Two stages, in order. Never start stage 2 while a stage 1 question is open — a
 
 **Ask the user everything else, in batches of up to 4** with `AskUserQuestion`. Each question gets 2-4 concrete answers, recommended one first, labelled `(Recommended)`, with the real trade-off in the description. Ask about decisions ("where do retries belong?"), not work ("add the retry handler") — work is stage 2.
 
+**Settle how the finished feature gets demonstrated.** One demo per feature, at the end, once every phase has merged — `build-feature` runs whatever this says and invents nothing. Ask whether the user wants one at all and, if so, what it is: a local run they drive with your steps, a scripted walkthrough the agent runs and reports, or an end-to-end check. `none` is a valid answer and plenty of features deserve it. Record the choice under `## Demo`. The one case where `none` is unavailable is a feature with a deferred phase — the demo is that phase's only proof, so it must cover it.
+
 **Keep asking until nothing is open.** Each answer usually exposes the next question. Write the plan file as you go, recording answers as they land and unanswered ones as `_open_`, so an interrupted session resumes from the file. If the user picks something you think is wrong, say why in a line or two; if they confirm, record it and move on.
 
 Hand over only when no `_open_` entry is left and no answer is hedged or `TBD`.
@@ -46,7 +48,7 @@ Good — feature slices, each one usable
 
 **Verification must run locally** — a dev server, a test database, a scratch account. A Verify line naming a deployed URL, a shared database, or production credentials is a rollout step, not a proof; write it as one at the end of the plan for the user to run after merge. A phase with no local proof needs a fixture or seed script, not a production target.
 
-**Some work can only be proven at the end.** Write `**Verify:** deferred — <why>` when a phase has no local surface of its own, and make sure the feature's final end-to-end check covers it. Deferral is for work with no local surface, never for work you have not thought through — two deferred phases in a row means the slices are wrong. If you cannot tell whether a phase is provable locally, that is a stage 1 question.
+**Some work can only be proven at the end.** Write `**Verify:** deferred — <why>` when a phase has no local surface of its own, and make sure the `## Demo` covers it. Deferral is for work with no local surface, never for work you have not thought through — two deferred phases in a row means the slices are wrong. If you cannot tell whether a phase is provable locally, that is a stage 1 question.
 
 **Order phases so the earliest is the smallest visible thing**, each later one building on what already runs. Size each to one build session — write, verify, two rounds of review fixes, in one context. A phase touching twenty files is too big whatever it gives the user; cut it. Prefer 3-6 phases, and more than 8 means the slices are too thin — but a feature small enough to fit one session is one phase, so do not split it to hit a count.
 
@@ -74,6 +76,9 @@ Phase 1 of 3 · 0/11 tasks
 - [ ] <task>
 - [ ] <task>
 **Verify:** <command, URL, click path, or test — or `deferred — <why>`>
+
+## Demo
+<how the finished feature gets shown once every phase has merged — or `none`>
 ```
 
 Add further sections the feature actually needs — context and constraints, steps to run against shared systems after merge, what was ruled out and why. Do not invent sections it does not need.
