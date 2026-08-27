@@ -63,6 +63,8 @@ Planning runs in two stages, in order. Never start stage 2 while a stage 1 quest
 
 11. **Order phases so the earliest is the smallest visible thing.** Each later phase builds on what already runs. Prefer 3-6 phases; if you have more than 8, the slices are too thin.
 
+    Size a phase to fit one build session — the agent writes the phase, verifies it, and applies two rounds of review fixes in a single context. A phase that touches twenty files across the codebase is too big to hold, whatever it gives the user; cut it.
+
 12. **Raise parallelism only when it pays.** A pair of phases qualifies only if both hold:
     - **No dependency.** Neither phase needs the other's schema, API, types, or new files. If B builds on what A introduces, B waits — starting it early means guessing at A's shape and rewriting later.
     - **Little overlap.** They touch mostly different files. Two phases editing the same modules will collide on merge, and reconciling the branches costs more than the parallel run saved.

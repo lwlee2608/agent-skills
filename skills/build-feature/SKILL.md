@@ -22,17 +22,17 @@ main
 ```
 for each phase in the plan:
 
-  branch off integrate  →  a subagent builds it  →  verification passes  →  push  →  PR
-                                                                             |
-                        review #1 (subagent)  →  fix worth-fixing            |
-                                                                             |
-                        review #2 (subagent)  →  fix worth-fixing            |
-                                                                             v
-                        merge (merge commit)  →  back to integrate  →  next phase
+  branch off integrate  →  build it here  →  verification passes  →  push  →  PR
+                                                                        |
+                   review #1 (subagent)  →  fix worth-fixing            |
+                                                                        |
+                   review #2 (subagent)  →  fix worth-fixing            |
+                                                                        v
+                   merge (merge commit)  →  back to integrate  →  next phase
 
 after the last phase:  ask the user how to demo  →  run it  →  PR to main
 
-this session holds the plan and the reports — never the diff
+you write the code; the reviews happen elsewhere and come back as reports
 ```
 
 ## Rules
@@ -43,22 +43,11 @@ this session holds the plan and the reports — never the diff
 
 2. **One feature, one integration branch; one phase, one branch, one PR.** Before the first phase, cut `integrate/<plan-name>` from an up-to-date `main` and push it — reuse it if it already exists. Every phase branches from it and every phase PR targets it, so `main` never holds half a feature. Build the first phase that still has unchecked boxes. Never pull work forward from a later phase, even when it is three lines and "right there" — the phase boundary is what makes the PR reviewable and its verification meaningful, and batching phases means the user cannot try phase 1 until phase 4 is written. Branch from an up-to-date integration branch, naming the branch after the plan and phase number.
 
-3. **Every code change goes to a subagent — the build and the review fixes alike.** Cut the branch yourself, then hand the whole phase to one subagent and keep its diff out of this session. Give it the plan path, the phase number, its task list, the phase's `**Verify:**` line, and the repo's check commands, and tell it to follow rules 4 and 5. It returns only:
+3. **Write the code yourself; delegate only the reviews.** Cut the branch, then build the phase in this session — the plan, the code, and the verification stay in one head, which is what keeps a phase coherent. The review is the one thing that goes out to a subagent (rule 7), because a second reader who did not write the code is the point of a review.
 
-   - the commit sha and the files it touched
-   - what it ran to verify the phase and what it saw
-   - the build, test, and lint results
-   - anything it could not do, and why
+   Apply the review fixes yourself too, in this session. You already have the diff in context; handing the findings to a subagent that has to re-read the phase from scratch buys nothing.
 
-   Ask for that report as plain prose. Do not attach an output schema to the spawn — a malformed one fails the task before any work starts, and the report is for you to read, not to parse.
-
-   Delegate the fixes after each review the same way, handing the findings over verbatim, and the fix subagent re-runs the phase's verification before it reports.
-
-   **Hand off, then wait once — never poll.** Spawn the subagent and block on the runtime's own wait or yield until it settles. A one-second wait, or a loop of waits that each come back "still running", learns nothing and re-sends this entire session on every turn; a phase costs more in polling than in building. If you need a progress check, send the subagent one message and let the reply wake you — do not go back to a timer.
-
-   **A subagent has nobody to ask, so it must never ask.** On an open decision, a verification it cannot run locally, or a locked decision the code disproves, it stops and says so in its report — you raise that with the user (rules 1, 5, 12).
-
-   Do not read the diff any of them produced. The PR body comes from the build report; correctness comes from the two reviews. If you find yourself opening the changed files, the delegation has failed and this session is carrying the phase after all — which costs the next phase its context.
+   Keep a phase to a small number of turns: batch independent reads and edits into one message instead of one call per file, and run long checks in the background and wait once rather than polling.
 
 4. **Do the phase's tasks and nothing else.** Unrelated bugs, stale code, and tempting refactors go under `## Notes` in the plan as one line each — not into this PR. Tick each task box and update the `## Progress` line as the work lands, in the same commit as the work, so an interrupted session knows exactly where it stopped.
 
@@ -70,9 +59,13 @@ this session holds the plan and the reports — never the diff
 
    **Deferred is not proof to invent.** When the phase's `**Verify:**` (older plans say `**Demo:**`) says `deferred`, run the repo's checks, report that this phase's proof is deferred to the feature's end-to-end demo, and move on. If a phase names no verification and no deferral — and rule 1 did not already catch it — say plainly that it is a planning bug and ask the user how they want that phase verified, before opening its PR.
 
-6. **Open the PR against the integration branch, with a short, feature-focused body.** Base it explicitly (`gh pr create --base integrate/<plan-name>`) — a phase PR never targets `main`. Title it `Phase <n>: <imperative title>` so the phase is readable from the PR list alone, then a `## Summary` of what this phase gives the user with bullets proportional to what the subagent reported, and a line naming the plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 11 — do not fake a review cycle.
+6. **Open the PR against the integration branch, with a short, feature-focused body.** Base it explicitly (`gh pr create --base integrate/<plan-name>`) — a phase PR never targets `main`. Title it `Phase <n>: <imperative title>` so the phase is readable from the PR list alone, then a `## Summary` of what this phase gives the user with bullets proportional to what the phase actually changed, and a line naming the plan file. No test plan, no checklist, no co-author line. If `gh` or a GitHub remote is unavailable, stop at the pushed branch, say so, and skip to rule 11 — do not fake a review cycle.
 
-7. **Review the PR in a subagent.** Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. Relay its report as-is. Do not re-review its findings yourself — reading the whole diff back into this session is what the subagent exists to avoid.
+7. **Review the PR in a subagent — always, both rounds.** Use the repo's review skill if one is installed, invoked as `review-code` with target `pr <number> --sub`; otherwise spawn a subagent to review that PR's diff for correctness, security, resource, and performance defects and to rate each finding by severity, likelihood, and whether it is worth fixing. The reviewer must be a fresh subagent, not you: you wrote this code, so you are the last one who will spot what you assumed.
+
+   **Hand off, then wait once — never poll.** Spawn the reviewer and block on the runtime's own wait or yield until it settles. A loop of waits that each come back "still running" learns nothing and re-sends this entire session on every turn. Ask for the report as plain prose; do not attach an output schema to the spawn — a malformed one fails the task before any review starts.
+
+   Relay its report as-is, then apply rule 8.
 
 8. **Fix only what is worth fixing.** Not everything a review prints deserves a commit:
 
@@ -104,12 +97,11 @@ Before merging any phase's PR, check:
 
 1. **Every task box for this phase is ticked** and the `## Progress` line matches the real count.
 2. **The phase was verified** after the last fix commit — not just before the first review — or its verification says `deferred` and you said so in the report.
-3. **Two review rounds happened on this PR**, both in a subagent, the second after the fix commits.
+3. **Two review rounds happened on this PR**, both in a fresh subagent, the second after the fix commits — you never stood in for the reviewer.
 4. **No `Yes` finding is unfixed**, and every skipped `Judgment call` has a one-line reason recorded.
-5. **Every code change was made in a subagent** and this session never read the diff — only the subagent reports.
-6. **The PR targeted the integration branch**, not `main` — the only PR into `main` is the final one, and the user merges that.
-7. **Nothing shared was touched** — verification ran locally, and no production database, deployed host, or credential file was read or written without the user saying yes first.
+5. **The PR targeted the integration branch**, not `main` — the only PR into `main` is the final one, and the user merges that.
+6. **Nothing shared was touched** — verification ran locally, and no production database, deployed host, or credential file was read or written without the user saying yes first.
 
 Before opening the final PR to `main`, check one more:
 
-8. **The feature was demoed the way the user chose**, covering every phase whose verification was deferred, and the PR body says what you ran and what happened.
+7. **The feature was demoed the way the user chose**, covering every phase whose verification was deferred, and the PR body says what you ran and what happened.
