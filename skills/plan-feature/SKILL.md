@@ -48,6 +48,8 @@ Good — feature slices, each one usable
 
 **Verify runs locally.** Dev server, test database, scratch account. A deployed URL, shared database, or production credential is a rollout step — park it at the end of the plan for the user to run after merge. No local proof means the phase needs a fixture, not a production target.
 
+**Never deploy to verify on your own call.** Convinced a phase or the demo can only be shown on staging, a preview URL, or any shared environment? Ask with `AskUserQuestion` and get an explicit yes before the plan writes it down. Deploying is the user's call, never a default you slip into a Verify line.
+
 **`**Verify:** deferred — <why>`** when a phase has no local surface, and the `## Demo` must cover it. For work with no surface, never for work you haven't thought through. Two deferrals in a row means the slices are wrong. Can't tell? Stage 1 question.
 
 **Size each phase to one build session** — write, verify, two rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
