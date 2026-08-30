@@ -52,7 +52,7 @@ Good — feature slices, each one usable
 
 **`**Verify:** deferred — <why>`** when a phase has no local surface, and the `## Demo` must cover it. For work with no surface, never for work you haven't thought through. Two deferrals in a row means the slices are wrong. Can't tell? Stage 1 question.
 
-**Size each phase to one build session** — write, verify, two rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
+**Size each phase to one build session** — write, verify, up to three rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
 
 **Parallelism only when it pays.** Two phases sharing no dependency and no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line and a note of where they merge. No qualifying pair? Say sequential, don't ask.
 
