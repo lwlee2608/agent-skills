@@ -1,6 +1,6 @@
 ---
 name: build-feature
-description: Use when implementing a feature plan file split into phases with task checkboxes. Builds one phase per branch, opens a PR against a feature-wide integration branch, reviews it twice in a subagent, fixes what is worth fixing, then merges before the next phase. Runs the plan's demo once at the end and leaves the final merge to main to the user.
+description: Use when implementing a feature plan file split into phases with task checkboxes. Builds one phase per branch, opens a PR against a feature-wide integration branch, reviews it in a subagent over up to three rounds, fixes what is worth fixing, then merges before the next phase. Runs the plan's demo once at the end and leaves the final merge to main to the user.
 argument-hint: "[<path to plan file>]"
 user-invocable: true
 disable-model-invocation: true
@@ -8,12 +8,12 @@ disable-model-invocation: true
 
 # Build a Feature, Phase by Phase
 
-One phase, one PR, reviewed twice and fixed twice before merge. A feature built in one branch can't be tried; code merged after one review pass merges its fixes unreviewed.
+One phase, one PR, reviewed and fixed in rounds before merge. A feature built in one branch can't be tried; code merged after one review pass merges its fixes unreviewed.
 
 ```
 main
  └─ integrate/<plan>                         cut once, before the first phase
-     ├─ <plan>-phase-1 ──PR──▶ integrate     build, verify, review x2, fix, merge
+     ├─ <plan>-phase-1 ──PR──▶ integrate     build, verify, review x3, fix, merge
      ├─ <plan>-phase-2 ──PR──▶ integrate
      ├─ <plan>-phase-N ──PR──▶ integrate
      └──────────────────PR──▶ main           demo, then the user merges
@@ -37,13 +37,15 @@ Run against something disposable. Needs a deployed host, shared database, or adm
 
 **PR targets the integration branch** — `gh pr create --base integrate/<plan-name>`, never `main`. Title `Phase <n>: <imperative title>`, then `## Summary` of what the user gains, bullets proportional to the change, and the plan file path. No test plan, no checklist, no co-author line. No `gh` or no GitHub remote: stop at the pushed branch and say so — don't fake a review cycle.
 
-**Review in a subagent, both rounds, always.** Repo's review skill if installed, as `review-code` with target `pr <number> --sub`; else spawn a subagent to review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Fresh subagent, never you — you wrote it, so you're last to spot what you assumed. Ask for plain prose; an output schema fails the task before the review starts. Spawn, then block on the runtime's wait — no polling. Relay the report as-is.
+**Review in a subagent, every round, always.** Repo's review skill if installed, as `review-code` with target `pr <number> --sub`; else spawn a subagent to review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Fresh subagent, never you — you wrote it, so you're last to spot what you assumed. Ask for plain prose; an output schema fails the task before the review starts. Spawn, then block on the runtime's wait — no polling. Relay the report as-is.
 
-Round 2 runs even when round 1 was clean: fixes are new code, and that's where the next bug is. Same PR, after the fix commits. Stop at two — still must-fix findings means the phase is too big; say so and let the user decide.
+Round 2 runs even when round 1 was clean: fixes are new code, and that's where the next bug is. Each round reads the last round's fixes — same PR, after the fix commits land. Skip a round only when the one before it produced no fixes; the diff hasn't moved.
 
-**Fix only what's worth fixing.** Worth-fixing findings get fixed here. Judgment calls: fix if trivial or small *and* in this phase's scope, else log in the plan. Nits stay. Fixes land as their own commits so round 2 sees them. Name what you skipped in one line — a silently dropped finding reads as one that never existed.
+Three rounds is the cap, and round 3's severity decides what happens next. Medium or lower: fix, re-verify, merge, and say in the phase report that those last fixes merged unreviewed. High or Critical: stop before merging — the phase is too big to converge. Report the finding and what you'd do about it, then ask the user. No fourth round on your own.
 
-**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), both rounds ran, no must-fix left, CI green — wait for it with one blocking `gh pr checks --watch`, not a poll loop. Fallen behind the integration branch? Merge it in and re-verify first. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
+**Fix only what's worth fixing.** Worth-fixing findings get fixed here. Judgment calls: fix if trivial or small *and* in this phase's scope, else log in the plan. Nits stay. Fixes land as their own commits so the next round sees them. Name what you skipped in one line — a silently dropped finding reads as one that never existed.
+
+**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), every round ran, no must-fix left, CI green — wait for it with one blocking `gh pr checks --watch`, not a poll loop. Fallen behind the integration branch? Merge it in and re-verify first. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
 
 **Report each phase in one block, then start the next.** PR link, tasks done, findings fixed, findings skipped, what you ran. No asking unless the user said to stop.
 
