@@ -23,6 +23,8 @@ main
 
 **One integration branch per feature; one branch and one PR per phase.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, reusing it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. Build the first phase with unchecked boxes. Never pull work forward from a later phase, even three lines — the boundary is what makes the PR reviewable.
 
+**Resume before you start.** Check what already exists: the integration branch, phase branches, `gh pr list --base integrate/<plan-name>`. An open PR for the current phase means you're mid-cycle — read its commits and review comments for which rounds already ran, and continue from there. Never restart a phase that already has a PR.
+
 **Write the code yourself; delegate only the review.** Plan, code, and verification in one head keeps a phase coherent. Apply review fixes yourself too — you already hold the diff.
 
 **This phase's tasks, nothing else.** Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
@@ -41,7 +43,7 @@ Round 2 runs even when round 1 was clean: fixes are new code, and that's where t
 
 **Fix only what's worth fixing.** Worth-fixing findings get fixed here. Judgment calls: fix if trivial or small *and* in this phase's scope, else log in the plan. Nits stay. Fixes land as their own commits so round 2 sees them. Name what you skipped in one line — a silently dropped finding reads as one that never existed.
 
-**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), both rounds ran, no must-fix left, CI green. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
+**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), both rounds ran, no must-fix left, CI green — wait for it with one blocking `gh pr checks --watch`, not a poll loop. Fallen behind the integration branch? Merge it in and re-verify first. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
 
 **Report each phase in one block, then start the next.** PR link, tasks done, findings fixed, findings skipped, what you ran. No asking unless the user said to stop.
 
