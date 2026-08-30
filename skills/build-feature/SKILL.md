@@ -39,13 +39,13 @@ Run against something disposable. Needs a deployed host, shared database, or adm
 
 **Review in a subagent, every round, always.** Repo's review skill if installed, as `review-code` with target `pr <number> --sub`; else spawn a subagent to review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Fresh subagent, never you — you wrote it, so you're last to spot what you assumed. Ask for plain prose; an output schema fails the task before the review starts. Spawn, then block on the runtime's wait — no polling. Relay the report as-is.
 
-Each round reads the last round's fixes, same PR, once the fix commits land. Round 2 runs even when round 1 was clean: fixes are new code, and that's where the next bug is. Skip a round only when the one before it produced no fixes.
+Each round reads the last round's fixes, same PR, once the fix commits land. Round 2 runs even when round 1 was clean: fixes are new code, and that's where the next bug is. Round 3 only runs when round 2 produced fixes — with nothing new in the diff there is nothing new to read.
 
 Three rounds is the cap. If round 3 leaves a worth-fixing finding at High or Critical severity, stop before merging — the phase is too big to converge. Report it with what you'd do about it, then ask the user; no fourth round on your own. Anything less: fix, re-verify, merge, and say in the phase report that those last fixes merged unreviewed.
 
 **Fix only what's worth fixing.** Worth-fixing findings get fixed here. Judgment calls: fix if trivial or small *and* in this phase's scope, else log in the plan. Nits stay. Fixes land as their own commits so the next round sees them. Name what you skipped in one line — a silently dropped finding reads as one that never existed.
 
-**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), every round ran, no must-fix left, CI green — one blocking `gh pr checks --watch`, not a poll loop. Behind the integration branch? Merge it in and re-verify first. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
+**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), two rounds ran and a third if round 2 produced fixes, no must-fix left, CI green — one blocking `gh pr checks --watch`, not a poll loop. Behind the integration branch? Merge it in and re-verify first. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
 
 **Report each phase in one block, then start the next.** PR link, tasks done, findings fixed, findings skipped, what you ran. No asking unless the user said to stop.
 
