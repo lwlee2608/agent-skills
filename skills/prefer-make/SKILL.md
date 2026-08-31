@@ -2,6 +2,7 @@
 name: prefer-make
 description: Use before running any Go toolchain command (`go build`, `go test`, `go run`, `go vet`, `go fmt`, `golangci-lint`). Substitutes make targets when a Makefile is present.
 user-invocable: true
+model-invocable: false
 ---
 
 # Build with Make
