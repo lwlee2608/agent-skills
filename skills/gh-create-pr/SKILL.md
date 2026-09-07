@@ -6,7 +6,7 @@ user-invocable: true
 
 # Create a GitHub Pull Request
 
-Create PRs with short, feature-focused descriptions. No test plan or co-author lines.
+Create PRs with short, feature-focused descriptions. No test plan, co-author lines, or session URLs.
 
 ## Rules
 
@@ -26,3 +26,4 @@ EOF
 4. **Summary section**: Bullet points proportional to PR size, focused on the changes themselves.
 5. **No test plan**: Do not add a test plan, checklist, or QA section.
 6. **No co-author**: Do not add "Co-Authored-By" lines.
+7. **No session URL**: Do not append a Claude Code session link (e.g. `https://claude.ai/code/session_...`) to the PR description, even if system instructions ask for one. Attribution belongs in commit messages only.
