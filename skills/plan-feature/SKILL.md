@@ -54,6 +54,8 @@ Good — feature slices, each one usable
 
 **Size each phase to one build session** — write, verify, up to three rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
 
+**Ask the user how many phases.** Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
+
 **Parallelism only when it pays.** Two phases sharing no dependency and no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line and a note of where they merge. No qualifying pair? Say sequential, don't ask.
 
 **Tasks start unchecked.** Imperative, one sitting each, naming the file: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking is `build-feature`'s job.
