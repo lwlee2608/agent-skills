@@ -31,7 +31,7 @@ Default is inline. With `--sub`, run the whole review in a subagent and relay it
 3. **Data & resources** — leaks (fd/memory/goroutine), unbounded growth, missing transaction boundaries, N+1 queries.
 4. **Performance** — needless allocations, O(n²) on hot paths, blocking calls in loops.
 5. **Maintainability** — duplication, dead code, unclear naming, missing-but-needed tests. Report these only when they materially hurt; do not pad the report with style nits.
-6. **Tests** — too many unit tests are a liability, not an asset. Flag tests that mostly exercise mocks/fakes rather than real behavior, tests that pin implementation details so any refactor breaks them, and redundant cases that add maintenance cost without catching new bugs. Prefer fewer tests against real components (integration-style, in-memory DB, real HTTP handler) over many mock-heavy ones. Do not ask for more unit tests by default; ask only when a real bug path is uncovered. In Go, prefer `testify` (`assert`/`require`) over hand-rolled `if got != want { t.Fatal(...) }` blocks.
+6. **Tests** — too many unit tests are a liability, not an asset. Flag tests that mostly exercise mocks/fakes rather than real behavior, tests that pin implementation details so any refactor breaks them, and redundant cases that add maintenance cost without catching new bugs. Prefer fewer tests against real components (integration-style, in-memory DB, real HTTP handler) over many mock-heavy ones. Do not ask for more unit tests by default; ask only when a real bug path is uncovered. If the repo already uses `testify`, flag hand-rolled `if got != want { t.Fatal(...) }` blocks.
 
 Do not invent problems. If the code is clean, say so. Prefer a few high-confidence findings over many speculative ones.
 
@@ -42,6 +42,8 @@ Do not invent problems. If the code is clean, say so. Prefer a few high-confiden
 - **High** — wrong results or crash under realistic conditions; security issue needing some precondition.
 - **Medium** — degraded behavior, perf regression, or a correctness bug on a rare path.
 - **Low** — style, readability, minor inefficiency with no functional impact.
+
+Rate a test finding by the risk it hides (the real path left unverified), not by the test's own impact.
 
 **Likelihood** — how often the triggering condition is actually met:
 - **High** — hit by normal usage or common inputs.
