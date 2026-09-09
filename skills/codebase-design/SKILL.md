@@ -89,6 +89,10 @@ Can the real dependency run inside the test?
 
 Injecting a dependency is what makes a module testable. Declaring an interface over it is a separate decision, and only the "no" branch earns it. Mocking what you could have run proves the code calls what you told it to call: it cannot catch a wrong query, a wrong endpoint, or a schema that drifted, which are the failures that actually happen.
 
+### Assertions (Go)
+
+Use `testify`, not hand-rolled `if got != want { t.Fatalf(...) }`. `require.*` when the test cannot continue (setup, errors); `assert.*` when it can, so one run reports every failure. Want first: `assert.Equal(t, want, got)`.
+
 ## Relationships
 
 - A **Module** has exactly one **Interface** (the surface it presents to callers and tests).
