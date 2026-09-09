@@ -31,6 +31,7 @@ Default is inline. With `--sub`, run the whole review in a subagent and relay it
 3. **Data & resources** — leaks (fd/memory/goroutine), unbounded growth, missing transaction boundaries, N+1 queries.
 4. **Performance** — needless allocations, O(n²) on hot paths, blocking calls in loops.
 5. **Maintainability** — duplication, dead code, unclear naming, missing-but-needed tests. Report these only when they materially hurt; do not pad the report with style nits.
+6. **Tests** — too many unit tests are a liability, not an asset. Flag tests that mostly exercise mocks/fakes rather than real behavior, tests that pin implementation details so any refactor breaks them, and redundant cases that add maintenance cost without catching new bugs. Prefer fewer tests against real components (integration-style, in-memory DB, real HTTP handler) over many mock-heavy ones. Do not ask for more unit tests by default; ask only when a real bug path is uncovered. In Go, prefer `testify` (`assert`/`require`) over hand-rolled `if got != want { t.Fatal(...) }` blocks.
 
 Do not invent problems. If the code is clean, say so. Prefer a few high-confidence findings over many speculative ones.
 
@@ -113,3 +114,4 @@ Before sending the report, check:
 - **Conflating severity with likelihood.** A SQL injection reachable only by an admin is High severity / Low likelihood — rate the two axes separately.
 - **Reviewing only changed lines.** A diff can introduce a bug whose root cause is in unchanged code a caller away; read enough context to judge it.
 - **Guessing the target state.** If the tools return nothing or error out, report that instead of reviewing an empty target.
+- **Treating test count as quality.** A PR with many mock-based unit tests can still be untested where it matters. Judge tests by what real behavior they pin down, and call out mock/fake-heavy tests as a maintainability cost.
