@@ -15,6 +15,8 @@ Stage 1 before stage 2, always. A task list written around an open decision gets
 
 ## Stage 1 — Settle every decision
 
+**Frame the feature first.** Four lines at the top of the plan, before any decision: **The Job** (what gets built), **The Why** (who needs it and what breaks or stalls without it), **The Guardrail** (what must not change or be touched — omit if none), **Done means** (the observable outcome that closes the feature). Can't write one from the request? It's the first question in the batch.
+
 **Read the code first.** Files touched, patterns to match, libraries already there. Every option you offer must be one the codebase can take.
 
 **Answer what the code answers.** Library support, existing schema, how a neighbouring feature did it — research, not decisions. Mark them `` `research` ``. Never ask what you could read.
@@ -66,6 +68,10 @@ Good — feature slices, each one usable
 
 ```markdown
 # <Feature>
+**The Job** — <what gets built>
+**The Why** — <who needs it, what breaks or stalls without it>
+**The Guardrail** — <what must not change — omit if none>
+**Done means** — <observable outcome that closes the feature>
 
 ## Decisions
 - **<question>** — <answer, one or two lines>
