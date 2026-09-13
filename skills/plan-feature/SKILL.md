@@ -62,6 +62,8 @@ Good — feature slices, each one usable
 
 **Tasks start unchecked.** Imperative, one sitting each, naming the file: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking is `build-feature`'s job.
 
+**Tasks say what, not how.** `- [ ] Retry failed uploads (internal/upload)`, not `- [ ] Loop with exponential backoff, max 3`. The builder picks the approach; anything that must be a specific way is a Decision.
+
 **Locked decisions stay locked.** Proved wrong by the build? Amend Decisions explicitly and name the phases it invalidates. Never quietly re-plan around the user's choice.
 
 ## Plan file format
