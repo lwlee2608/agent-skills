@@ -33,7 +33,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **Verify before the PR, locally.** Proof it does what it promised, plus the repo's checks — `make build` / `make test` / `make lint` when a Makefile has them, else the project's native commands. Proof is the plan's Verify line; failing that, a test that fails without this phase's code, or a run against a local fixture or dev server. "It compiles" is not proof.
 
-Run against something disposable. Needs a deployed host, shared database, or admin login? Stop and ask, naming what it would change. Never open a credential file to make it runnable — an unset `DATABASE_URL` is a stop sign, not a puzzle.
+Run against something disposable. Needs a deployed host, shared database, or admin login? Stop and ask, naming what it would change. Never open a credential file to make it runnable.
 
 `deferred` Verify line (older plans say `**Demo:**`): run the repo's checks, say the proof is deferred to the demo, move on. Don't invent one.
 
