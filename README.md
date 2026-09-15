@@ -72,11 +72,12 @@ Explain technical concepts the way an engineer would at a whiteboard.
 
 ### explain-outcome
 
-Report the result of an action in three parts: what happened, what it means, what's next.
+Report a failure, incident, or multi-step result in three parts: what happened, what it means, what's next.
 
-- Facts only under "What happened"; every inference under "What it means", with unknowns labelled.
-- "What's next" is always actionable: what the agent will do, or the decision the user must make.
-- Same shape for successes and failures; bad news leads the first line.
+- Facts under "What happened"; guesses under "What it means", marked "likely" or "not confirmed".
+- "What's next" is an action: what the agent will do, or the decision the user must make.
+- Written in Simplified Technical English so a human reads it once and understands.
+- Small results with no decision get one sentence instead.
 
 ### writing-system-prompts
 

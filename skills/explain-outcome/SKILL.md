@@ -1,6 +1,6 @@
 ---
 name: explain-outcome
-description: Use when reporting a failed command, test, build, or deploy, an investigation into an error or incident, or the result of a multi-step task. Structures the report as three parts: what happened, what it means, what's next.
+description: "Use when reporting a failed command, test, build, or deploy, an investigation into an error or incident, or the result of a multi-step task. Structures the report as three parts: what happened, what it means, what's next."
 user-invocable: true
 argument-hint: <thing to explain>
 ---
