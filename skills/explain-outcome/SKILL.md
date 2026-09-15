@@ -1,6 +1,6 @@
 ---
 name: explain-outcome
-description: Use when reporting the result of an action — a command, test run, build, deploy, migration, or an investigation into an error or incident. Structures the report as three parts: what happened, what it means, what's next.
+description: Use when reporting a failed command, test, build, or deploy, an investigation into an error or incident, or the result of a multi-step task. Structures the report as three parts: what happened, what it means, what's next.
 user-invocable: true
 argument-hint: <thing to explain>
 ---
@@ -24,7 +24,7 @@ Write in ASD-STE100 Simplified Technical English. Short sentences are easier to 
 <the action the agent will do, or the decision the user must make>
 ```
 
-Facts go under "What happened". Guesses go under "What it means", marked "likely" or "not confirmed". "What's next" is an action: "I will..." or "You must decide...". If no action is necessary, write "Nothing. Done."
+Facts go under "What happened". Guesses go under "What it means", marked "likely" or "not confirmed". "What's next" is an action: "I will..." or "You must decide...". If no action is necessary, write "Nothing. Done." For a small result with no decision, reply in one sentence instead.
 
 ## Worked example
 
@@ -43,10 +43,10 @@ Good:
 The discount is not in the order total. The likely cause is an early return in `applyDiscount` (order.go:41). This is not confirmed. No other test failed.
 
 **What's next**
-- I will read `applyDiscount` and remove the early return.
+- I will read `applyDiscount` to confirm the cause, then fix it.
 - You must decide: does a 0% discount call `applyDiscount`, or skip it?
 ```
 
-Bad — facts and guesses in one sentence, no action:
+Bad — facts and guesses in one sentence, asks instead of states:
 
 > Tests failed because the discount logic is broken in order.go, probably the early return. I can fix it if you want.
