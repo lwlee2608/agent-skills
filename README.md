@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-16-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-17-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -69,6 +69,14 @@ Explain technical concepts the way an engineer would at a whiteboard.
 - Analogy before jargon; short sentences capped at 20 words.
 - Pairs the explanation with a small diagram whenever it adds clarity.
 - One concept per response, no preamble or recap.
+
+### explain-outcome
+
+Report the result of an action in three parts: what happened, what it means, what's next.
+
+- Facts only under "What happened"; every inference under "What it means", with unknowns labelled.
+- "What's next" is always actionable: what the agent will do, or the decision the user must make.
+- Same shape for successes and failures; bad news leads the first line.
 
 ### writing-system-prompts
 
