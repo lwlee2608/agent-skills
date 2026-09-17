@@ -55,7 +55,7 @@ Guide the creation of new SKILL.md files that meet quality standards.
 
 ### ascii-diagram
 
-Validate and fix alignment issues in ASCII diagrams.
+Validate and fix alignment issues in ASCII diagrams written to files (docs, README, code comments). Not for inline chat diagrams.
 
 - Redraws diagrams from scratch with correct padding and border widths.
 - Supports both plain ASCII (`+`, `-`, `|`) and Unicode box-drawing characters.

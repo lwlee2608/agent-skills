@@ -1,6 +1,6 @@
 ---
 name: ascii-diagram
-description: Use after generating or editing ASCII art, box diagrams, tables, or any monospace text art to ensure all lines, corners, and boxes are properly aligned.
+description: Use after writing or editing an ASCII/box diagram in a file (README, docs, code comments) to verify lines, corners, and boxes align. Not for diagrams drawn inline in a chat reply.
 user-invocable: true
 argument-hint: "[<file>]"
 ---
