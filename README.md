@@ -116,7 +116,7 @@ Review a local diff, a GitHub PR, or a whole codebase and report findings.
 Review, fix, and re-review until nothing worth fixing is left.
 
 - Runs `review-code` in a fresh subagent every round and fixes what it rates worth fixing.
-- Caps at 5 rounds; `--commit each|end` commits per fix or once at the end, else leaves fixes uncommitted.
+- Caps at 5 rounds; commits each fix by default, or once at the end with `--commit end`.
 
 ### opencode-review
 

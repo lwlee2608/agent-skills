@@ -22,7 +22,7 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 5. **Stop when a round has nothing new to fix.** Cap at 5 rounds. If the cap hits, or a fixed finding comes back, stop fixing and hand the open findings to the user.
 
-6. **Commit only as the user chose.** `--commit each` — one commit per fixed finding. `--commit end` — one commit after the loop stops. No flag — leave fixes in the working tree. Never push. On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
+6. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push. On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
 
 7. **Report at the end:** rounds run and why it stopped, fixes (`path:line` — what changed), skipped findings with a reason each, open findings, and check results.
 
