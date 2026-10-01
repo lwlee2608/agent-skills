@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-17-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-18-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -110,6 +110,13 @@ Review a local diff, a GitHub PR, or a whole codebase and report findings.
 - Target is passed as an argument: `diff` (default), `pr <number>`, `all`, or a path.
 - Each finding gets a severity, a likelihood, a worth-fixing verdict, and a high-level fix.
 - Reports only — never edits code.
+
+### review-loop
+
+Review, fix, and re-review until nothing worth fixing is left.
+
+- Runs `review-code` in a fresh subagent every round and fixes what it rates worth fixing.
+- Caps at 5 rounds; leaves fixes uncommitted.
 
 ### opencode-review
 
