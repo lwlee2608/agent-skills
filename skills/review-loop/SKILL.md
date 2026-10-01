@@ -25,9 +25,3 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 6. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push. On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
 
 7. **Report at the end:** rounds run and why it stopped, fixes (`path:line` — what changed), skipped findings with a reason each, open findings, and check results.
-
-## Common mistakes to watch for
-
-- **Reviewing `pr <number>` every round** — the fixes never get reviewed.
-- **Fixing No-rated nits** to make a round "clean" — scope creep.
-- **Stopping right after a fix round** — the fixes need their own review.
