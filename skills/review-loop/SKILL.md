@@ -1,9 +1,8 @@
 ---
 name: review-loop
-description: Use when the user asks to review code and fix the findings in a loop until clean. Reviews with the review-code skill in a fresh subagent each round, fixes what is worth fixing, and re-reviews until nothing is left to fix.
+description: Use only when the user explicitly asks to review and fix in a loop until clean. Not for plain reviews (use review-code); never invoke proactively.
 argument-hint: "[diff|pr <number>|all|<path>] [--commit each|end]"
 user-invocable: true
-disable-model-invocation: true
 ---
 
 # Review Loop
