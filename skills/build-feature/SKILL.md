@@ -33,6 +33,8 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **Ask model and effort per subagent role, in the same call** — reviewer always, worker under Orchestrator. Recommend the reviewer at your model and effort, the worker at your model one effort step down (`xhigh`→`high`, `high`→`medium`). Pass both on every spawn; whichever the runtime can't set per spawn, say so in the first phase report.
 
+**No subagent tool in this runtime?** Stop and tell the user to install one — never build your own spawner.
+
 **Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep it alive across review rounds — it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
 
 **This phase's tasks, nothing else.** Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
