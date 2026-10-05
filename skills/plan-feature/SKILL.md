@@ -15,6 +15,13 @@ Stage 1 before stage 2, always. A task list written around an open decision gets
 
 ## Stage 1 — Settle every decision
 
+**Ask how deep to interview,** first, via `AskUserQuestion`:
+- **Key decisions only** `(Recommended)` — you settle calls that are cheap to reverse; ask anything shaping scope, data model, public API, or what the user sees, plus phase count.
+- **Ask everything** — every decision, demo, and phase count goes to the user.
+- **Agent decides** — you settle everything, then the user reviews.
+
+Record it as the first Decision. Whatever the depth, always ask framing gaps and any deploy. Every pick you make yourself gets `` `agent` ``; before Stage 2, list them in one message so the user can overturn any.
+
 **Frame the feature first.** Four lines at the top of the plan, before any decision: **The Job** (what gets built), **The Why** (who needs it and what breaks or stalls without it), **The Guardrail** (what must not change or be touched — omit if none), **Done means** (the observable outcome that closes the feature). Can't write one from the request? It's the first question in the batch.
 
 **Read the code first.** Files touched, patterns to match, libraries already there. Every option you offer must be one the codebase can take.
@@ -27,7 +34,7 @@ Stage 1 before stage 2, always. A task list written around an open decision gets
 
 **Loop until nothing is open.** Each answer exposes the next question. Write the file as you go — answers as they land, unanswered ones as `_open_` — so an interrupted session resumes from the file. Disagree with a pick? Say why in two lines, then record their call.
 
-Hand over only when no `_open_` is left and no answer is hedged.
+Hand over only when no `_open_` is left, no answer is hedged, and the user has seen every `` `agent` `` pick.
 
 ## Stage 2 — Cut the work into phases
 
@@ -56,7 +63,7 @@ Good — feature slices, each one usable
 
 **Size each phase to one build session** — write, verify, up to three rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
 
-**Ask the user how many phases.** Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
+**Ask the user how many phases** — under `agent decides`, pick it yourself and say why in the handover. Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
 
 **Parallelism only when it pays.** Two phases sharing no dependency and no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line and a note of where they merge. No qualifying pair? Say sequential, don't ask.
 
@@ -76,7 +83,9 @@ Good — feature slices, each one usable
 **Done means** — <observable outcome that closes the feature>
 
 ## Decisions
+- **Interview depth** — <key only | ask all | agent decides>
 - **<question>** — <answer, one or two lines>
+- **<question>** — <answer> `agent`
 - **<question>** — <answer> `research`
 - **<question>** — _open_   <-- only while stage 1 is running
 
