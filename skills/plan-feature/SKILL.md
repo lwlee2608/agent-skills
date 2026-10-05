@@ -16,11 +16,11 @@ Stage 1 before stage 2, always. A task list written around an open decision gets
 ## Stage 1 — Settle every decision
 
 **Ask how deep to interview,** first, via `AskUserQuestion`:
-- **Key decisions only** `(Recommended)` — you settle calls that are cheap to reverse; ask anything shaping scope, data model, public API, or what the user sees, plus phase count.
+- **Key decisions only** `(Recommended)` — you settle calls that are cheap to reverse; ask anything shaping scope, data model, public API, or what the user sees, plus demo and phase count.
 - **Ask everything** — every decision, demo, and phase count goes to the user.
 - **Agent decides** — you settle everything, then the user reviews.
 
-Record it as the first Decision. Whatever the depth, always ask framing gaps and any deploy. Every pick you make yourself gets `` `agent` ``; before Stage 2, list them in one message so the user can overturn any.
+Record it as the first Decision. It governs every question in this skill, except framing gaps and deploys — always asked. Every pick you make yourself gets `` `agent` ``; list them before Stage 2, and Stage 2's at the end, so the user can overturn any.
 
 **Frame the feature first.** Four lines at the top of the plan, before any decision: **The Job** (what gets built), **The Why** (who needs it and what breaks or stalls without it), **The Guardrail** (what must not change or be touched — omit if none), **Done means** (the observable outcome that closes the feature). Can't write one from the request? It's the first question in the batch.
 
@@ -63,9 +63,9 @@ Good — feature slices, each one usable
 
 **Size each phase to one build session** — write, verify, up to three rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
 
-**Ask the user how many phases** — under `agent decides`, pick it yourself and say why in the handover. Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
+**Ask the user how many phases.** Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
 
-**Every phase carries a Blocked by line** — the phases whose code it needs merged first, or `none`. Only real dependencies, not plan order; this is the graph that decides what runs in parallel.
+**Every phase carries a Blocked by line** — phases that must merge first, or `none`: code it needs, files it shares, or the user chose sequential. Not plan order; this graph decides what runs in parallel.
 
 **Parallelism only when it pays.** Two phases neither blocking the other and sharing no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line. No qualifying pair? Say sequential, don't ask.
 
@@ -85,7 +85,7 @@ Good — feature slices, each one usable
 **Done means** — <observable outcome that closes the feature>
 
 ## Decisions
-- **Interview depth** — <key only | ask all | agent decides>
+- **Interview depth** — <key decisions only | ask everything | agent decides>
 - **<question>** — <answer, one or two lines>
 - **<question>** — <answer> `agent`
 - **<question>** — <answer> `research`

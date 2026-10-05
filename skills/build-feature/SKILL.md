@@ -25,7 +25,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **One integration branch per feature; one branch and one PR per phase.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, reusing it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. Build the first phase with unchecked boxes. Never pull work forward from a later phase, even three lines — the boundary is what makes the PR reviewable. One-phase plan: no integrate branch — branch off `main` as `feat/<plan-name>`, target `main`, and after the demo stop at the green PR for the user to merge, no final PR after it.
 
-**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for the current phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there — with a fresh worker if not solo.
+**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there — with a fresh worker if not solo.
 
 **Ask how to build, before phase 1,** via `AskUserQuestion`. One-phase plan: skip, build solo. Record it as `**Build mode**` under Decisions so a resume keeps it.
 - **Solo** `(Recommended)` — you write every phase yourself, a fresh reviewer subagent per round; later phases build on a crowded context.
