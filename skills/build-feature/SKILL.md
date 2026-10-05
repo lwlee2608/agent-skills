@@ -27,9 +27,11 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there — with a fresh worker if not solo.
 
-**Ask how to build, before phase 1,** via `AskUserQuestion`. One-phase plan: skip, build solo. Record it as `**Build mode**` under Decisions so a resume keeps it.
+**Ask how to build, before phase 1,** via `AskUserQuestion`. One-phase plan: skip the mode, build solo. Record it as `**Build mode**` under Decisions, with the model picks below, so a resume keeps it.
 - **Solo** `(Recommended)` — you write every phase yourself, a fresh reviewer subagent per round; later phases build on a crowded context.
 - **Orchestrator** — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Every phase whose `Blocked by:` phases have merged starts at once, each worker in its own git worktree; no `Blocked by:` lines means one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
+
+**Ask model and effort per subagent role, in the same call** — reviewer always, worker under Orchestrator. Recommend the reviewer at your model and effort, the worker at your model one effort step down (`xhigh`→`high`, `high`→`medium`). Pass both on every spawn; whichever the runtime can't set per spawn, say so in the first phase report.
 
 **Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep it alive across review rounds — it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
 
