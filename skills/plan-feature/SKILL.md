@@ -65,7 +65,9 @@ Good — feature slices, each one usable
 
 **Ask the user how many phases** — under `agent decides`, pick it yourself and say why in the handover. Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
 
-**Parallelism only when it pays.** Two phases sharing no dependency and no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line and a note of where they merge. No qualifying pair? Say sequential, don't ask.
+**Every phase carries a Blocked by line** — the phases whose code it needs merged first, or `none`. Only real dependencies, not plan order; this is the graph that decides what runs in parallel.
+
+**Parallelism only when it pays.** Two phases neither blocking the other and sharing no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line. No qualifying pair? Say sequential, don't ask.
 
 **Tasks start unchecked.** Imperative, one sitting each, naming the file: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking is `build-feature`'s job.
 
@@ -94,6 +96,7 @@ Phase 1 of 3 · 0/11 tasks
 
 ### Phase 1 — <what the user gains>
 <one line: what they can do now that they could not before>
+**Blocked by:** <phase numbers, or `none`>
 - [ ] <task>
 - [ ] <task>
 **Verify:** <command, URL, click path, or test — or `deferred — <why>`>
