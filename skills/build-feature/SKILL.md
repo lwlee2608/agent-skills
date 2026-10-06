@@ -31,7 +31,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 - **Solo** `(Recommended)` — you write every phase yourself, a fresh reviewer subagent per round; later phases build on a crowded context.
 - **Orchestrator** — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Every phase whose `Blocked by:` phases have merged starts at once, each worker in its own git worktree; no `Blocked by:` lines means one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
 
-**Ask model and effort per subagent role, in the same call** — reviewer always, worker under Orchestrator. Recommend the reviewer at your model and effort, the worker at your model one effort step down (`xhigh`→`high`, `high`→`medium`). Pass both on every spawn; whichever the runtime can't set per spawn, say so in the first phase report.
+**Then ask the model per subagent role, in one call after the mode answer** — reviewer always, worker only if Orchestrator was picked. Recommend your model. Ask effort too only if the spawn tool takes an effort parameter: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Otherwise don't ask; say once that subagents run at their agent definition's effort.
 
 **No subagent tool in this runtime?** Stop and tell the user to install one — never build your own spawner.
 
