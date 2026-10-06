@@ -35,7 +35,17 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **No subagent tool in this runtime?** Stop and tell the user to install one — never build your own spawner.
 
-**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep it alive across review rounds — it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
+**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
+
+```
+phase N
+  worker W ── spawned once: builds, verifies, opens PR
+     │  round 1  reviewer R1 (new) ──report──▶ you ──relay──▶ W fixes, commits
+     │  round 2  reviewer R2 (new) ──report──▶ you ──relay──▶ W fixes, commits
+     │  round 3  reviewer R3 (new) ──report──▶ you ──relay──▶ W fixes, commits
+     ▼
+  merge ── W retired; phase N+1 gets a new worker
+```
 
 **This phase's tasks, nothing else.** Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
 
@@ -47,7 +57,7 @@ Run against something disposable. Needs a deployed host, shared database, or adm
 
 **PR targets the integration branch** — `gh pr create --base integrate/<plan-name>`, never `main`. Title `Phase <n>: <imperative title>`, then `## Summary` of what the user gains, bullets proportional to the change, and the plan file path. No test plan, no checklist, no co-author line. No `gh` or no GitHub remote: stop at the pushed branch and say so — don't fake a review cycle.
 
-**Review in a subagent, every round, always.** Repo's review skill if installed, as `review-code` with target `pr <number> --sub`; else spawn a subagent to review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Fresh subagent, never the writer — it's last to spot what it assumed. Ask for plain prose; an output schema fails the task before the review starts. Spawn, then block on the runtime's wait — no polling. Relay the report as-is.
+**Review in a subagent, every round, always.** Repo's review skill if installed, as `review-code` with target `pr <number> --sub`; else spawn a subagent to review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. A new subagent each round, never reused, never the writer — it's last to spot what it assumed. Ask for plain prose; an output schema fails the task before the review starts. Spawn, then block on the runtime's wait — no polling. Relay the report as-is.
 
 Each round reads the last round's fixes, same PR, once the fix commits land. Round 2 runs even when round 1 was clean: fixes are new code, and that's where the next bug is. Round 3 only runs when round 2 produced fixes — with nothing new in the diff there is nothing new to read.
 
