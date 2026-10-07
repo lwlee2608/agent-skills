@@ -25,7 +25,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **One integration branch per feature; one branch and one PR per phase.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, reusing it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. Build the first phase with unchecked boxes. Never pull work forward from a later phase, even three lines — the boundary is what makes the PR reviewable. One-phase plan: no integrate branch — branch off `main` as `feat/<plan-name>`, target `main`, and after the demo stop at the green PR for the user to merge, no final PR after it.
 
-**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there. In Orchestrator mode, inspect saved worker IDs in the original parent session. Explicitly recover its retained worker if closed, then send a new continuation task; never replay the interrupted task or an old reply. Outside that recovery scope, report a fresh-worker restart and brief a new worker from the plan and PR, not assumed context.
+**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there. Not solo: continue the phase's original worker if the runtime still has it; otherwise say so and brief a fresh worker from the plan and PR, not assumed context.
 
 **Ask how to build, before phase 1,** via `AskUserQuestion`. One-phase plan: skip the mode, build solo. Record it as `**Build mode**` under Decisions, with the model picks below, so a resume keeps it.
 - **Solo** `(Recommended)` — you write every phase yourself, a fresh reviewer subagent per round; later phases build on a crowded context.
@@ -35,7 +35,9 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **No subagent tool in this runtime?** Stop and tell the user to install one — never build your own spawner.
 
-**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it with the `message` task action after it becomes idle, never spawn a new one; it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
+**On Pi?** Read `pi.md` beside this file before asking how to build — it checks the installed subagent tool and maps every subagent step below to its actions.
+
+**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
 
 ```
 phase N
@@ -46,21 +48,6 @@ phase N
      ▼
   merge ── W retired; phase N+1 gets a new worker
 ```
-
-## Pi persistent subagent mapping
-
-Use this mapping with `@lwlee2608/pi-subagent` only; the old example's API is different. Do not load both extensions or change a global installation mid-build. If the installed tool cannot retain/message workers, Orchestrator mode is blocked; use Solo if the user selects it, never invent a spawner.
-
-- **Start a phase worker:** `subagent({ action: "start", agent: "worker", lifetime: "retained", cwd: <phase-worktree>, label: <phase>, model: <provider/model>, effort: <chosen-effort>, task: <brief> })`. Start returns admission with `workerId` and `runId`, not task success. Record both. The orchestrator creates and owns the worktree before starting the worker.
-- **Fresh review:** use `start` with `agent: "reviewer"`, `lifetime: "once"`, the review cwd/model/effort, and the prose review brief. Wait on its returned run ID. Its process retires automatically, preserving the result. Wait/status text is a bounded summary, not the full report. Before relaying findings or deciding whether to merge, read the returned worker's `sessionFile` and retrieve the complete final reviewer assistant response (all text blocks). Relay it unchanged; failed retrieval blocks the review cycle. This is also the simple-review recipe; no retained worker is needed for a standalone review.
-- **Wait:** `subagent({ action: "wait", runIds: [...], mode: "all" })` for all selected runs, or `"any"` for one completion. One ID is a single-run wait. Wait is event-driven; do not poll status. Inspect each immutable terminal outcome (`completed`, `failed`, `interrupted`). A timeout only ends the wait window, and cancelling a wait leaves workers running; wait again or explicitly stop.
-- **Attention:** any owned pending question can release any wait, including one on a queued sibling. Inspect `pendingQuestionIds` and `status`; answer only within your authority, otherwise ask the user. Use `reply` with `questionId` and exactly one of `message` or `cancelled: true`. Cancellation interrupts the worker, never authorizes a guess. Reply acknowledgement is not task completion; wait on the existing run ID again.
-- **Fix round:** `subagent({ action: "message", workerId: <original-worker>, mode: "task", label: <phase-and-round>, message: <verbatim-review-report-and-fix-brief> })`. This requires an idle retained worker and returns a new run ID. A working worker accepts only `mode: "steer"` for guidance within its current run; queued/blocked workers reject task messages. Never queue independent follow-up tasks.
-- **Inspect:** `status` lists this parent's workers or takes one `workerId`; it does not consume results. `/subagents` shows live transcripts and safe controls. Provider/tool restrictions are capabilities, not an OS sandbox.
-- **Recover:** in the original parent Pi session only, `subagent({ action: "recover", workerId: <saved-retained-worker> })` reopens a closed retained conversation idle with a new PID. Then explicitly send a new task containing the decision/context needed to continue. No task, steering, or reply is replayed; old question IDs remain cancelled. Refused prerequisites or uncertain ownership are blockers, not permission to remove locks, substitute models, or adopt a foreign worker.
-- **Retire:** `subagent({ action: "stop", workerId })` after the phase's merge/review cycle, before removing its worktree. Require confirmed exit (`processAlive: false`); cleanup failure blocks worktree removal. Stop preserves terminal results, transcripts, and edits. Shutdown/reload closes owned processes, not detached work.
-
-This API accepts explicit model and effort: ask both in the role-selection call, record them, and pass them on every start. Reviewer effort matches the parent; worker effort is one step down. Unsupported selections fail instead of silently falling back. For parallel phases, admitted excess work can queue within configured limits; blocked questions retain task capacity, while reply/stop remain available.
 
 **This phase's tasks, nothing else.** Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
 
