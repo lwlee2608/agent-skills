@@ -25,7 +25,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **One integration branch per feature; one branch and one PR per phase.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, reusing it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. Build the first phase with unchecked boxes. Never pull work forward from a later phase, even three lines — the boundary is what makes the PR reviewable. One-phase plan: no integrate branch — branch off `main` as `feat/<plan-name>`, target `main`, and after the demo stop at the green PR for the user to merge, no final PR after it.
 
-**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there — with a fresh worker if not solo.
+**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there. Not solo: continue the phase's original worker if the runtime still has it; otherwise say so and brief a fresh worker from the plan and PR, not assumed context.
 
 **Ask how to build, before phase 1,** via `AskUserQuestion`. One-phase plan: skip the mode, build solo. Record it as `**Build mode**` under Decisions, with the model picks below, so a resume keeps it.
 - **Solo** `(Recommended)` — you write every phase yourself, a fresh reviewer subagent per round; later phases build on a crowded context.
@@ -34,6 +34,8 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 **Then ask the model per subagent role, in one call after the mode answer** — reviewer always, worker only if Orchestrator was picked. Recommend your model. Ask effort too only if the spawn tool takes an effort parameter: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Otherwise don't ask; say once that subagents run at their agent definition's effort.
 
 **No subagent tool in this runtime?** Stop and tell the user to install one — never build your own spawner.
+
+**On Pi?** Read `pi.md` beside this file before asking how to build — it checks the installed subagent tool and maps every subagent step below to its actions.
 
 **Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
 
