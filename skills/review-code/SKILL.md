@@ -30,8 +30,10 @@ Default is inline. With `--sub`, run the whole review in a subagent and relay it
 2. **Security** — injection, missing authz/authn, secrets in code, unsafe deserialization, path traversal, unvalidated input.
 3. **Data & resources** — leaks (fd/memory/goroutine), unbounded growth, missing transaction boundaries, N+1 queries.
 4. **Performance** — needless allocations, O(n²) on hot paths, blocking calls in loops.
-5. **Maintainability** — duplication, dead code, unclear naming, missing-but-needed tests. Report these only when they materially hurt; do not pad the report with style nits.
-6. **Tests** — too many unit tests are a liability, not an asset. Flag tests that mostly exercise mocks/fakes rather than real behavior, tests that pin implementation details so any refactor breaks them, and redundant cases that add maintenance cost without catching new bugs. Prefer fewer tests against real components (integration-style, in-memory DB, real HTTP handler) over many mock-heavy ones. Do not ask for more unit tests by default; ask only when a real bug path is uncovered. If the repo already uses `testify`, flag hand-rolled `if got != want { t.Fatal(...) }` blocks.
+5. **Codebase fit** — a second pattern for something the repo already solves (HTTP client, error style, config), logic in the wrong layer, or code size out of proportion to what it delivers. Favor a small surface: few methods, simple params, complexity hidden inside. Deletion test for new abstractions: if deleting one makes complexity vanish, it was a pass-through; if complexity reappears across callers, it earns its keep.
+   - **No unnecessary Go `interface`s.** A small surface is a concrete type with few methods, not the `interface` keyword. Declare one only when two real implementations exist or the real dependency cannot run in a test (third-party API, remote service). Flag single-implementation interfaces as indirection.
+6. **Maintainability** — duplication, dead code, unclear naming, missing-but-needed tests. Report these only when they materially hurt; do not pad the report with style nits.
+7. **Tests** — too many unit tests are a liability, not an asset. Flag tests that mostly exercise mocks/fakes rather than real behavior, tests that pin implementation details so any refactor breaks them, and redundant cases that add maintenance cost without catching new bugs. Prefer fewer tests against real components (integration-style, in-memory DB, real HTTP handler) over many mock-heavy ones. Do not ask for more unit tests by default; ask only when a real bug path is uncovered. After a refactor, tests on pieces that became internal should be deleted, not kept beside the new ones. If the repo already uses `testify`, flag hand-rolled `if got != want { t.Fatal(...) }` blocks.
 
 Do not invent problems. If the code is clean, say so. Prefer a few high-confidence findings over many speculative ones.
 
@@ -77,9 +79,12 @@ Bump a Judgment call to **Yes** when the fix effort is Trivial; drop toward **No
 
 Lead with a one-line summary and a table sorted by worth-fixing (Yes first), then severity. Then one block per finding.
 
+For `diff`/`pr`, add a **Net effect** line: weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
+
 ```
 **Reviewed:** <target> — <N files, what was covered>
 **Summary:** <one line: overall health + count of must-fix findings>
+**Net effect:** Improves | Neutral | Degrades — <one-line reason>
 
 | # | Finding | Severity | Likelihood | Worth fixing | Fix effort |
 |---|---------|----------|------------|--------------|------------|
@@ -92,7 +97,7 @@ Then for each:
 ```
 ### 1. <short title>
 - **Location:** `path/to/file.ext:42`
-- **Category:** correctness | security | resources | performance | maintainability
+- **Category:** correctness | security | resources | performance | codebase-fit | maintainability | tests
 - **Severity:** High — <why this impact>
 - **Likelihood:** High — <what triggers it>
 - **Worth fixing:** Yes
