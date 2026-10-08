@@ -30,7 +30,7 @@ jq -rs '[.[] | select(.type=="message" and .message.role=="assistant")] | last |
 
 Empty output or an error blocks the review cycle — never relay the capped text instead.
 
-**Fix rounds go to the original worker** as a `message` task, only once it's idle; it returns a new run ID to wait on. A working worker accepts only `mode: "steer"`.
+**Fix rounds go to the original worker** as a `message` task, only once it's idle; it returns a new run ID to wait on. A working worker accepts only `mode: "steer"`. A clean round sends nothing — the worker stays idle until there is work.
 
 **Resume only in the original parent session.** `status` lists its saved workers. A closed one: `recover` reopens it idle and replays nothing, so follow with a `message` task carrying the context it needs; old question IDs stay cancelled. Refused recovery is a blocker — report it; never remove locks, swap models, or adopt another parent's worker. A different parent session: brief a fresh worker, as SKILL.md says.
 

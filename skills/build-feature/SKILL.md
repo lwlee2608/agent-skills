@@ -37,7 +37,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **On Pi?** Read `pi.md` beside this file before asking how to build — it checks the installed subagent tool and maps every subagent step below to its actions.
 
-**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay the report to the worker. Solo: you are the worker.
+**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay any report with findings to the worker; a clean round needs no message. Solo: you are the worker.
 
 ```
 phase N
@@ -55,7 +55,7 @@ phase N
 
 Run against something disposable. Needs a deployed host, shared database, or admin login? Stop and ask, naming what it would change. Never open a credential file to make it runnable.
 
-`deferred` Verify line (older plans say `**Demo:**`): run the repo's checks, say the proof is deferred to the demo, move on. Don't invent one.
+`deferred` Verify line (older plans say `**Demo:**`): run the repo's checks, say the proof is deferred to the demo, move on. Don't invent one. A Verify step that needs the user's own device or personal account, where no scratch account works: run the rest, defer that step to the demo without asking, and name it in the phase report. Deployed hosts, shared databases, and admin logins still stop and ask.
 
 **PR targets the integration branch** — `gh pr create --base integrate/<plan-name>`, never `main`. Title `Phase <n>: <imperative title>`, then `## Summary` of what the user gains, bullets proportional to the change, and the plan file path. No test plan, no checklist, no co-author line. No `gh` or no GitHub remote: stop at the pushed branch and say so — don't fake a review cycle.
 
@@ -73,6 +73,6 @@ Three rounds is the cap. If round 3 leaves a worth-fixing finding at High or Cri
 
 **A locked decision proved wrong stops the build.** Name the decision, what the code showed, which later phases it invalidates. The user amends the plan; you don't quietly re-plan around their choice.
 
-**Demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. The plan decides, not you: `none` skips straight to the final PR; something you can't run yourself means handing the user steps and waiting. Never invent a demo, never stage one per phase. Plan silent (older ones are)? Ask, record the answer in the plan, then run. Broken demo: fix belongs to the phase that owns it, same branch-review-merge cycle.
+**Demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. The plan decides, not you: `none` skips straight to the final PR; something you can't run yourself means handing the user steps and waiting. Never invent a demo, never stage one per phase. Add every deferred user-only Verify step to the demo handoff. Plan silent (older ones are)? Ask, record the answer in the plan, then run. Broken demo: fix belongs to the phase that owns it, same branch-review-merge cycle.
 
-**Final PR, integration branch to `main`:** feature summary, the phase PRs, the demo and its result if the plan called for one, commands the user can run, plus any post-merge steps the plan leaves them. `main` moved? Merge it in and re-run the repo's checks. Then stop — the user merges that PR.
+**Final PR, integration branch to `main`:** feature summary, the phase PRs, the demo and its result if the plan called for one, any deferred Verify steps still unrun, commands the user can run, plus any post-merge steps the plan leaves them. `main` moved? Merge it in and re-run the repo's checks. Then stop — the user merges that PR.

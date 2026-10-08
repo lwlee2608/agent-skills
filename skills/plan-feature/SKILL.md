@@ -55,7 +55,7 @@ Good — feature slices, each one usable
 
 **Every phase carries a Verify line** — a command, URL, click path, or test that fails without this phase's code. "Checks pass" is not one. Can't write it? Not a phase.
 
-**Verify runs locally.** Dev server, test database, scratch account. A deployed URL, shared database, or production credential is a rollout step — park it at the end of the plan for the user to run after merge. No local proof means the phase needs a fixture, not a production target.
+**Verify runs locally.** Dev server, test database, scratch account. A deployed URL, shared database, or production credential is a rollout step — park it at the end of the plan for the user to run after merge. No local proof means the phase needs a fixture, not a production target. A step that needs the user's own device or personal account, where no scratch account works, belongs in `## Demo`, not a Verify line; the builder must run every Verify line without stopping.
 
 **Never deploy to verify on your own call.** Convinced a phase or the demo can only be shown on staging, a preview URL, or any shared environment? Ask with `AskUserQuestion` and get an explicit yes before the plan writes it down. Deploying is the user's call, never a default you slip into a Verify line.
 
