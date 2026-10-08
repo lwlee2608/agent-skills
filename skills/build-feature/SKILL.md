@@ -37,7 +37,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **On Pi?** Read `pi.md` beside this file before asking how to build — it checks the installed subagent tool and maps every subagent step below to its actions.
 
-**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay any report with worth-fixing findings to the worker; a clean round needs no message. Solo: you are the worker.
+**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay any report with findings to the worker; a clean round needs no message. Solo: you are the worker.
 
 ```
 phase N
