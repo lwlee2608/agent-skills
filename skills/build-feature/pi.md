@@ -6,7 +6,7 @@ Maps build-feature's spawn, wait, continue, resume, and retire steps to the `sub
 
 ```json
 {"action":"start","agent":"worker","lifetime":"retained","cwd":"<phase-worktree>","label":"Phase <n>","model":"<provider/model>","effort":"<effort>","task":"<brief>"}
-{"action":"start","agent":"reviewer","lifetime":"once","cwd":"<phase-worktree>","model":"<provider/model>","effort":"<effort>","task":"<review brief>"}
+{"action":"start","agent":"reviewer","lifetime":"once","cwd":"<phase-worktree>","parentWorkerId":"<worker-id>","model":"<provider/model>","effort":"<effort>","task":"<review brief>"}
 {"action":"wait","runIds":["<run-id>"]}
 {"action":"reply","questionId":"<question-id>","message":"<answer>"}
 {"action":"message","workerId":"<worker-id>","mode":"task","label":"Phase <n> round <r>","message":"<full report + fix brief>"}
@@ -18,7 +18,7 @@ Maps build-feature's spawn, wait, continue, resume, and retire steps to the `sub
 
 **You own the worktree.** Create it on the phase branch before starting the worker — `git worktree add -b <plan>-phase-<n> <path> integrate/<plan-name>` — so the worker skips cutting the branch.
 
-**Reviewers run in the phase worktree.** An omitted `cwd` is your checkout on the integration branch, where the reviewer reads pre-PR code. Solo: omit it, your checkout is the phase branch. Drop `--sub` from the `review-code` target — Pi children can't delegate. A `once` reviewer retires itself and keeps its result.
+**Reviewers run in the phase worktree.** An omitted `cwd` is your checkout on the integration branch, where the reviewer reads pre-PR code. Solo: omit it, your checkout is the phase branch. Drop `--sub` from the `review-code` target — Pi children can't delegate. A `once` reviewer retires itself and keeps its result. Orchestrator: pass the phase worker's ID as `parentWorkerId` so the panel nests its reviewers; Solo: omit it.
 
 **Wait, never poll.** `reason: "timeout"` is not failure — wait again. `reason: "attention"` means any owned worker asked a question, maybe not one you waited on: read `pendingQuestionIds` and `status`, `reply` if the answer is within your authority, else ask the user. `cancelled: true` in place of `message` interrupts the worker; it never licenses a guess. After replying, wait on the same run ID. Finished runs report `runs[].result.outcome`: `completed`, `failed`, or `interrupted`.
 
