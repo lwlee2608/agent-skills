@@ -77,14 +77,15 @@ Bump a Judgment call to **Yes** when the fix effort is Trivial; drop toward **No
 
 ## Report format
 
-Lead with a one-line summary and a table sorted by worth-fixing (Yes first), then severity. Then one block per finding.
+Lead with a `## Summary` section: header bullets, then a table sorted by worth-fixing (Yes first), then severity. Then a `## Findings` section with one block per finding. If nothing is worth reporting, omit the table and `## Findings`.
 
-For `diff`/`pr`, add a **Net effect** line: weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
+For `diff`/`pr`, add a **Net effect** bullet: weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
 
 ```
-**Reviewed:** <target> — <N files, what was covered>
-**Summary:** <one line: overall health + count of must-fix findings>
-**Net effect:** Improves | Neutral | Degrades — <one-line reason>
+## Summary
+- **Reviewed:** <target> — <N files, what was covered>
+- **Verdict:** <one line: overall health + count of must-fix findings>
+- **Net effect:** Improves | Neutral | Degrades — <one-line reason> (diff/pr only)
 
 | # | Finding | Severity | Likelihood | Worth fixing | Fix effort |
 |---|---------|----------|------------|--------------|------------|
@@ -92,9 +93,11 @@ For `diff`/`pr`, add a **Net effect** line: weigh what the change removes or sim
 | 2 | <short title> | Low | Medium | No | — |
 ```
 
-Then for each:
+Then:
 
 ```
+## Findings
+
 ### 1. <short title>
 - **Location:** `path/to/file.ext:42`
 - **Category:** correctness | security | resources | performance | codebase-fit | maintainability | tests
