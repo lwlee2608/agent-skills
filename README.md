@@ -120,7 +120,7 @@ Review, fix, and re-review until nothing worth fixing is left.
 
 ### second-opinion
 
-Get a second-opinion review from a non-Claude model via `pi`.
+Get a second-opinion review from another model via `pi`.
 
 - Runs a fresh `pi -p` session on pi's configured default model (override with any `pi --list-models` entry).
 - Delegates the rubric to the `review-code` skill rather than duplicating it.
