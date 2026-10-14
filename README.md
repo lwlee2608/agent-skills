@@ -118,13 +118,13 @@ Review, fix, and re-review until nothing worth fixing is left.
 - Runs `review-code` in a fresh subagent every round and fixes what it rates worth fixing.
 - Caps at 5 rounds; commits each fix by default, or once at the end with `--commit end`.
 
-### opencode-review
+### second-opinion
 
-Get a second-opinion review from a non-Claude model via `opencode`.
+Get a second-opinion review from another model via `pi`.
 
-- Runs a fresh `opencode` session on `velocirouter/gpt-5.6-sol` (override with any `opencode models` entry).
+- Runs a fresh `pi -p` session on pi's configured default model (override with any `pi --list-models` entry).
 - Delegates the rubric to the `review-code` skill rather than duplicating it.
-- Runs inside a subagent and relays the review verbatim, keeping the transcript out of the main session.
+- Read-only: edit and write tools are excluded; the review is relayed verbatim.
 
 ### linear-issues
 
