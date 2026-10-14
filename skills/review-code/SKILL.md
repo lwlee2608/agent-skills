@@ -79,7 +79,7 @@ Bump a Judgment call to **Yes** when the fix effort is Trivial; drop toward **No
 
 Lead with a `## Summary` section: header bullets, then a table sorted by worth-fixing (Yes first), then severity. Then a `## Findings` section with one block per finding. If nothing is worth reporting, omit the table and `## Findings`.
 
-For `diff`/`pr`, add a **Net effect** bullet: weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
+For `diff`/`pr`, add a **Net effect** bullet: judge only the codebase's structural health, not the feature value. A new feature or capability is never an improvement on its own. Weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
 
 ```
 ## Summary
