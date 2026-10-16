@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-18-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-19-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -44,6 +44,13 @@ Update PR title/body through `gh api` REST calls when `gh pr edit` is unreliable
 - Uses `gh pr view` to detect PR context.
 - Uses `gh api repos/{owner}/{repo}/pulls/{number} -X PATCH` to update title/body.
 - Keeps `gh pr create` and `gh pr view` unchanged.
+
+### merge-pr
+
+Merge a GitHub PR, close the issues it fixes, and delete its branch.
+
+- Merges with a merge commit (not squash) and deletes the branch.
+- Closes linked issues GitHub left open (e.g. PR into a non-default branch).
 
 ### create-skill
 
