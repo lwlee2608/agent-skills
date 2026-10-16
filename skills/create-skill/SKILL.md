@@ -39,9 +39,9 @@ Guide the creation of a new SKILL.md file that meets quality standards for agent
 
    <Numbered steps the agent follows to check its own work.>
 
-   ## Common mistakes to watch for (if applicable)
+   ## Common mistakes to watch for (only if observed — see rule 9)
 
-   <Bulleted list of predictable failure modes and how to avoid them.>
+   <Bulleted list of observed failure modes and how to avoid them.>
    ```
 
 5. **Write rules in direct imperative voice.** Start each rule with a bolded action ("**Use...**", "**Never...**", "**Always prefer...**"). Rules must be specific enough that two agents would follow them the same way.
@@ -52,7 +52,7 @@ Guide the creation of a new SKILL.md file that meets quality standards for agent
 
 8. **Include a verification procedure for skills that produce output.** Tell the agent how to check its own work. This catches more errors than generic "think carefully" instructions.
 
-9. **Document common failure modes.** LLMs make predictable, repeated mistakes. List the top 3-5 mistakes for the skill's domain so the agent can avoid them.
+9. **Document only observed failure modes.** Add a "Common mistakes" section only when there is evidence: the user reported the mistake, it happened in this session, or it is a documented bug or gotcha. Never invent plausible-sounding mistakes to fill the section; guessed failure modes add tokens and can steer the agent wrong. If there is no evidence, omit the section.
 
 10. **Design for the 80% case.** Over-specified skills become brittle. Establish a preference hierarchy with fallbacks (e.g., "prefer X, fall back to Y if X is unavailable") rather than trying to cover every edge case.
 
@@ -71,6 +71,7 @@ After drafting the skill, verify:
 5. **Rationale check** — Does every non-obvious rule have a "why"?
 6. **Scope check** — Does the skill do exactly one thing? Can you describe it in one sentence without "and"?
 7. **Independence check** — Does the skill work standalone without other skills loaded?
+8. **Evidence check** — Is every "Common mistakes" entry backed by a user report, an observed failure, or a documented bug? Delete any that are guesses.
 
 ## Common mistakes to watch for
 
