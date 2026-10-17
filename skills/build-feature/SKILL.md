@@ -1,6 +1,6 @@
 ---
 name: build-feature
-description: Use when implementing a feature plan file split into phases with task checkboxes. Builds one phase per branch, opens a PR against a feature-wide integration branch, reviews it in a subagent over up to three rounds, fixes what is worth fixing, then merges before the next phase. Runs the plan's demo once at the end and leaves the final merge to main to the user.
+description: Use when implementing a phased feature plan file. Builds each phase on its own branch and PR into a feature integration branch, reviews and fixes in rounds, merges, then runs the plan's demo and leaves the final merge to main to the user.
 argument-hint: "[<path to plan file>]"
 user-invocable: true
 disable-model-invocation: true
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # Build a Feature, Phase by Phase
 
-One phase, one PR, reviewed and fixed in rounds before merge. A feature built in one branch can't be tried; code merged after one review pass merges its fixes unreviewed.
+One phase, one PR, reviewed and fixed in rounds before merge. A feature built in one branch can't be tried, and code merged after one review pass merges its fixes unreviewed.
 
 ```
 main
@@ -21,23 +21,23 @@ main
 one phase: feat/<plan> ──PR──▶ main          no integrate branch
 ```
 
-**Start from the plan file, never memory.** Path from the argument, else look under `plans/` and ask if several match. Re-read it each phase. Any `_open_` decision: stop, send the user back to planning. Read every Verify line and `## Demo` before phase 1 — a phase with no proof and no deferral is a planning bug, cheapest to raise now.
+**Start from the plan file, never memory.** Take the path from the argument, or look under `plans/` and ask if several match. Re-read it each phase. If any decision is `_open_`, stop and send the user back to planning. Before phase 1, check every Verify line and `## Demo`: a phase with no proof and no deferral is a planning bug, cheapest to raise now.
 
-**One integration branch per feature; one branch and one PR per phase.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, reusing it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. Build the first phase with unchecked boxes. Never pull work forward from a later phase, even three lines — the boundary is what makes the PR reviewable. One-phase plan: no integrate branch — branch off `main` as `feat/<plan-name>`, target `main`, and after the demo stop at the green PR for the user to merge, no final PR after it.
+**Branch as the diagram shows.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, or reuse it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. A one-phase plan skips it: branch `feat/<plan-name>` off `main`, and after the demo stop at the green PR for the user to merge.
 
-**Resume, don't restart.** Check `gh pr list --base integrate/<plan-name>` first. An open PR for an unmerged phase means you're mid-cycle: its commits and review comments say which rounds already ran, so pick up from there. Not solo: continue the phase's original worker if the runtime still has it; otherwise say so and brief a fresh worker from the plan and PR, not assumed context.
+**Start at the first phase with unchecked boxes, and build only its tasks.** Never pull work forward from a later phase, even three lines; the boundary keeps the PR reviewable. Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
 
-**Ask how to build, before phase 1,** via `AskUserQuestion`. One-phase plan: skip the mode, build solo. Record it as `**Build mode**` under Decisions, with the model picks below, so a resume keeps it.
-- **Solo** `(Recommended)` — you write every phase yourself, a fresh reviewer subagent per round; later phases build on a crowded context.
-- **Orchestrator** — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Every phase whose `Blocked by:` phases have merged starts at once, each worker in its own git worktree; no `Blocked by:` lines means one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
+**Resume, don't restart.** First look for open PRs against the integration branch. An open PR for an unmerged phase means you are mid-cycle; its commits and review comments show which rounds ran. Outside solo mode, continue the phase's worker if the runtime still has it. Otherwise say so, and brief a fresh worker from the plan and PR.
 
-**Then ask the model per subagent role, in one call after the mode answer** — reviewer always, worker only if Orchestrator was picked. Recommend your model. Ask effort too only if the spawn tool takes an effort parameter: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Otherwise don't ask; say once that subagents run at their agent definition's effort.
+**Ask how to build before phase 1,** with `AskUserQuestion`. Record the answers as `**Build mode**` under Decisions so a resume keeps them. A one-phase plan skips this and builds solo.
+- **Solo** `(Recommended)` — you build every phase, with a fresh reviewer subagent per round. Later phases run on a crowded context.
+- **Orchestrator** — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Phases whose `Blocked by:` phases have merged run at once, each worker in its own git worktree. Without `Blocked by:` lines, run one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
 
-**No subagent tool in this runtime?** Stop and tell the user to install one — never build your own spawner.
+Then, in one more call, ask which model each subagent role uses: the reviewer always, the worker only in Orchestrator mode. Recommend your own model. If the spawn tool takes an effort parameter, ask effort too: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Otherwise say once that subagents run at their agent definition's effort.
 
-**On Pi?** Read `pi.md` beside this file before asking how to build — it checks the installed subagent tool and maps every subagent step below to its actions.
+**No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
-**Workers build; you orchestrate.** Plan, code, and verification for a phase stay in one head — the worker's. It cuts the phase branch, writes, verifies, opens the PR, and applies review fixes; you own the integration branch, reviews, merges, reports, and the demo. Brief it with the plan path, its phase, and this skill's rules for scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round — continue it by message (e.g. `SendMessage`), never spawn a new one; it already holds the diff. You spawn each reviewer and relay any report with findings to the worker; a clean round needs no message. Solo: you are the worker.
+**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, and this skill's rules on scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. In solo mode, you are the worker.
 
 ```
 phase N
@@ -49,30 +49,25 @@ phase N
   merge ── W retired; phase N+1 gets a new worker
 ```
 
-**This phase's tasks, nothing else.** Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
+**Verify locally before the PR.** Run the repo's checks plus proof the phase does what it promised. Proof is the plan's Verify line; failing that, a test that fails without this phase's code, or a run against a local fixture or dev server. "It compiles" is not proof.
+- Use something disposable. If proof needs a deployed host, shared database, or admin login, stop and ask, naming what it would change. Never open a credential file to make it runnable.
+- For a `deferred` Verify line (older plans say `**Demo:**`), run the checks, say the proof is deferred to the demo, and move on. Don't invent one.
+- For a step that needs the user's own device or personal account, with no scratch account possible, run the rest, defer that step to the demo without asking, and name it in the phase report.
 
-**Verify before the PR, locally.** Proof it does what it promised, plus the repo's checks — `make build` / `make test` / `make lint` when a Makefile has them, else the project's native commands. Proof is the plan's Verify line; failing that, a test that fails without this phase's code, or a run against a local fixture or dev server. "It compiles" is not proof.
+**Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
-Run against something disposable. Needs a deployed host, shared database, or admin login? Stop and ask, naming what it would change. Never open a credential file to make it runnable.
+**Review in a new subagent every round,** never reused and never the writer, who is the last to spot what it assumed. Use the repo's review skill if installed, as `review-code` with target `pr <number> --sub`. Otherwise have the subagent review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Ask for plain prose; an output schema fails the task before the review starts. Block on the runtime's wait, never poll. Relay the report as-is.
 
-`deferred` Verify line (older plans say `**Demo:**`): run the repo's checks, say the proof is deferred to the demo, move on. Don't invent one. A Verify step that needs the user's own device or personal account, where no scratch account works: run the rest, defer that step to the demo without asking, and name it in the phase report. Deployed hosts, shared databases, and admin logins still stop and ask.
+**Run two or three rounds** on the same PR, each after the previous fix commits land. Round 2 always runs, even after a clean round 1, because a fresh reviewer catches what the first missed. Round 3 runs only if round 2 produced fixes. Three is the cap: if round 3 leaves a worth-fixing High or Critical finding, stop before merging, since the phase is too big to converge. Report it with what you would do, and ask the user. Otherwise fix, re-verify, merge, and note in the phase report that those last fixes merged unreviewed.
 
-**PR targets the integration branch** — `gh pr create --base integrate/<plan-name>`, never `main`. Title `Phase <n>: <imperative title>`, then `## Summary` of what the user gains, bullets proportional to the change, and the plan file path. No test plan, no checklist, no co-author line. No `gh` or no GitHub remote: stop at the pushed branch and say so — don't fake a review cycle.
+**Fix only what's worth fixing.** Fix every worth-fixing finding. Fix a judgment call if it is small and in this phase's scope; otherwise log it in the plan. Leave nits. Commit fixes separately so the next round sees them. Name what you skipped in one line; a silently dropped finding reads as one that never existed.
 
-**Review in a subagent, every round, always.** Repo's review skill if installed, as `review-code` with target `pr <number> --sub`; else spawn a subagent to review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. A new subagent each round, never reused, never the writer — it's last to spot what it assumed. Ask for plain prose; an output schema fails the task before the review starts. Spawn, then block on the runtime's wait — no polling. Relay the report as-is.
+**Merge only when all four hold:** verification passes after the last fix commit, the required rounds ran, no worth-fixing finding is left, and CI is green. Wait on CI with one blocking call, not a poll loop. If the PR is behind the integration branch, merge it in and re-verify first. Use a merge commit, never squash; the per-phase history is the record. Then delete the phase branch and return to an up-to-date integration branch.
 
-Each round reads the last round's fixes, same PR, once the fix commits land. Round 2 runs even when round 1 was clean: fixes are new code, and that's where the next bug is. Round 3 only runs when round 2 produced fixes — with nothing new in the diff there is nothing new to read.
+**Report each phase in one block, then start the next** without asking, unless the user asked you to pause. Include the PR link, tasks done, findings fixed and skipped, and what you ran.
 
-Three rounds is the cap. If round 3 leaves a worth-fixing finding at High or Critical severity, stop before merging — the phase is too big to converge. Report it with what you'd do about it, then ask the user; no fourth round on your own. Anything less: fix, re-verify, merge, and say in the phase report that those last fixes merged unreviewed.
+**A locked decision proved wrong stops the build.** Name the decision, what the code showed, and which later phases it invalidates. The user amends the plan; never quietly re-plan around their choice.
 
-**Fix only what's worth fixing.** Worth-fixing findings get fixed here. Judgment calls: fix if trivial or small *and* in this phase's scope, else log in the plan. Nits stay. Fixes land as their own commits so the next round sees them. Name what you skipped in one line — a silently dropped finding reads as one that never existed.
+**Run the demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. `none` skips to the final PR. If you can't run it yourself, hand the user the steps and wait. Never invent a demo or stage one per phase. Add every deferred user-only Verify step to the handoff. If the plan has no `## Demo` (older plans), ask, record the answer in the plan, then run it. A broken demo gets fixed in the phase that owns it, through the same branch, review, and merge cycle.
 
-**Merge on all four:** verification passes *after the last fix commit* (fixes are code too), two rounds ran and a third if round 2 produced fixes, no must-fix left, CI green — one blocking `gh pr checks --watch`, not a poll loop. Behind the integration branch? Merge it in and re-verify first. Merge commit, never squash — the per-phase history is the record. Delete the phase branch, return to an up-to-date integration branch.
-
-**Report each phase in one block, then start the next.** PR link, tasks done, findings fixed, findings skipped, what you ran. No asking unless the user said to stop.
-
-**A locked decision proved wrong stops the build.** Name the decision, what the code showed, which later phases it invalidates. The user amends the plan; you don't quietly re-plan around their choice.
-
-**Demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. The plan decides, not you: `none` skips straight to the final PR; something you can't run yourself means handing the user steps and waiting. Never invent a demo, never stage one per phase. Add every deferred user-only Verify step to the demo handoff. Plan silent (older ones are)? Ask, record the answer in the plan, then run. Broken demo: fix belongs to the phase that owns it, same branch-review-merge cycle.
-
-**Final PR, integration branch to `main`:** feature summary, the phase PRs, the demo and its result if the plan called for one, any deferred Verify steps still unrun, commands the user can run, plus any post-merge steps the plan leaves them. `main` moved? Merge it in and re-run the repo's checks. Then stop — the user merges that PR.
+**Open the final PR from the integration branch to `main`** with the feature summary, the phase PRs, the demo and its result, any deferred Verify steps still unrun, commands the user can run, and any post-merge steps from the plan. If `main` moved, merge it in and re-run the checks. Then stop; the user merges that PR.
