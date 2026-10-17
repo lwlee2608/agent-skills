@@ -51,17 +51,13 @@ Guide the creation of a SKILL.md file that meets quality standards.
 
 7. **Explain the why behind non-obvious rules** so the agent can handle edge cases.
 
-8. **Add a verification procedure to skills that produce output.** Self-checks catch more errors than "think carefully".
+8. **Add a verification procedure only for a concrete check the agent would not do on its own** (e.g., measuring alignment, running a validator). Skip it otherwise.
 
 9. **Document only observed mistakes.** Add "Common mistakes" only with evidence: a user report, a failure in this session, or a documented bug. Otherwise omit it. Guesses add tokens and mislead.
 
 10. **Keep skills independent.** Do not assume other skills are loaded.
 
 11. **Keep it short.** Aim under 4KB; the hard max is 500 lines. Move detail to sibling files (`reference.md`, `examples.md`) linked from SKILL.md. Keep links one level deep, because nested files may be read only partly.
-
-## Verification procedure
-
-Check the draft against each rule above and fix any it breaks.
 
 ## Common mistakes to watch for
 
