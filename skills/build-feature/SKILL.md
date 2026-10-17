@@ -30,8 +30,25 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 **Resume, don't restart.** First look for open PRs against the integration branch. An open PR for an unmerged phase means you are mid-cycle; its commits and review comments show which rounds ran. Outside solo mode, continue the phase's worker if the runtime still has it. Otherwise say so, and brief a fresh worker from the plan and PR.
 
 **Ask how to build before phase 1,** with `AskUserQuestion`. Record the answers as `**Build mode**` under Decisions so a resume keeps them. A one-phase plan skips this and builds solo.
-- **Solo** `(Recommended)` — you build every phase, with a fresh reviewer subagent per round. Later phases run on a crowded context.
-- **Orchestrator** — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Phases whose `Blocked by:` phases have merged run at once, each worker in its own git worktree. Without `Blocked by:` lines, run one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
+- **Orchestrator** `(Recommended)` — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Phases whose `Blocked by:` phases have merged run at once, each worker in its own git worktree. Without `Blocked by:` lines, run one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
+- **Solo** — you build every phase, with a fresh reviewer subagent per round. Later phases run on a crowded context.
+
+Show each mode's diagram in its option's `preview`. If the question tool has no preview, print both diagrams before asking.
+
+```
+Orchestrator
+you ─┬─ worker 1 ── phase 1 ── reviewers
+     ├─ worker 2 ── phase 2 ── reviewers
+     └─ worker 3 ── phase 3 ── reviewers
+fresh context per phase; unblocked
+phases run in parallel
+
+Solo
+you ─┬─ phase 1 ── reviewers
+     ├─ phase 2 ── reviewers
+     └─ phase 3 ── reviewers
+one context, grows each phase
+```
 
 Then, in one more call, ask which model each subagent role uses: the reviewer always, the worker only in Orchestrator mode. Recommend your own model. If the spawn tool takes an effort parameter, ask effort too: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Otherwise say once that subagents run at their agent definition's effort.
 
