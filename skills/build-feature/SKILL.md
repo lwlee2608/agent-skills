@@ -50,7 +50,7 @@ you ─┬─ phase 1 ── reviewers
 one context, grows each phase
 ```
 
-Then, in one more call, ask which model each subagent role uses: the reviewer always, the worker only in Orchestrator mode. Recommend your own model. If the spawn tool takes an effort parameter, ask effort too: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Otherwise say once that subagents run at their agent definition's effort.
+Then, in one more call, ask which model each subagent role uses: the reviewer always, the worker only in Orchestrator mode. Recommend your own model. If the spawn tool takes an effort parameter, ask effort too: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Your effort is not in your context, so never guess it; in Claude Code, read `$CLAUDE_EFFORT`. If you cannot find it, offer the levels without a recommendation. If the spawn tool has no effort parameter, say once that subagents run at their agent definition's effort.
 
 **No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
