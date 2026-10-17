@@ -9,6 +9,8 @@ user-invocable: true
 
 Get a code review from a different agent by running a fresh headless session of it. The user wants that agent's take, not yours — relay it, don't redo it.
 
+When `review-code --second-opinion` runs this skill, these rules govern only the relayed review. The caller's own review still runs, and a failure here does not stop it.
+
 ## Pick the reviewer
 
 If `PI_CODING_AGENT` is `true`, you are running in pi — the reviewer is **Claude Code** (`claude`). Otherwise the reviewer is **pi**.

@@ -14,7 +14,7 @@ Review a target and report findings. Each finding is rated by **severity** (how 
 Pick the target from the argument, ignoring any flags. Default to `diff` when no target is given.
 
 1. **`diff` (default)** — local work on the current branch: uncommitted edits, unpushed commits, and already-pushed commits, reviewed together. Anchor on the base-branch fork point, **not** the branch's own remote — otherwise commits drop out of the diff once they are pushed. Include untracked files, which a plain diff omits.
-2. **`pr <number>`** (or a PR URL) — review a GitHub PR: its diff plus enough PR context (title, description, base branch) to judge intent. If the GitHub CLI is unavailable, say so and fall back to `diff`.
+2. **`pr <number>`** (or a PR URL; bare `pr` means the current branch's PR) — review a GitHub PR: its diff plus enough PR context (title, description, base branch) to judge intent. If the GitHub CLI is unavailable, say so and fall back to `diff`.
 3. **`<base>...<head>`** — review that commit range.
 4. **`all` / `codebase`** — review the whole repository. State the scope you can realistically cover and prioritize entry points, core logic, and recently changed files. Note anything skipped.
 5. **`<path>`** — a file or directory argument scopes the review to that path.
