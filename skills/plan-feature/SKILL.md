@@ -7,38 +7,33 @@ user-invocable: true
 
 # Plan a Feature
 
-Two failure modes: guessing at decisions that were the user's, and slicing by layer so nothing is visible until the last phase. Settle decisions first, then cut vertical slices.
+Two failure modes: guessing at decisions that belong to the user, and slicing by layer so nothing is visible until the last phase. Settle decisions first, then cut vertical slices. Finish stage 1 before stage 2; a task list built around an open decision gets thrown away.
 
-Plan lives at `plans/<feature-slug>.md` — unless the repo keeps design docs elsewhere, or the user names a directory. Plan already covers this feature? Resume it.
-
-Stage 1 before stage 2, always. A task list written around an open decision gets thrown away.
+The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs elsewhere or the user names a directory. If a plan for this feature exists, resume it.
 
 ## Stage 1 — Settle every decision
 
-**Ask how deep to interview,** first, via `AskUserQuestion`:
-- **Key decisions only** `(Recommended)` — you settle calls that are cheap to reverse; ask anything shaping scope, data model, public API, or what the user sees, plus demo and phase count.
-- **Ask everything** — every decision, demo, and phase count goes to the user.
-- **Agent decides** — you settle everything, then the user reviews.
+**Ask how deep to interview, first:** key decisions only (recommended), ask everything, or you decide. Record it as the first Decision. It governs every question in this skill, except framing gaps and deploys, which are always asked.
 
-Record it as the first Decision. It governs every question in this skill, except framing gaps and deploys — always asked. Every pick you make yourself gets `` `agent` ``; list them before Stage 2, and Stage 2's at the end, so the user can overturn any.
+**Read the code first.** Learn the files touched, the patterns, and the libraries in use. Offer only options the codebase can take.
 
-**Frame the feature first.** Four lines at the top of the plan, before any decision: **The Job** (what gets built), **The Why** (who needs it and what breaks or stalls without it), **The Guardrail** (what must not change or be touched — omit if none), **Done means** (the observable outcome that closes the feature). Can't write one from the request? It's the first question in the batch.
+**Frame the feature.** Write the four framing lines from the format below. If you cannot write a line from the request, ask about it first.
 
-**Read the code first.** Files touched, patterns to match, libraries already there. Every option you offer must be one the codebase can take.
+**Answer what the code answers.** Library support, existing schema, and how a similar feature works are research, not decisions. Tag them `research`. Never ask what you could read.
 
-**Answer what the code answers.** Library support, existing schema, how a neighbouring feature did it — research, not decisions. Mark them `` `research` ``. Never ask what you could read.
+**Ask about what matters.** Under key decisions only, ask anything that shapes scope, data model, public API, or what the user sees, and settle cheap-to-reverse calls yourself. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
 
-**Ask the rest, batches of 4,** via `AskUserQuestion`. 2-4 concrete options each, recommended first, labelled `(Recommended)`, real trade-off in the description. Decisions ("where do retries belong?"), not work ("add the retry handler").
+**Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
 
-**Settle the demo.** One per feature, at the end, after every phase merges; `build-feature` runs it verbatim and invents nothing. Ask whether the user wants one and what it is — steps they run themselves, a walkthrough the agent runs, an end-to-end check. `none` is valid and common. Record under `## Demo`. `none` is unavailable only when a phase defers its Verify: the demo is that phase's only proof.
+**Write the file as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open.
 
-**Loop until nothing is open.** Each answer exposes the next question. Write the file as you go — answers as they land, unanswered ones as `_open_` — so an interrupted session resumes from the file. Disagree with a pick? Say why in two lines, then record their call.
+**Disagree once, then follow.** If you disagree with any pick in this skill, say why in two lines, then record the user's call.
 
-Hand over only when no `_open_` is left, no answer is hedged, and the user has seen every `` `agent` `` pick.
+**Move to stage 2 only when nothing is open,** no answer is hedged, and the user has seen every `agent` pick.
 
 ## Stage 2 — Cut the work into phases
 
-**Slice vertically.** `Backend`, `Frontend`, `Database`, `Tests`, `Foundations`, `Setup` are all the same bug: user blind until the end, integration problems last.
+**Slice vertically.** Layer phases (`Backend`, `Frontend`, `Database`, `Tests`, `Setup`) keep the user blind until the end and push integration problems last.
 
 ```
 Bad — layer slices, nothing usable until the end
@@ -53,27 +48,24 @@ Good — feature slices, each one usable
 
 **Name phases by what the user gains.** "Log in and see an empty library", not "Auth layer".
 
-**Every phase carries a Verify line** — a command, URL, click path, or test that fails without this phase's code. "Checks pass" is not one. Can't write it? Not a phase.
+**Give every phase a Verify line** that fails without the phase's code: a command, URL, click path, or test. "Checks pass" is not one. If you cannot write one, it is not a phase.
 
-**Verify runs locally.** Dev server, test database, scratch account. A deployed URL, shared database, or production credential is a rollout step — park it at the end of the plan for the user to run after merge. No local proof means the phase needs a fixture, not a production target. A step that needs the user's own device or personal account, where no scratch account works, belongs in `## Demo`, not a Verify line; the builder must run every Verify line without stopping.
+**Verify locally,** with a dev server, test database, or scratch account. The builder must run every Verify line without stopping. If there is no local proof, add a fixture rather than target production.
+- A step that needs a deployed URL, shared database, or production credential is a rollout step. List it at the end of the plan for the user to run after merge.
+- A step that needs the user's own device or personal account goes in `## Demo`.
+- Never plan a deploy for a Verify line or the demo unless the user explicitly agrees.
 
-**Never deploy to verify on your own call.** Convinced a phase or the demo can only be shown on staging, a preview URL, or any shared environment? Ask with `AskUserQuestion` and get an explicit yes before the plan writes it down. Deploying is the user's call, never a default you slip into a Verify line.
+**Defer Verify only when a phase has no local surface:** `**Verify:** deferred — <why>`, and the demo must cover it. Never defer work you have not thought through. Two deferrals in a row means the slices are wrong.
 
-**`**Verify:** deferred — <why>`** when a phase has no local surface, and the `## Demo` must cover it. For work with no surface, never for work you haven't thought through. Two deferrals in a row means the slices are wrong. Can't tell? Stage 1 question.
+**Size each phase to one build session:** write, verify, and review fixes in one context. Put the smallest visible thing first, each phase building on what already runs. Prefer 3-6 phases; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count.
 
-**Size each phase to one build session** — write, verify, up to three rounds of review fixes, one context. Twenty files is too big whatever it gives the user. Order smallest-visible-thing first, each building on what runs. Prefer 3-6; over 8 the slices are too thin; one is right when the feature fits one session. Never split to hit a count.
+**Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other and share no files, ask whether to run them as `2a`/`2b`.
 
-**Ask the user how many phases.** Cut the slices first, then offer counts with `AskUserQuestion` — yours first, `(Recommended)`, each option naming which slices merge or split and what it costs. Argued against their pick? Say why in two lines, then cut to their number.
+**Write tasks as unchecked imperatives, one sitting each, naming the file:** `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Say what, not how: `Retry failed uploads`, not `Loop with exponential backoff, max 3`. Anything that must be done a specific way is a Decision. The builder ticks the boxes.
 
-**Every phase carries a Blocked by line** — phases that must merge first, or `none`: code it needs, files it shares, or the user chose sequential. Not plan order; this graph decides what runs in parallel.
+**Locked decisions stay locked.** If the build proves one wrong, amend Decisions explicitly and name the phases it affects. Never quietly re-plan around the user's choice.
 
-**Parallelism only when it pays.** Two phases neither blocking the other and sharing no meaningful files: ask whether to run them as `2a`/`2b`, each with its own Verify line. No qualifying pair? Say sequential, don't ask.
-
-**Tasks start unchecked.** Imperative, one sitting each, naming the file: `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Ticking is `build-feature`'s job.
-
-**Tasks say what, not how.** `- [ ] Retry failed uploads (internal/upload)`, not `- [ ] Loop with exponential backoff, max 3`. The builder picks the approach; anything that must be a specific way is a Decision.
-
-**Locked decisions stay locked.** Proved wrong by the build? Amend Decisions explicitly and name the phases it invalidates. Never quietly re-plan around the user's choice.
+**List stage 2's `agent` picks at the end** so the user can overturn any.
 
 ## Plan file format
 
@@ -105,4 +97,4 @@ Phase 1 of 3 · 0/11 tasks
 <how the finished feature gets shown once every phase has merged — or `none`>
 ```
 
-Add sections the feature needs — constraints, post-merge rollout steps, what was ruled out. Nothing it doesn't.
+Add sections the feature needs, such as constraints, post-merge rollout steps, or what was ruled out. Nothing else.
