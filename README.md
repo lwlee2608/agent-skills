@@ -114,7 +114,7 @@ Remove comment noise from code at two levels.
 
 Review a local diff, a GitHub PR, or a whole codebase and report findings.
 
-- Target is passed as an argument: `diff` (default), `pr <number>`, `all`, or a path.
+- Target is passed as an argument: `diff` (default), `pr <number>`, `<base>...<head>`, `all`, or a path.
 - Each finding gets a severity, a likelihood, a worth-fixing verdict, and a high-level fix.
 - Reports only — never edits code.
 

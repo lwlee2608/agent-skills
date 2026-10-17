@@ -1,7 +1,7 @@
 ---
 name: second-opinion
 description: Use when the user asks for a second-opinion review from another agent (e.g., "get a second opinion", "review with pi", "review using gpt-6-astra", "/second-opinion"), or when review-code runs with `--second-opinion`. Runs a fresh pi session (or Claude Code, when already inside pi) on the review-code skill and relays its review.
-argument-hint: "PR number, ref range, or model"
+argument-hint: "PR number, ref range, all, path, or model"
 user-invocable: true
 ---
 
@@ -19,8 +19,8 @@ Assume the reviewer is installed, its default model is configured, and the `revi
 
 1. **Resolve the target in `review-code`'s vocabulary.** Don't compute the diff yourself.
    - PR number → `pr <N>`
-   - "PR" with no number → `pr <N>` for the current branch (`gh pr view --json number -q .number`)
-   - Ref range (e.g., `main...HEAD`) → verbatim
+   - "PR" with no number → `pr <N>` for the current branch's PR
+   - Ref range (e.g., `main...HEAD`), `all`, `codebase`, or a path → verbatim
    - Otherwise → `diff`
 
 2. **Pass the user's model verbatim to `--model`**, or omit `--model` if they named none — the reviewer falls back to its configured default.
@@ -66,6 +66,5 @@ Assume the reviewer is installed, its default model is configured, and the `revi
 
 ## Verification procedure
 
-1. The command had no session-reuse flag and no `--second-opinion`.
-2. Every reported finding has a `path:line` citation. If findings lack them, the reviewer likely never loaded `review-code` — re-run once, then report. A clean review with no findings needs no citations.
-3. If pi rejects the model, check `pi --list-models <name>` and retry with a listed name.
+1. Every reported finding has a `path:line` citation. If findings lack them, the reviewer likely never loaded `review-code` — re-run once, then report. A clean review with no findings needs no citations.
+2. If pi rejects the model, check `pi --list-models <name>` and retry with a listed name.

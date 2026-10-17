@@ -2,7 +2,7 @@
 name: review-code
 description: Use when asked to review a local diff, a GitHub PR, or a whole codebase. Reports rated findings; never edits code.
 user-invocable: true
-argument-hint: "[diff|pr <number>|all|<path>] [--sub] [--second-opinion]"
+argument-hint: "[diff|pr <number>|<base>...<head>|all|<path>] [--sub] [--second-opinion]"
 ---
 
 # Review Code
@@ -15,10 +15,11 @@ Pick the target from the argument, ignoring any flags. Default to `diff` when no
 
 1. **`diff` (default)** — local work on the current branch: uncommitted edits, unpushed commits, and already-pushed commits, reviewed together. Anchor on the base-branch fork point, **not** the branch's own remote — otherwise commits drop out of the diff once they are pushed. Include untracked files, which a plain diff omits.
 2. **`pr <number>`** (or a PR URL) — review a GitHub PR: its diff plus enough PR context (title, description, base branch) to judge intent. If the GitHub CLI is unavailable, say so and fall back to `diff`.
-3. **`all` / `codebase`** — review the whole repository. State the scope you can realistically cover and prioritize entry points, core logic, and recently changed files. Note anything skipped.
-4. **`<path>`** — a file or directory argument scopes the review to that path.
+3. **`<base>...<head>`** — review that commit range.
+4. **`all` / `codebase`** — review the whole repository. State the scope you can realistically cover and prioritize entry points, core logic, and recently changed files. Note anything skipped.
+5. **`<path>`** — a file or directory argument scopes the review to that path.
 
-For a diff/PR, review the changed lines **plus enough surrounding context** to judge them (callers, related functions). A bug is in scope even if the changed line only exposes it.
+For a diff, PR, or range, review the changed lines **plus enough surrounding context** to judge them (callers, related functions). A bug is in scope even if the changed line only exposes it.
 
 ## Where to run the review
 
@@ -26,7 +27,10 @@ Default is inline. With `--sub`, run the whole review in a subagent and relay it
 
 ## Second opinion
 
-With `--second-opinion`, first start the `second-opinion` skill on the same target in the background — it runs pi, or Claude Code when you are in pi. Then do your own review as normal; don't wait on it. When both finish, end your report with a `## Second Opinion` section holding the other agent's review verbatim. Don't merge, dedupe, or re-rate its findings. If it fails, put the error in that section; your review stands.
+With `--second-opinion`, also get a review from another agent: pi, or Claude Code when you are in pi.
+
+- **Start it first.** Run the `second-opinion` skill on the same target in the background, then review as normal without waiting. The main session starts it even with `--sub`, because a background job started by a subagent can die when the subagent exits. If the skill isn't available, say so and review alone.
+- **Append it verbatim.** End your report with a `## Second Opinion` section holding the other agent's review. Don't merge, dedupe, or re-rate its findings. If it fails, put the error there; your review stands.
 
 ## Review lens (in priority order)
 
@@ -83,13 +87,13 @@ Bump a Judgment call to **Yes** when the fix effort is Trivial; drop toward **No
 
 Lead with a `## Summary` section: header bullets, then a table of every finding sorted by worth-fixing (Yes first), then severity. Then a `## Findings` section with one block per finding. Every location must be a `file:line` you actually read. If nothing is worth reporting, omit the table and `## Findings`.
 
-For `diff`/`pr`, add a **Net effect** bullet: judge only the codebase's structural health, not the feature value. A new feature or capability is never an improvement on its own. Weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
+For `diff`, `pr`, or a range, add a **Net effect** bullet: judge only the codebase's structural health, not the feature value. A new feature or capability is never an improvement on its own. Weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
 
 ```
 ## Summary
 - **Reviewed:** <target> — <N files, what was covered>
 - **Verdict:** <one line: overall health + count of worth-fixing findings>
-- **Net effect:** Improves | Neutral | Degrades — <one-line reason> (diff/pr only)
+- **Net effect:** Improves | Neutral | Degrades — <one-line reason> (diff/pr/range only)
 
 | # | Finding | Severity | Likelihood | Worth fixing | Fix effort |
 |---|---------|----------|------------|--------------|------------|
