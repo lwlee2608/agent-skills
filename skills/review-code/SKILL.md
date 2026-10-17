@@ -30,7 +30,7 @@ Default is inline. With `--sub`, run the whole review in a subagent and relay it
 With `--second-opinion`, also get a review from another agent: pi, or Claude Code when you are in pi.
 
 - **Start it first.** Run the `second-opinion` skill on the same target in the background, then review as normal without waiting. The main session starts it even with `--sub`, because a background job started by a subagent can die when the subagent exits. If the skill isn't available, say so and review alone.
-- **Append it verbatim.** End your report with a `## Second Opinion` section holding the other agent's review. Don't merge, dedupe, or re-rate its findings. If it fails, put the error there; your review stands.
+- **Append it verbatim.** End your report with a `---` rule and a `## Second Opinion (<agent>)` section holding the other agent's review. Demote its headings one level (`##` → `###`) so it reads as nested; change nothing else. Don't merge, dedupe, or re-rate its findings. If it fails, put the error there; your review stands.
 
 ## Review lens (in priority order)
 
