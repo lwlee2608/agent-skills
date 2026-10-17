@@ -55,19 +55,19 @@ Rate a test finding by the risk it hides (the real path left unverified), not by
 **Worth fixing** — derived from severity × likelihood, adjusted for fix cost:
 
 ```
-                 Likelihood
-Severity     High        Medium      Low
-Critical     Yes         Yes         Yes
-High         Yes         Yes         Judgment call
-Medium       Yes         Judgment    No (note only)
-Low          Judgment    No          No
+                    Likelihood
+Severity     High           Medium         Low
+Critical     Yes            Yes            Yes
+High         Yes            Yes            Judgment call
+Medium       Yes            Judgment call  No (note only)
+Low          Judgment call  No             No
 ```
 
 - **Yes** — recommend fixing; include a fix.
 - **Judgment call** — explain the trade-off (fix effort vs. payoff) and give a recommendation; include a fix.
 - **No** — note it for awareness; omit the fix or keep it to one line.
 
-**Fix effort** — rate whenever a fix is included (Yes / Judgment call); omit for No:
+**Fix effort** — rate whenever a fix is included:
 - **Trivial** — a few lines, one file, no design change.
 - **Small** — localized change, under an hour of work.
 - **Medium** — touches several files or needs new tests.
@@ -77,14 +77,14 @@ Bump a Judgment call to **Yes** when the fix effort is Trivial; drop toward **No
 
 ## Report format
 
-Lead with a `## Summary` section: header bullets, then a table sorted by worth-fixing (Yes first), then severity. Then a `## Findings` section with one block per finding. If nothing is worth reporting, omit the table and `## Findings`.
+Lead with a `## Summary` section: header bullets, then a table of every finding sorted by worth-fixing (Yes first), then severity. Then a `## Findings` section with one block per finding. Every location must be a `file:line` you actually read. If nothing is worth reporting, omit the table and `## Findings`.
 
 For `diff`/`pr`, add a **Net effect** bullet: judge only the codebase's structural health, not the feature value. A new feature or capability is never an improvement on its own. Weigh what the change removes or simplifies against what it adds. It improves when callers learn less and changes land in one place; it degrades when it adds shallow layers or spreads one concern across callers. Default to Neutral without concrete evidence either way.
 
 ```
 ## Summary
 - **Reviewed:** <target> — <N files, what was covered>
-- **Verdict:** <one line: overall health + count of must-fix findings>
+- **Verdict:** <one line: overall health + count of worth-fixing findings>
 - **Net effect:** Improves | Neutral | Degrades — <one-line reason> (diff/pr only)
 
 | # | Finding | Severity | Likelihood | Worth fixing | Fix effort |
@@ -105,23 +105,10 @@ Then:
 - **Likelihood:** High — <what triggers it>
 - **Worth fixing:** Yes
 - **Issue:** <what is wrong and what goes wrong as a result>
-- **Fix:** <high-level approach, not a full patch — omit or keep to one line if Worth fixing = No>
-- **Fix effort:** Trivial | Small | Medium | Large — <one clause on what the fix touches; omit if Worth fixing = No>
+- **Fix:** <high-level approach, not a full patch>
+- **Fix effort:** Trivial | Small | Medium | Large — <one clause on what the fix touches>
 ```
-
-End with: `**Not worth fixing right now:** <one-line list>` if any No/low items were folded out, so nothing is silently dropped.
-
-## Verification procedure
-
-Before sending the report, check:
-1. **Every finding cites a real location** (`file:line`) you actually inspected — no hypothetical line numbers.
-2. **The worth-fixing verdict matches the matrix**, or you stated why you overrode it.
-3. **Every "Yes" and "Judgment call" has a concrete fix and a fix-effort rating**; every fix is high-level (approach, not a finished diff), and none was applied to the working tree.
-4. **Clean code is reported as clean.** If you found nothing worth fixing, say that plainly instead of manufacturing Low findings.
 
 ## Common mistakes to watch for
 
-- **Conflating severity with likelihood.** A SQL injection reachable only by an admin is High severity / Low likelihood — rate the two axes separately.
-- **Reviewing only changed lines.** A diff can introduce a bug whose root cause is in unchanged code a caller away; read enough context to judge it.
-- **Guessing the target state.** If the tools return nothing or error out, report that instead of reviewing an empty target.
 - **Treating test count as quality.** A PR with many mock-based unit tests can still be untested where it matters. Judge tests by what real behavior they pin down, and call out mock/fake-heavy tests as a maintainability cost.
