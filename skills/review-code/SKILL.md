@@ -2,7 +2,7 @@
 name: review-code
 description: Use when asked to review a local diff, a GitHub PR, or a whole codebase. Reports rated findings; never edits code.
 user-invocable: true
-argument-hint: "[diff|pr <number>|all|<path>] [--sub]"
+argument-hint: "[diff|pr <number>|all|<path>] [--sub] [--second-opinion]"
 ---
 
 # Review Code
@@ -23,6 +23,10 @@ For a diff/PR, review the changed lines **plus enough surrounding context** to j
 ## Where to run the review
 
 Default is inline. With `--sub`, run the whole review in a subagent and relay its report verbatim — use it for `all`/`codebase` or a large diff, where reading the files would bloat the session. Never re-review or paste back what the subagent returns. If the harness has no subagents, say so and review inline.
+
+## Second opinion
+
+With `--second-opinion`, first start the `second-opinion` skill on the same target in the background — it runs pi, or Claude Code when you are in pi. Then do your own review as normal; don't wait on it. When both finish, end your report with a `## Second Opinion` section holding the other agent's review verbatim. Don't merge, dedupe, or re-rate its findings. If it fails, put the error in that section; your review stands.
 
 ## Review lens (in priority order)
 

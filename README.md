@@ -127,9 +127,10 @@ Review, fix, and re-review until nothing worth fixing is left.
 
 ### second-opinion
 
-Get a second-opinion review from another model via `pi`.
+Get a second-opinion review from another agent: `pi`, or Claude Code when already running inside pi.
 
-- Runs a fresh `pi -p` session on pi's configured default model (override with any `pi --list-models` entry).
+- Runs a fresh headless session (`pi -p` / `claude -p`) on the reviewer's default model, or one you name.
+- Triggered by `review-code --second-opinion`, which runs it in the background alongside its own review.
 - Delegates the rubric to the `review-code` skill rather than duplicating it.
 - Read-only: edit and write tools are excluded; the review is relayed verbatim.
 
