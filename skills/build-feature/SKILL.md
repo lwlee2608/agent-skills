@@ -29,6 +29,23 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **Resume, don't restart.** First look for open PRs against the integration branch. An open PR for an unmerged phase means you are mid-cycle; its commits and review comments show which rounds ran. Outside solo mode, continue the phase's worker if the runtime still has it. Otherwise say so, and brief a fresh worker from the plan and PR.
 
+**Show the route before any work.** Once you know where you stand, print the flow as a plain-text diagram from the plan's phases, merged PRs, and open PRs. Mark each step done, in progress, or pending, so the user sees what is left. With `Blocked by:` lines, group phases into waves: a wave holds the phases whose blockers all sit in earlier waves. Name each phase's blockers, since a phase starts once its own blockers merge, not the whole wave before it. Without them, list phases in order. A one-phase plan shows `feat/<plan>` instead of the integrate branch.
+
+```
+plans/<plan>.md
+main
+ └─ integrate/<plan>
+     ├─ wave 1
+     │   └─ [x] phase 1  <title>   merged #12
+     ├─ wave 2
+     │   ├─ [~] phase 2  <title>   PR #14, review round 2
+     │   └─ [~] phase 3  <title>   building
+     ├─ wave 3
+     │   └─ [ ] phase 4  <title>   blocked by 2, 3
+     ├─ [ ] demo
+     └─ [ ] final PR ──▶ main      user merges
+```
+
 **Ask how to build before phase 1,** with `AskUserQuestion`. Record the answers as `**Build mode**` under Decisions so a resume keeps them. A one-phase plan skips this and builds solo.
 - **Orchestrator** `(Recommended)` — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Phases whose `Blocked by:` phases have merged run at once, each worker in its own git worktree. Without `Blocked by:` lines, run one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
 - **Solo** — you build every phase, with a fresh reviewer subagent per round. Later phases run on a crowded context.
