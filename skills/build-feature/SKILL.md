@@ -25,11 +25,11 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 
 **Branch as the diagram shows.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, or reuse it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. A one-phase plan skips it: branch `feat/<plan-name>` off `main`, and after the demo stop at the green PR for the user to merge.
 
-**Start at the first phase with unchecked boxes, and build only its tasks.** Never pull work forward from a later phase, even three lines; the boundary keeps the PR reviewable. Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work.
+**Start every phase with unchecked boxes whose `Blocked by:` phases have merged, and build only its tasks.** Solo takes them one at a time, in plan order. Never pull work forward from a phase not started, even three lines; the boundary keeps the PR reviewable. Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work. `Active:` lists every phase in progress, e.g. `Active: 2a, 2b · 7/15 tasks`.
 
 **Resume, don't restart.** First look for open PRs against the integration branch. An open PR for an unmerged phase means you are mid-cycle; its commits and review comments show which rounds ran. Outside solo mode, continue the phase's worker if the runtime still has it. Otherwise say so, and brief a fresh worker from the plan and PR.
 
-**Show the route before any work.** Once you know where you stand, print the flow as a plain-text diagram from the plan's phases, merged PRs, and open PRs. Mark each step done, in progress, or pending, so the user sees what is left. With `Blocked by:` lines, group phases into waves: a wave holds the phases whose blockers all sit in earlier waves. Name each phase's blockers, since a phase starts once its own blockers merge, not the whole wave before it. Without them, list phases in order. A one-phase plan shows `feat/<plan>` instead of the integrate branch.
+**Show the route before any work.** Once you know where you stand, print the flow as a plain-text diagram from the plan's phases, merged PRs, and open PRs. Mark each step done, in progress, or pending, so the user sees what is left. With `Blocked by:` lines, group phases into waves: a wave holds the phases whose blockers all sit in earlier waves. Name each phase's blockers, since a phase starts once its own blockers merge, not the whole wave before it. Without them, list phases in order. Use the plan's phase IDs as written, such as `2a`. A one-phase plan shows `feat/<plan>` instead of the integrate branch.
 
 ```
 plans/<plan>.md
@@ -38,10 +38,10 @@ main
      ├─ wave 1
      │   └─ [x] phase 1  <title>   merged #12
      ├─ wave 2
-     │   ├─ [~] phase 2  <title>   PR #14, review round 2
-     │   └─ [~] phase 3  <title>   building
+     │   ├─ [~] phase 2a <title>   PR #14, review round 2
+     │   └─ [~] phase 2b <title>   building
      ├─ wave 3
-     │   └─ [ ] phase 4  <title>   blocked by 2, 3
+     │   └─ [ ] phase 3  <title>   blocked by 2a, 2b
      ├─ [ ] demo
      └─ [ ] final PR ──▶ main      user merges
 ```

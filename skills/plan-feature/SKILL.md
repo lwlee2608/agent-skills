@@ -89,7 +89,7 @@ Good — feature slices, each one usable
 - **<question>** — _open_   <-- only while stage 1 is running
 
 ## Progress
-Phase 1 of 3 · 0/11 tasks
+Active: 1 · 0/11 tasks
 
 ### Phase 1 — <what the user gains>
 <one line: what they can do now that they could not before>
