@@ -23,14 +23,26 @@ For a diff, PR, or range, review the changed lines **plus enough surrounding con
 
 ## Where to run the review
 
-Default is inline. With `--sub`, run the whole review in a subagent and relay its report verbatim — use it for `all`/`codebase` or a large diff, where reading the files would bloat the session. Never re-review or paste back what the subagent returns. If the harness has no subagents, say so and review inline.
+Default is inline. With `--sub`, run the whole review in a subagent and relay its report verbatim — use it for `all`/`codebase` or a large diff, where reading the files would bloat the session. Never re-review or paste back what the subagent returns; the only exception is the final call under `--second-opinion`. If the harness has no subagents, say so and review inline.
 
 ## Second opinion
 
 With `--second-opinion`, also get a review from another agent: pi, or Claude Code when you are in pi.
 
 - **Start it first.** Run the `second-opinion` skill on the same target in the background, then review as normal without waiting. The main session starts it even with `--sub`, because a background job started by a subagent can die when the subagent exits. If the skill isn't available, say so and review alone.
-- **Append it verbatim.** End your report with a `---` rule and a `## Second Opinion (<agent>)` section holding the other agent's review. Demote its headings one level (`##` → `###`) so it reads as nested; change nothing else. Don't merge, dedupe, or re-rate its findings. If it fails, put the error there; your review stands.
+- **Append it verbatim.** After your report, add a `---` rule and a `## Second Opinion (<agent>)` section holding the other agent's review. Demote its headings one level (`##` → `###`) so it reads as nested; change nothing else. Don't merge, dedupe, or re-rate its findings. If it fails, put the error there; your review stands and you skip the final call.
+- **Make the final call.** Either review can be wrong, including your own subagent's. End with another `---` rule and a `## Final Call` section that decides which findings are actually worth fixing:
+  - Pair up findings that describe the same issue across both reviews.
+  - Check every finding rated Yes or Judgment call by either review, and every one the reviews rate differently, against the code at its cited `file:line`. Don't take either review's word, and don't treat agreement as proof.
+  - Rule each one **Fix**, **Optional**, or **Skip**, with a one-clause reason. Skip false positives (misread code, wrong location, path that can't run) and say why.
+  - Add no new findings here.
+
+  ```
+  | # | Finding | Source | Call | Reason |
+  |---|---------|--------|------|--------|
+  | 1 | <short title> | Main #2, Second #1 | Fix | <why> |
+  | 2 | <short title> | Second #3 | Skip | <false positive: why> |
+  ```
 
 ## Review lens (in priority order)
 
