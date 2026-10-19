@@ -15,7 +15,10 @@ The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs e
 
 **Ask the intent first.** Ask what end goal or trigger is behind the request. Offer your best guesses as options. Never infer the Why from the request; a plausible guess is still a guess. If the goal points to a smaller or different fix, say so once, then follow.
 
-**Ask how deep to interview, next:** key decisions only (recommended), ask everything, or you decide. Record it as the first Decision. It governs every question in this skill, except intent, framing gaps, and deploys, which are always asked.
+**Ask how deep to interview, next.** Record it as the first Decision. It governs every question in both stages, except intent, framing gaps, and deploys, which are always asked.
+- **Key decisions only** (recommended): ask what is expensive to reverse; settle the rest as `agent`.
+- **Ask everything:** ask every decision, cheap ones included; make no `agent` picks.
+- **Agent decides:** settle everything else as `agent`, and show the list before stage 2.
 
 **Read the code first.** Learn the files touched, the patterns, and the libraries in use. Offer only options the codebase can take.
 
@@ -23,7 +26,7 @@ The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs e
 
 **Answer what the code answers.** Library support, existing schema, and how a similar feature works are research, not decisions. Tag them `research`. Never ask what you could read.
 
-**Ask about what matters.** Under key decisions only, ask anything that shapes scope, data model, public API, or what the user sees, and settle cheap-to-reverse calls yourself. Use the Why to rank questions: ask what bears on it, settle what does not. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
+**Ask about what matters.** Under key decisions only, ask what is expensive to reverse, usually scope, data model, public API, or what the user sees, and settle cheap-to-reverse calls yourself. Use the Why to rank questions: ask what bears on it, settle what does not. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Batch independent questions, up to four per call; ask a follow-up only after the answer it depends on lands. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
 
 **Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
 
