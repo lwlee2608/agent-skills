@@ -14,6 +14,9 @@ Write short, feature-focused PR descriptions.
 ## Context
 <1–2 sentences>
 
+## User impact
+<bullet points>
+
 ## Summary
 <bullet points>
 
@@ -33,7 +36,8 @@ Write short, feature-focused PR descriptions.
 Closes #<issue>
 ```
 
-- **Context:** The business or user-facing reason, stated by a linked issue, ticket, CLAUDE.md, or the conversation. Say what the user or business gets, not how. Skip it for purely technical work (refactor, chore, dep bump).
+- **Context:** The before. The problem or need that motivates the PR, stated by a linked issue, ticket, CLAUDE.md, or the conversation. Skip it for purely technical work (refactor, chore, dep bump).
+- **User impact:** The after. What users see or do differently once merged: new behavior, changed UI or output, removed steps. Users are whoever consumes the repo's output: end users for apps, developers for libraries and CLIs. Plain language, no code terms, 1–3 bullets. Skip it when users notice nothing.
 - **Summary:** Required. Bullets proportional to PR size, focused on the changes.
 - **Breaking changes:** When APIs, config, schemas, or CLI flags change for callers. Say what breaks and what callers must change.
 - **Risk:** For any runtime behavior change. Skip it for docs, tests, or tooling-only PRs.
