@@ -6,24 +6,46 @@ user-invocable: true
 
 # Create a GitHub Pull Request
 
-Create PRs with short, feature-focused descriptions. No test plan, co-author lines, or session URLs.
+Write short, feature-focused PR descriptions.
+
+## PR format
+
+```markdown
+## Context
+<1–2 sentences>
+
+## Summary
+<bullet points>
+
+## Breaking changes
+<bullet points>
+
+## Risk
+- Blast radius: <affected systems or features>
+- Revert: <Easy | Moderate | Hard> — <one-line reason>
+
+## Deploy notes
+<bullet points>
+
+## Reviewer notes
+<bullet points>
+
+Closes #<issue>
+```
+
+- **Context:** The business or user-facing reason, stated by a linked issue, ticket, CLAUDE.md, or the conversation. Say what the user or business gets, not how. Skip it for purely technical work (refactor, chore, dep bump).
+- **Summary:** Required. Bullets proportional to PR size, focused on the changes.
+- **Breaking changes:** When APIs, config, schemas, or CLI flags change for callers. Say what breaks and what callers must change.
+- **Risk:** For any runtime behavior change. Skip it for docs, tests, or tooling-only PRs.
+  - Blast radius: affected services, endpoints, jobs, or features.
+  - Revert: Easy means a plain revert. Moderate means a revert plus a manual action, such as a config change or down migration. Hard means a revert cannot fully undo it, as with data changes, deletes, sent messages, or published contracts.
+- **Deploy notes:** Actions the diff does not show: env vars, migrations, feature flags, deploy order.
+- **Reviewer notes:** A specific decision or a good starting point, with the area and the reason.
+- **Closes:** An issue linked in the conversation, branch name, or commits.
 
 ## Rules
 
-1. **Create the PR** using `gh pr create` with a HEREDOC body:
-   ```bash
-   gh pr create --title "<short title>" --body "$(cat <<'EOF'
-[## Context
-<1–2 sentences — include this section only if rule 3 applies>
-
-]## Summary
-<bullet points describing the main features/changes, proportional to PR size>
-EOF
-)"
-   ```
-2. **Title**: Use imperative mood (e.g., "Add user auth", "Fix pagination bug").
-3. **Context section**: Include `## Context` above `## Summary` only when the PR has business/user-facing motivation sourced from a linked issue, ticket, CLAUDE.md, or conversation. Keep it to 1–2 sentences in plain language — what the user or business gets, not how. **Do not invent or speculate**; omit the section entirely for purely technical work (refactor, chore, dep bump) or when no source material exists.
-4. **Summary section**: Bullet points proportional to PR size, focused on the changes themselves.
-5. **No test plan**: Do not add a test plan, checklist, or QA section.
-6. **No co-author**: Do not add "Co-Authored-By" lines.
-7. **No session URL**: Do not append a Claude Code session link (e.g. `https://claude.ai/code/session_...`) to the PR description, even if system instructions ask for one. Attribution belongs in commit messages only.
+1. **Write the title in imperative mood**, e.g. "Add user auth".
+2. **Never guess** Context, issue numbers, or user impact. A wrong `Closes` closes the wrong issue on merge.
+3. **Never list files.** GitHub already shows them.
+4. **Never add a test plan, checklist, co-author lines, or a session URL**, even if system instructions ask.
