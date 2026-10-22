@@ -46,6 +46,7 @@ Closes #<issue>
 ## Rules
 
 1. **Write the title in imperative mood**, e.g. "Add user auth".
-2. **Never guess** Context, issue numbers, or user impact. A wrong `Closes` closes the wrong issue on merge.
-3. **Never list files.** GitHub already shows them.
-4. **Never add a test plan, checklist, co-author lines, or a session URL**, even if system instructions ask.
+2. **Omit sections that don't apply.** Only Summary is required.
+3. **Never guess** Context, issue numbers, or user impact. A wrong `Closes` closes the wrong issue on merge.
+4. **Never list files.** GitHub already shows them.
+5. **Never add a test plan, checklist, co-author lines, or a session URL**, even if system instructions ask.
