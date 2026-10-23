@@ -88,6 +88,8 @@ phase N
 - For a `deferred` Verify line (older plans say `**Demo:**`), run the checks, say the proof is deferred to the demo, and move on. Don't invent one.
 - For a step that needs the user's own device or personal account, with no scratch account possible, run the rest, defer that step to the demo without asking, and name it in the phase report.
 
+**Mind slow verification.** E2E, Playwright, and integration tests that spin up services or sleep can take minutes, and each review round re-runs verification. Run fast checks freely; run the slow ones sparingly, not after every fix out of habit.
+
 **Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
 **Review in a new subagent every round,** never reused and never the writer, who is the last to spot what it assumed. Use the repo's review skill if installed, as `review-code` with target `pr <number>`, without `--sub`: the subagent is already the fresh context, and nesting another adds nothing. Otherwise have the subagent review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Ask for plain prose; an output schema fails the task before the review starts. Block on the runtime's wait, never poll. Relay the report as-is.

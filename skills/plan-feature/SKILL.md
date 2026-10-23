@@ -57,6 +57,8 @@ Good — feature slices, each one usable
 
 **Give every phase a Verify line** that fails without the phase's code: a command, URL, click path, or test. "Checks pass" is not one. State the steps and the observable result; name queries or flags only when nothing visible shows the result. If you cannot write one, it is not a phase.
 
+**Mind slow Verify steps.** E2E, Playwright, and integration tests that spin up services or sleep can take minutes, and the builder re-runs Verify after every review fix. Fast checks are fine; plan the slow ones to run sparingly.
+
 **Verify locally,** with a dev server, test database, or scratch account. The builder must run every Verify line without stopping. If there is no local proof, add a fixture rather than target production.
 - A step that needs a deployed URL, shared database, or production credential is a rollout step. List it at the end of the plan for the user to run after merge.
 - A step that needs the user's own device or personal account goes in `## Demo`.
