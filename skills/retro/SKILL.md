@@ -14,7 +14,7 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
 2. **Condense the transcript before you read it.** Transcripts run to megabytes, mostly tool output. Extract a short timeline: each user prompt, and each tool call with its time, duration, input, and error. Read a full result only when one error needs it.
 
-3. **Time each phase.** Phases are understanding, implementing, testing, reviewing, and other (git, CI, deploy). A phase lasts until the next one starts. Time waiting for the user is not agent time; report it apart. Background tasks finish later than their call shows, so use their completion notice. Skip this retro's own calls.
+3. **Time each phase.** Phases are understanding, implementing, testing, reviewing, and other (git, CI, deploy). A phase lasts until the next one starts. Time waiting for the user is not agent time; report it apart. Questions to the user and permission prompts count as user wait. Background tasks finish later than their call shows, so use their completion notice. Skip this retro's own calls.
 
 4. **Flag slow checks run again for no reason.** Slow means Playwright, e2e, integration, full suites, or CI watches. A rerun is waste when no covered code changed, or a narrower check would have proved the fix. A rerun after a relevant change is fine.
 
