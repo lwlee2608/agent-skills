@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-20-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-21-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -109,6 +109,16 @@ Show this session's ID so another agent session can find or message it.
 - Reads `CLAUDE_CODE_SESSION_ID` (Claude Code) or `PI_SESSION_ID` (pi).
 - OpenCode has no session-ID env var, so it takes the newest session for the current directory.
 - Prints harness, session ID, working directory, git branch, PID, transcript path, and resume command.
+
+### retro
+
+Review a Claude Code or pi session transcript and report how well it ran.
+
+- Defaults to the current session; takes a session ID or transcript path.
+- Condenses the transcript to a timeline instead of reading megabytes of raw output.
+- Times each phase: understanding, implementing, testing, reviewing, and user wait.
+- Flags slow suites (Playwright, e2e, integration, CI) rerun with nothing changed, tool-call errors by cause, and skill inefficiencies.
+- Reports only — suggests the file and one-line change, never edits.
 
 ### trim-comments
 
