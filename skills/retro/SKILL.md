@@ -32,7 +32,9 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
 7. **Report only; never edit.** The user decides what to change.
 
-8. **Reply in this format.** Cite a timestamp for every finding. Omit empty sections. If the session ran clean, say so in one line; never invent findings.
+8. **Grade by share of agent time wasted.** A: none. B: under 10%. C: 10–25%. D: 25–50%. F: over 50%, or the task failed.
+
+9. **Reply in this format.** Cite a timestamp for every finding. Omit empty sections. If the session ran clean, say so in one line; never invent findings.
 
    ```
    Session: <id> (<harness>), <start>–<end>, <agent time> agent / <user wait> user wait
