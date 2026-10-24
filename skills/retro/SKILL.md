@@ -34,34 +34,36 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
 8. **Grade by share of agent time wasted.** A: none. B: under 10%. C: 10–25%. D: 25–50%. F: over 50%, or the task failed.
 
-9. **Draw the subagent tree when the session spawned any.** Nest each agent under its spawner, one line each: ID, role and task, span, agent time, outcome. Agent time excludes waiting on other agents, so parallel agents can sum past wall time. Group `build-feature` runs by phase. Tag waste at the end of its line. Example, a `build-feature` orchestrator run:
+9. **Chart the subagents when the session spawned any.** One row per agent, nested under its spawner, with bars on a shared time axis: `█` working, `░` alive but waiting on another agent. Overlapping bars ran in parallel; staggered bars ran in sequence. End each row with agent time, which counts only `█`, so parallel agents can sum past wall time. Then add the task or outcome and any waste tag. Render the chart with a script from the condensed timeline; never place bars by hand. Scale it to about 60 columns. Group `build-feature` runs by phase. Example, a `build-feature` orchestrator run at 2 minutes per column:
 
    ```
-   you  orchestrator                        10:00–11:40  14m
-    ├─ phase 1                              10:02–11:01
-    │   ├─ W1  worker  build, PR #12        10:02–10:54  39m
-    │   ├─ R1  review  round 1, 3 findings  10:32–10:38   6m
-    │   ├─ R2  review  round 2, 1 finding   10:46–10:51   5m
-    │   └─ R3  review  round 3, clean       10:55–10:59   4m
-    ├─ phase 2a (parallel with 2b)          11:02–11:35
-    │   ├─ W2  worker  build, PR #13        11:02–11:30  24m  waste: e2e 3×, +10m
-    │   ├─ R1  review  round 1, clean       11:14–11:19   5m
-    │   └─ R2  review  round 2, clean       11:21–11:25   4m
-    └─ phase 2b (parallel with 2a)          11:02–11:38
-        ├─ W3  worker  build, PR #14        11:02–11:33  27m
-        ├─ R1  review  round 1, 2 findings  11:16–11:22   6m
-        └─ R2  review  round 2, clean       11:27–11:31   4m
+                       10:00          10:30          11:00          11:30
+   you  orchestrator   █░░░░░░░░░░░░░░█░░░█░░█░░█░█░██░░░░░░░░░░░░░░█░███   16m
+    ├─ phase 1
+    │   ├─ W1  worker   ██████████████░░░░███░░░██░░                        39m
+    │   ├─ R1  review                  ███                                   6m  3 findings
+    │   ├─ R2  review                         ██                             5m  1 finding
+    │   └─ R3  review                             ██                         4m  clean
+    ├─ phase 2a
+    │   ├─ W2  worker                                 ██████░░█░░███░░      19m  waste: e2e 3×, +10m
+    │   ├─ R1  review                                       ██               5m  clean
+    │   └─ R2  review                                          ██            4m  clean
+    └─ phase 2b
+        ├─ W3  worker                                 ███████░░░██░░█░░░    21m
+        ├─ R1  review                                        ███             6m  2 findings
+        └─ R2  review                                             ██         4m  clean
    ```
 
-   Subagents the harness spawned on its own have no phases; list them in spawn order, role as agent type, task as spawn description:
+   Subagents the harness spawned on its own have no phases; list them in spawn order, with the agent type as role. Example at 1 minute per column:
 
    ```
-   you  main session                         14:00–14:52  31m
-    ├─ E1  Explore  find auth handlers       14:03–14:06   3m
-    ├─ E2  Explore  find session store       14:03–14:05   2m
-    ├─ G1  general  check diagram alignment  14:31–14:33   2m  waste: 6-line diagram, inline is faster
-    └─ G2  general  review-code, local diff  14:40–14:49   9m
-        └─ E3  Explore  find callers         14:42–14:44   2m
+                       14:00          14:15          14:30          14:45
+   you  main session   ███░░░█████████████████████████░░███████░░░░░░░░░███   38m
+    ├─ E1  Explore        ███                                                  3m  find auth handlers
+    ├─ E2  Explore        ██                                                   2m  find session store
+    ├─ G1  general                                    ██                       2m  check diagram alignment; waste: 6 lines, inline is faster
+    └─ G2  general                                             ██░░█████       7m  review-code, local diff
+        └─ E3  Explore                                           ██            2m  find callers
    ```
 
 10. **Reply in this format.** Cite a timestamp for every finding. Omit empty sections. If the session ran clean, say so in one line; never invent findings.
@@ -74,7 +76,7 @@ Review a session transcript. Report how well it ran, where the time went, and wh
    | Phase | Time | % | Notes |
 
    Subagents
-   <tree from rule 9>
+   <chart from rule 9>
 
    Wasteful verification
    - <suite> run <N>× (<total>) at <times> — <why wasteful>; saves ~<time>
