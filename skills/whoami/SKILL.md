@@ -24,7 +24,7 @@ Report how another session can reach this one: harness, session ID, working dire
 
 3. **Print only the env vars you need.** Never dump the whole environment; it holds API keys.
 
-4. **Include the working directory and git branch.** Claude Code and pi group sessions by project directory, so another session must resume from it. Omit the branch outside a git repo.
+4. **Include the working directory and git branch.** Claude Code and pi group sessions by project directory, so another session must resume from it. Omit the branch outside a git repo, and end the branch lookup with `|| true` — git exits 128 there, and harnesses render the whole call as a failure.
 
 5. **Warn against resuming a live session.** Two processes writing one session interleave or fork its history. A live peer should read the transcript; resume only after this session exits.
 
