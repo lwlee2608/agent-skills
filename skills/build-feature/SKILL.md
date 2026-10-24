@@ -71,7 +71,7 @@ Then, in one more call, ask which model each subagent role uses: the reviewer al
 
 **No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
-**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, and this skill's rules on scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. In solo mode, you are the worker.
+**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, and this skill's rules on scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. In solo mode, you are the worker.
 
 ```
 phase N
@@ -96,7 +96,7 @@ phase N
 
 **Run two or three rounds** on the same PR, each after the previous fix commits land. Round 2 always runs, even after a clean round 1, because a fresh reviewer catches what the first missed. Round 3 runs only if round 2 produced fixes. Three is the cap: if round 3 leaves a worth-fixing High or Critical finding, stop before merging, since the phase is too big to converge. Report it with what you would do, and ask the user. Otherwise fix, re-verify, merge, and note in the phase report that those last fixes merged unreviewed.
 
-**Fix only what's worth fixing.** Fix every worth-fixing finding. Fix a judgment call if it is small and in this phase's scope; otherwise log it in the plan. Leave nits. Commit fixes separately so the next round sees them. Name what you skipped in one line; a silently dropped finding reads as one that never existed.
+**Fix only what's worth fixing.** Fix every worth-fixing finding. Fix a judgment call if it is small and in this phase's scope; otherwise log it in the plan. Leave nits. One finding can name several defects; the fix brief lists each one, and a fix covers them all. Commit fixes separately so the next round sees them. Name what you skipped in one line; a silently dropped finding reads as one that never existed.
 
 **Merge only when all four hold:** fast checks pass after the last fix commit and slow checks pass after the last fix that touched them, the required rounds ran, no worth-fixing finding is left, and CI is green. Wait on CI with one blocking call, not a poll loop. If the PR is behind the integration branch, merge it in and re-verify first. Use a merge commit, never squash; the per-phase history is the record. Then delete the phase branch and return to an up-to-date integration branch.
 
