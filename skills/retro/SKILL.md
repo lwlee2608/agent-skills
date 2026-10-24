@@ -10,7 +10,7 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
 ## Rules
 
-1. **Default to the current session.** Accept a session ID or a transcript path instead. Include subagent transcripts, since their work counts too. OpenCode keeps sessions in a database, so say it is not supported.
+1. **Default to the current session.** Find it by this session's ID, never by the newest file; parallel sessions share a project folder. Accept a session ID or a transcript path instead. Include subagent transcripts, since their work counts too. OpenCode keeps sessions in a database, so say it is not supported.
 
 2. **Condense the transcript before you read it.** Transcripts run to megabytes, mostly tool output. Extract a short timeline: each user prompt, and each tool call with its time, duration, input, and error. Read a full result only when one error needs it.
 
