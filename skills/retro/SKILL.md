@@ -34,7 +34,37 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
 8. **Grade by share of agent time wasted.** A: none. B: under 10%. C: 10–25%. D: 25–50%. F: over 50%, or the task failed.
 
-9. **Reply in this format.** Cite a timestamp for every finding. Omit empty sections. If the session ran clean, say so in one line; never invent findings.
+9. **Draw the subagent tree when the session spawned any.** Nest each agent under its spawner, one line each: ID, role and task, span, agent time, outcome. Agent time excludes waiting on other agents, so parallel agents can sum past wall time. Group `build-feature` runs by phase. Tag waste at the end of its line. Example, a `build-feature` orchestrator run:
+
+   ```
+   you  orchestrator                        10:00–11:40  14m
+    ├─ phase 1                              10:02–11:01
+    │   ├─ W1  worker  build, PR #12        10:02–10:54  39m
+    │   ├─ R1  review  round 1, 3 findings  10:32–10:38   6m
+    │   ├─ R2  review  round 2, 1 finding   10:46–10:51   5m
+    │   └─ R3  review  round 3, clean       10:55–10:59   4m
+    ├─ phase 2a (parallel with 2b)          11:02–11:35
+    │   ├─ W2  worker  build, PR #13        11:02–11:30  24m  waste: e2e 3×, +10m
+    │   ├─ R1  review  round 1, clean       11:14–11:19   5m
+    │   └─ R2  review  round 2, clean       11:21–11:25   4m
+    └─ phase 2b (parallel with 2a)          11:02–11:38
+        ├─ W3  worker  build, PR #14        11:02–11:33  27m
+        ├─ R1  review  round 1, 2 findings  11:16–11:22   6m
+        └─ R2  review  round 2, clean       11:27–11:31   4m
+   ```
+
+   Subagents the harness spawned on its own have no phases; list them in spawn order, role as agent type, task as spawn description:
+
+   ```
+   you  main session                         14:00–14:52  31m
+    ├─ E1  Explore  find auth handlers       14:03–14:06   3m
+    ├─ E2  Explore  find session store       14:03–14:05   2m
+    ├─ G1  general  check diagram alignment  14:31–14:33   2m  waste: 6-line diagram, inline is faster
+    └─ G2  general  review-code, local diff  14:40–14:49   9m
+        └─ E3  Explore  find callers         14:42–14:44   2m
+   ```
+
+10. **Reply in this format.** Cite a timestamp for every finding. Omit empty sections. If the session ran clean, say so in one line; never invent findings.
 
    ```
    Session: <id> (<harness>), <start>–<end>, <agent time> agent / <user wait> user wait
@@ -42,6 +72,9 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
    Time by phase
    | Phase | Time | % | Notes |
+
+   Subagents
+   <tree from rule 9>
 
    Wasteful verification
    - <suite> run <N>× (<total>) at <times> — <why wasteful>; saves ~<time>
