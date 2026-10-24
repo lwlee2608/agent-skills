@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-19-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-20-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -101,6 +101,14 @@ Condense the current conversation into a handoff document for another agent to p
 - Writes a summary to `/tmp` with a "Suggested skills" section.
 - References existing artifacts (PRDs, ADRs, commits) by path or URL rather than duplicating them.
 - Redacts API keys, passwords, and other sensitive information.
+
+### whoami
+
+Show this session's ID so another agent session can find or message it.
+
+- Reads `CLAUDE_CODE_SESSION_ID` (Claude Code) or `PI_SESSION_ID` (pi).
+- OpenCode has no session-ID env var, so it takes the newest session for the current directory.
+- Prints harness, session ID, working directory, git branch, PID, transcript path, and resume command.
 
 ### trim-comments
 
