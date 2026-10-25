@@ -67,11 +67,11 @@ you ─┬─ phase 1 ── reviewers
 one context, grows each phase
 ```
 
-Then, in one more call, ask which model each subagent role uses: the reviewer always, the worker only in Orchestrator mode. Recommend your own model. If the spawn tool takes an effort parameter, ask effort too: reviewer at yours, worker one step down (`xhigh`→`high`, `high`→`medium`). Your effort is not in your context, so never guess it; in Claude Code, read `$CLAUDE_EFFORT`. If you cannot find it, offer the levels without a recommendation. If the spawn tool has no effort parameter, say once that subagents run at their agent definition's effort.
+**Don't ask which models subagents use.** Both run your model unless the user's argument says otherwise. With an effort parameter, the reviewer runs at your effort and the worker one step down (`high`→`medium`). In Claude Code read `$CLAUDE_EFFORT`; never guess it, and leave effort unset if you can't find it. Record each role's model and effort with the build mode.
 
 **No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
-**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, and this skill's rules on scope, verifying, PRs, fixes, and locked decisions. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. In solo mode, you are the worker.
+**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, this skill's rules on scope, verifying, PRs, fixes, and locked decisions, and its common mistakes. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. In solo mode, you are the worker.
 
 ```
 phase N
@@ -98,7 +98,7 @@ phase N
 
 **Fix only what's worth fixing.** Fix every worth-fixing finding. Fix a judgment call if it is small and in this phase's scope; otherwise log it in the plan. Leave nits. One finding can name several defects; the fix brief lists each one, and a fix covers them all. Commit fixes separately so the next round sees them. Name what you skipped in one line; a silently dropped finding reads as one that never existed.
 
-**Merge only when all four hold:** fast checks pass after the last fix commit and slow checks pass after the last fix that touched them, the required rounds ran, no worth-fixing finding is left, and CI is green. Wait on CI with one blocking call, not a poll loop. If the PR is behind the integration branch, merge it in and re-verify first. Use a merge commit, never squash; the per-phase history is the record. Then delete the phase branch and return to an up-to-date integration branch.
+**Merge only when all four hold:** fast checks pass after the last fix commit and slow checks pass after the last fix that touched them, the required rounds ran, no worth-fixing finding is left, and CI is green. Wait on CI with one blocking call, not a poll loop. If the PR is behind the integration branch, merge it in and re-verify first. Use a merge commit, never squash; the per-phase history is the record. Once GitHub reports the PR merged, delete the phase branch and return to an up-to-date integration branch.
 
 **Report each phase in one block, then start the next** without asking, unless the user asked you to pause. Include the PR link, tasks done, findings fixed and skipped, and what you ran.
 
@@ -107,3 +107,10 @@ phase N
 **Run the demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. `none` skips to the final PR. If you can't run it yourself, hand the user the steps and wait. Never invent a demo or stage one per phase. Add every deferred user-only Verify step to the handoff. If the plan has no `## Demo` (older plans), ask, record the answer in the plan, then run it. A broken demo gets fixed in the phase that owns it, through the same branch, review, and merge cycle.
 
 **Open the final PR from the integration branch to `main`** with the feature summary, the phase PRs, the demo and its result, any deferred Verify steps still unrun, commands the user can run, and any post-merge steps from the plan. If `main` moved, merge it in and re-run the checks. Then stop; the user merges that PR.
+
+## Common mistakes to watch for
+
+- **Chaining merge and branch delete with `;`.** A hung merge let the delete run and closed the PR.
+- **Tests or `git fetch` with no `timeout`.** A hang blocks the call until the tool gives up.
+- **`cd /abs/worktree &&` or `git -C` in a worktree.** The isolation guard rejects them; run plain commands from the worktree root.
+- **Relaying a cut-off review.** If a report ends mid-finding, ask the reviewer for the rest.

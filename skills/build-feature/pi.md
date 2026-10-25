@@ -5,8 +5,8 @@ Maps build-feature's spawn, wait, continue, resume, and retire steps to the `sub
 **Check the tool before asking how to build.** It is `@lwlee2608/pi-subagent` only if `action` accepts exactly `start`, `message`, `wait`, `status`, `stop`, `reply`, and `recover` — npm `pi-subagents` also has an `action` parameter, so its presence proves nothing. No `subagent` tool: stop and tell the user to install `@lwlee2608/pi-subagent`. Any other `subagent` tool: ignore the calls below and build Solo with its one-shot reviewer through its own API; leave Orchestrator out of the mode question and say it needs `@lwlee2608/pi-subagent`. Never install or swap extensions yourself, and never load two `subagent` tools.
 
 ```json
-{"action":"start","agent":"worker","lifetime":"retained","cwd":"<phase-worktree>","label":"Phase <n>","model":"<provider/model>","effort":"<effort>","task":"<brief>"}
-{"action":"start","agent":"reviewer","lifetime":"once","cwd":"<phase-worktree>","parentWorkerId":"<worker-id>","model":"<provider/model>","effort":"<effort>","task":"<review brief>"}
+{"action":"start","agent":"worker","lifetime":"retained","cwd":"<phase-worktree>","label":"Phase <n>","task":"<brief>"}
+{"action":"start","agent":"reviewer","lifetime":"once","cwd":"<phase-worktree>","parentWorkerId":"<worker-id>","task":"<review brief>"}
 {"action":"wait","runIds":["<run-id>"]}
 {"action":"reply","questionId":"<question-id>","message":"<answer>"}
 {"action":"message","workerId":"<worker-id>","mode":"task","label":"Phase <n> round <r>","message":"<full report + fix brief>"}
@@ -14,7 +14,7 @@ Maps build-feature's spawn, wait, continue, resume, and retire steps to the `sub
 {"action":"stop","workerId":"<worker-id>"}
 ```
 
-**Start returns admission, not success.** Keep the returned `workerId` and `runId`, then `wait`. Pass the recorded model and effort on every `start`; an unsupported pick fails instead of falling back.
+**Start returns admission, not success.** Keep the returned `workerId` and `runId`, then `wait`. Omit `model` and `effort` unless the user's argument names them; children take the agent file's pick, else yours. An unsupported pick fails instead of falling back.
 
 **You own the worktree.** Create it on the phase branch before starting the worker — `git worktree add -b <plan>-phase-<n> <path> integrate/<plan-name>` — so the worker skips cutting the branch.
 
