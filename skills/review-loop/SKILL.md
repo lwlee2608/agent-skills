@@ -11,16 +11,18 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 ## Rules
 
-1. **Review in a fresh subagent every round.** Invoke `review-code` with `<target> --sub` (default target `diff`). If `review-code` is missing, spawn a subagent to review for correctness, security, resource, and performance defects, rating each finding Yes / Judgment call / No for worth fixing. Never review your own fixes inline. With `--second-opinion`, add it to round 1 only; later rounds review small fix diffs and stay `--sub`.
+1. **Review in a fresh subagent every round.** Invoke `review-code` with `<target> --sub` (default target `diff`). If `review-code` is missing, spawn a subagent to review for correctness, security, resource, and performance defects, rating each finding Yes / Judgment call / No for worth fixing. Never review your own fixes inline.
 
-2. **Use `diff` from round 2 for every target, including paths.** GitHub does not see unpushed fixes, re-reviewing the whole codebase wastes context, and path-scoped reviews can miss fixes in related files. For `pr <number>`, run `gh pr checkout <number>` first.
+2. **Pass `--second-opinion` to round 1 only.** Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
 
-3. **Fix every Yes; fix a Judgment call only if Trivial or Small.** Skip No. When a round has a Final Call, act on it instead: Fix → fix, Optional → fix only if Trivial or Small, Skip → skip. Do not re-fix or re-argue a skipped item when a later round raises it again.
+3. **Use `diff` from round 2 for every target, including paths.** GitHub does not see unpushed fixes, re-reviewing the whole codebase wastes context, and path-scoped reviews can miss fixes in related files. For `pr <number>`, check out the PR first.
 
-4. **Run the repo's checks after each round's fixes** (`make build` / `make test` / `make lint`, else native commands). Fix breakage before the next review.
+4. **Fix every Yes; fix a Judgment call only if Trivial or Small.** Skip No. When a round has a Final Call, act on it instead: Fix → fix, Optional → fix only if Trivial or Small, Skip → skip. Do not re-fix or re-argue a skipped item when a later round raises it again.
 
-5. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings.
+5. **Run the repo's checks after each round's fixes** (`make build` / `make test` / `make lint`, else native commands). Fix breakage before the next review.
 
-6. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push. On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
+6. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings.
 
-7. **Report at the end:** rounds run and why it stopped, fixes (`path:line` — what changed), skipped findings with a reason each, open findings, and check results.
+7. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push. On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
+
+8. **Report at the end:** rounds run and why it stopped, fixes (`path:line` — what changed), skipped findings with a reason each, open findings, and check results.
