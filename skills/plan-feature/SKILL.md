@@ -28,7 +28,7 @@ The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs e
 
 **Ask about what matters.** Under key decisions only, ask what is expensive to reverse, usually scope, data model, public API, or what the user sees, and settle cheap-to-reverse calls yourself. Use the Why to rank questions: ask what bears on it, settle what does not. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Batch independent questions, up to four per call; ask a follow-up only after the answer it depends on lands. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
 
-**Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a locked guess made before the code exists binds them to it.
+**Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a locked guess made before the code exists binds them to it. Leave branching and merge targets to the build skill. Restate rules from other docs that bind the build, like an earlier plan's verification budget; a fresh builder skips a pointer.
 
 **Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
 
@@ -57,7 +57,7 @@ Good — feature slices, each one usable
 
 **Give every phase a Verify line** that fails without the phase's code: a command, URL, click path, or test. "Checks pass" is not one. State the steps and the observable result; name queries or flags only when nothing visible shows the result. If you cannot write one, it is not a phase.
 
-**Mind slow Verify steps.** The builder re-runs fast checks after every review fix but slow ones (E2E, Playwright, integration tests that boot services or sleep) only before the PR and before merge. Keep the Verify line's proof fast where a test can show it; leave cross-repo runs to `## Demo`.
+**Mind slow Verify steps.** The builder re-runs fast checks after every review fix but slow ones (E2E, Playwright, integration tests that boot services or sleep) only before the PR, after a fix that touches them, and in full before merge when CI doesn't. A Verify line runs only the phase's own slow cases, by file or name filter, never the whole suite. Keep its proof fast where a test can show it; leave cross-repo runs to `## Demo`.
 
 **Verify locally,** with a dev server, test database, or scratch account. The builder must run every Verify line without stopping. If there is no local proof, add a fixture rather than target production.
 - A step that needs a deployed URL, shared database, or production credential is a rollout step. List it at the end of the plan for the user to run after merge.
