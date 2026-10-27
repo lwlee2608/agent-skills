@@ -1,7 +1,7 @@
 ---
 name: review-loop
 description: Use only when the user explicitly asks to review and fix in a loop until clean. Not for plain reviews (use review-code); never invoke proactively.
-argument-hint: "[diff|pr <number>|all|<path>] [--commit each|end] [--second-opinion]"
+argument-hint: "[diff|pr <number>|all|<path>] [--commit each|end] [--second-opinion] [--merge]"
 user-invocable: true
 ---
 
@@ -23,6 +23,8 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 6. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings.
 
-7. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push. On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
+7. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push, except under `--merge` (rule 8). On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
 
-8. **Report at the end:** rounds run and why it stopped, fixes (`path:line` — what changed), skipped findings with a reason each, open findings, and check results.
+8. **With `--merge`, merge only a clean loop.** Merge only if no findings are open and checks pass; otherwise skip it and say why. Push the branch, then merge its PR by reading and following `merge-pr`'s SKILL.md. The Skill tool refuses it because it is user-only; the flag is the user's go-ahead. If the branch has no PR or `merge-pr` is missing, say so and stop.
+
+9. **Report at the end:** rounds run and why it stopped, fixes (`path:line` — what changed), skipped findings with a reason each, open findings, check results, and the merge result under `--merge`.
