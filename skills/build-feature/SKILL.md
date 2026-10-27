@@ -88,7 +88,7 @@ phase N
 - For a `deferred` Verify line (older plans say `**Demo:**`), run the checks, say the proof is deferred to the demo, and move on. Don't invent one.
 - For a step that needs the user's own device or personal account, with no scratch account possible, run the rest, defer that step to the demo without asking, and name it in the phase report.
 
-**Mind slow verification.** Fast checks run after the build and every fix commit. Slow ones (E2E, Playwright, integration tests that boot services or sleep) run in slices: before the PR, only the phase's own slow cases, as its Verify line names them; after a fix, only the cases it touched. Before merge, run the full slow suite once if CI doesn't, since it is the only guard on what earlier phases built. Rules in the plan override these. Reviewers don't run slow checks.
+**Mind slow verification.** Fast checks run after the build and every fix commit. Slow ones (E2E, Playwright, integration tests that boot services or sleep) run only the cases covering what changed, new ones included: the phase's before the PR, each fix's after it. Before merge, run the full slow suite once if CI doesn't. The plan's rules win. Reviewers don't run slow checks.
 
 **Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
@@ -98,7 +98,7 @@ phase N
 
 **Fix only what's worth fixing.** Fix every worth-fixing finding. Fix a judgment call if it is small and in this phase's scope; otherwise log it in the plan. Leave nits. One finding can name several defects; the fix brief lists each one, and a fix covers them all. Commit fixes separately so the next round sees them. Name what you skipped in one line; a silently dropped finding reads as one that never existed.
 
-**Merge only when all four hold:** fast checks pass after the last fix commit, the phase's slow cases pass after the last fix that touched them and the full slow suite after the last commit when CI doesn't run it, the required rounds ran, no worth-fixing finding is left, and CI is green. Wait on CI with one blocking call, not a poll loop. If the PR is behind the integration branch, merge it in and re-verify first. Use a merge commit, never squash; the per-phase history is the record. Once GitHub reports the PR merged, delete the phase branch and return to an up-to-date integration branch.
+**Merge only when all four hold:** fast checks pass after the last fix commit, slow cases after the last fix that changed what they cover, the full slow suite after the last commit if CI doesn't run it, the required rounds ran, no worth-fixing finding is left, and CI is green. Wait on CI with one blocking call, not a poll loop. If the PR is behind the integration branch, merge it in and re-verify first. Use a merge commit, never squash; the per-phase history is the record. Once GitHub reports the PR merged, delete the phase branch and return to an up-to-date integration branch.
 
 **Report each phase in one block, then start the next** without asking, unless the user asked you to pause. Include the PR link, tasks done, findings fixed and skipped, and what you ran.
 
