@@ -67,7 +67,7 @@ you ─┬─ phase 1 ── reviewers
 one context, grows each phase
 ```
 
-**Don't ask which models subagents use.** Both run your model unless the user's argument says otherwise. With an effort parameter, the reviewer runs at your effort and the worker one step down (`high`→`medium`). In Claude Code read `$CLAUDE_EFFORT`; never guess it, and leave effort unset if you can't find it. Record each role's model and effort with the build mode.
+**Ask which model and effort each subagent uses,** in one more call: the reviewer always, the worker only in Orchestrator mode. Recommend your model, your effort for the reviewer, and one step lower for the worker. Read your effort from the environment; never guess it. Record the picks with the build mode.
 
 **No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
