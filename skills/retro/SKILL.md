@@ -31,6 +31,8 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
    Tie each to the skill, instruction file, or habit that should change.
 
+   Report only improvements worth the user's effort to make; drop nitpicks and one-off slips. At most 3; none is fine.
+
 7. **Report only; never edit.** The user decides what to change.
 
 8. **Grade by share of agent time wasted.** A: none. B: under 10%. C: 10–25%. D: 25–50%. F: over 50%, or the task failed.
@@ -86,5 +88,5 @@ Review a session transcript. Report how well it ran, where the time went, and wh
    - <N>× <cause> at <times> — <fix>
 
    Improvements
-   1. <file or skill>: <one-line change> — <evidence>
+   1. <file or skill>: <one-line change> — <evidence>; saves ~<time>
    ```
