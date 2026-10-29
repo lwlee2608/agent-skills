@@ -31,7 +31,7 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
    Tie each to the skill, instruction file, or habit that should change.
 
-   Report only improvements worth the user's effort to make; drop nitpicks and one-off slips. At most 3; none is fine.
+   Report only improvements worth the user's effort to make; drop nitpicks and one-off slips. None is fine.
 
 7. **Report only; never edit.** The user decides what to change.
 
@@ -88,5 +88,5 @@ Review a session transcript. Report how well it ran, where the time went, and wh
    - <N>× <cause> at <times> — <fix>
 
    Improvements
-   1. <file or skill>: <one-line change> — <evidence>; saves ~<time>
+   1. <file or skill>: <one-line change> — <evidence>
    ```
