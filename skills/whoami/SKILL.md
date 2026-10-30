@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Who Am I
 
-Report how another session can reach this one: harness, session ID, working directory, transcript, resume command, PID, and git branch.
+Report how another session can reach this one: harness, session ID, working directory, transcript, resume command, PID, git branch, and tmux pane.
 
 ## Rules
 
@@ -27,9 +27,11 @@ Report how another session can reach this one: harness, session ID, working dire
 
 4. **Include the working directory and git branch.** Claude Code and pi group sessions by project directory, so another session must resume from it. Omit the branch outside a git repo, and end the branch lookup with `|| true` — git exits 128 there, and harnesses render the whole call as a failure.
 
-5. **Warn against resuming a live session.** Two processes writing one session interleave or fork its history. A live peer should read the transcript; resume only after this session exits.
+5. **Include the tmux pane when `$TMUX_PANE` is set.** pi and OpenCode have no message channel between sessions, so a peer reaches them by typing into this session's tmux pane. Omit the field outside tmux.
 
-6. **Reply in this format and nothing else:**
+6. **Warn against resuming a live session.** Two processes writing one session interleave or fork its history. A live peer should read the transcript; resume only after this session exits.
+
+7. **Reply in this format and nothing else:**
 
    ```
    harness:    <Claude Code | pi | OpenCode>
@@ -37,8 +39,9 @@ Report how another session can reach this one: harness, session ID, working dire
    cwd:        <absolute path>
    branch:     <git branch>
    pid:        <pid>
+   tmux:       <pane id>
    transcript: <absolute path>
    resume:     cd <cwd> && <resume command>  (only after this session exits)
    ```
 
-7. **If no harness matches, say so.** Don't fall back to a made-up ID.
+8. **If no harness matches, say so.** Don't fall back to a made-up ID.
