@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-21-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-22-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -172,6 +172,14 @@ Plan work too big for one session as a single markdown file under `plans/`.
 - Plans only — never implements.
 
 ### build-feature
+
+Build one feature end to end from a description, without a plan file.
+
+- Spawns a worker subagent that builds on `feat/<slug>`, verifies, and opens a PR to `main`.
+- Runs `review-loop --merge` on the PR, with `--second-opinion` if the user picks it, merging once clean.
+- Asks first if given a plan file, since that flow moved to `implement-plan-feature`.
+
+### implement-plan-feature
 
 Implement a phased plan file one phase at a time, one PR per phase.
 
