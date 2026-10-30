@@ -175,8 +175,9 @@ Plan work too big for one session as a single markdown file under `plans/`.
 
 Build one feature end to end from a description, without a plan file.
 
-- Spawns a worker subagent that builds on `feat/<slug>`, verifies, and opens a PR to `main`.
-- Runs `review-loop --merge` on the PR, with `--second-opinion` if the user picks it, merging once clean.
+- Spawns one worker subagent that builds on `feat/<slug>`, verifies, opens a PR to `main`, and fixes review findings.
+- Reviews in two or three rounds, each in a fresh subagent; runs slow checks only where the change is.
+- Merges with a merge commit once checks and CI pass.
 - Asks first if given a plan file, since that flow moved to `implement-plan-feature`.
 
 ### implement-plan-feature
