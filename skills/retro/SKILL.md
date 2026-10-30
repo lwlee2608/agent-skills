@@ -37,7 +37,7 @@ Review a session transcript. Report how well it ran, where the time went, and wh
 
 8. **Grade by share of agent time wasted.** A: none. B: under 10%. C: 10–25%. D: 25–50%. F: over 50%, or the task failed.
 
-9. **Chart the subagents when the session spawned any.** One row per agent, nested under its spawner, with bars on a shared time axis: `█` working, `░` alive but waiting on another agent. Overlapping bars ran in parallel; staggered bars ran in sequence. End each row with agent time, which counts only `█`, so parallel agents can sum past wall time. Then add the task or outcome and any waste tag. Render the chart with a script from the condensed timeline; never place bars by hand. Scale it to about 60 columns. Group `build-feature` runs by phase. Example, a `build-feature` orchestrator run at 2 minutes per column:
+9. **Chart the subagents when the session spawned any.** One row per agent, nested under its spawner, with bars on a shared time axis: `█` working, `░` alive but waiting on another agent. Overlapping bars ran in parallel; staggered bars ran in sequence. End each row with agent time, which counts only `█`, so parallel agents can sum past wall time. Then add the task or outcome and any waste tag. Render the chart with a script from the condensed timeline; never place bars by hand. Scale it to about 60 columns. Group `implement-plan-feature` runs by phase. Example, an `implement-plan-feature` orchestrator run at 2 minutes per column:
 
    ```
                        10:00          10:30          11:00          11:30

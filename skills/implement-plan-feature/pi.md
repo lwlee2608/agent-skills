@@ -1,6 +1,6 @@
-# build-feature on Pi
+# implement-plan-feature on Pi
 
-Maps build-feature's spawn, wait, continue, resume, and retire steps to the `subagent` tool from `@lwlee2608/pi-subagent`.
+Maps implement-plan-feature's spawn, wait, continue, resume, and retire steps to the `subagent` tool from `@lwlee2608/pi-subagent`.
 
 **Check the tool before asking how to build.** It is `@lwlee2608/pi-subagent` only if `action` accepts exactly `start`, `message`, `wait`, `status`, `stop`, `reply`, and `recover` — npm `pi-subagents` also has an `action` parameter, so its presence proves nothing. No `subagent` tool: stop and tell the user to install `@lwlee2608/pi-subagent`. Any other `subagent` tool: ignore the calls below and build Solo with its one-shot reviewer through its own API; leave Orchestrator out of the mode question and say it needs `@lwlee2608/pi-subagent`. Never install or swap extensions yourself, and never load two `subagent` tools.
 
