@@ -112,5 +112,5 @@ phase N
 
 - **Chaining merge and branch delete with `;`.** A hung merge let the delete run and closed the PR.
 - **Tests or `git fetch` with no `timeout`.** A hang blocks the call until the tool gives up.
-- **`cd /abs/worktree &&` or `git -C` in a worktree.** The isolation guard rejects them; run plain commands from the worktree root.
+- **Complex shell commands in a worktree.** The isolation guard rejects `cd /abs/worktree &&`, `git -C`, a `cd` to a path computed at runtime, chained or piped commands it can't trace, and Python that starts other programs. Run one plain command per call from the worktree root; put a multi-step verify flow in a script file.
 - **Relaying a cut-off review.** If a report ends mid-finding, ask the reviewer for the rest.
