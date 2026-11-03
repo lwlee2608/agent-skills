@@ -1,9 +1,8 @@
 ---
 name: build-feature
-description: Use when the user asks to build a feature end to end from a description, without a plan file. A worker subagent builds it and opens a PR, fresh reviewers check it in rounds, and you merge.
+description: Use only when the user explicitly names build-feature; never invoke proactively. A worker builds a feature end to end and opens a PR, fresh reviewers check it, and you merge.
 argument-hint: "<feature description>"
 user-invocable: true
-disable-model-invocation: true
 ---
 
 # Build a Feature
