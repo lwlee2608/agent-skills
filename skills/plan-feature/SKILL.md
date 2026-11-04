@@ -66,7 +66,7 @@ Good — feature slices, each one usable
 
 **Defer Verify only when a phase has no local surface:** `**Verify:** deferred — <why>`, and the demo must cover it. Never defer work you have not thought through. Two deferrals in a row means the slices are wrong.
 
-**Size each phase to one build session:** write, verify, and review fixes in one context. Put the smallest visible thing first, each phase building on what already runs. Prefer 3-6 phases; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count.
+**Size each phase to one build session:** write, verify, and review fixes in one context. Put the smallest visible thing first, each phase building on what already runs. Use your judgement on the count; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count.
 
 **Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other and share no files, ask whether to run them as `2a`/`2b`.
 
