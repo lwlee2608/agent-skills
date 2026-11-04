@@ -71,7 +71,7 @@ one context, grows each phase
 
 **No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
-**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, this skill's rules on scope, verifying, PRs, fixes, and locked decisions, and its common mistakes. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. In solo mode, you are the worker.
+**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, this skill's rules on scope, verifying, PRs, fixes, and locked decisions, and its common mistakes. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. An idle notice with no report means the reviewer stalled, whatever it says it's waiting on. Tell it to finish now, and don't report the round as running. In solo mode, you are the worker.
 
 ```
 phase N
@@ -88,7 +88,7 @@ phase N
 - For a `deferred` Verify line (older plans say `**Demo:**`), run the checks, say the proof is deferred to the demo, and move on. Don't invent one.
 - For a step that needs the user's own device or personal account, with no scratch account possible, run the rest, defer that step to the demo without asking, and name it in the phase report.
 
-**Mind slow verification.** Fast checks run after the build and every fix commit. Slow ones (E2E, Playwright, integration tests that boot services or sleep) run only the cases covering what changed, new ones included: the phase's before the PR, each fix's after it. Before merge, run the full slow suite once if CI doesn't. The plan's rules win. Reviewers don't run slow checks.
+**Mind slow verification.** Fast checks run after the build and every fix commit. In a monorepo, scope them to the changed package, and run repo-wide checks once before the PR and again after any change that reaches other packages. Slow ones (E2E, Playwright, integration tests that boot services or sleep) run only the cases covering what changed, new ones included: the phase's before the PR, each fix's after it. Before merge, run the full slow suite once if CI doesn't. The plan's rules win. Reviewers don't run slow checks. Nor do they start background work: a reviewer's turn ends with its report. When a worker couldn't prove something, brief the reviewer to read for that risk, not to run it.
 
 **Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
@@ -104,7 +104,7 @@ phase N
 
 **A locked decision proved wrong stops the build.** Name the decision, what the code showed, and which later phases it invalidates. The user amends the plan; never quietly re-plan around their choice.
 
-**Run the demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. `none` skips to the final PR. If you can't run it yourself, hand the user the steps and wait. Never invent a demo or stage one per phase. Add every deferred user-only Verify step to the handoff. If the plan has no `## Demo` (older plans), ask, record the answer in the plan, then run it. A broken demo gets fixed in the phase that owns it, through the same branch, review, and merge cycle.
+**Run the demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. `none` skips to the final PR. If you can't run it yourself, hand the user the steps and wait. Never invent a demo or stage one per phase. Add every deferred user-only Verify step to the handoff. If the plan has no `## Demo` (older plans), ask, record the answer in the plan, then run it. A broken demo gets fixed in the phase that owns it, through the same branch, review, and merge cycle. When the fix changes something the user sees, show them the worker's real output and get a yes before any review round. If the user finds a demo result wrong, ask what's wrong first, and include options a locked decision rules out, marked as such.
 
 **Open the final PR from the integration branch to `main`** with the feature summary, the phase PRs, the demo and its result, any deferred Verify steps still unrun, commands the user can run, and any post-merge steps from the plan. If `main` moved, merge it in and re-run the checks. Then stop; the user merges that PR.
 
@@ -112,5 +112,6 @@ phase N
 
 - **Chaining merge and branch delete with `;`.** A hung merge let the delete run and closed the PR.
 - **Tests or `git fetch` with no `timeout`.** A hang blocks the call until the tool gives up.
-- **Complex shell commands in a worktree.** The isolation guard rejects `cd /abs/worktree &&`, `git -C`, a `cd` to a path computed at runtime, chained or piped commands it can't trace, and Python that starts other programs. Run one plain command per call from the worktree root; put a multi-step verify flow in a script file.
+- **Complex shell commands in a worktree.** The isolation guard rejects `cd /abs/worktree &&`, `git -C`, a `cd` to a path computed at runtime, chained or piped commands it can't trace, heredocs, and Python that starts other programs. Run one plain command per call from the worktree root; put a multi-step verify flow in a script file, and write scripts with the file tool.
+- **Probing a fresh worktree for dependencies.** It has none of the repo's ignored files. Run the repo's install command first.
 - **Relaying a cut-off review.** If a report ends mid-finding, ask the reviewer for the rest.
