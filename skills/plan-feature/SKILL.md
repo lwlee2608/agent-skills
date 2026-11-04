@@ -1,13 +1,13 @@
 ---
 name: plan-feature
-description: Use when planning a feature too big to hold in one session. Settles every open decision by asking the user, locks the answers into one markdown plan file, then cuts the work into phases the user can verify one at a time.
+description: Use when planning a feature that has decisions to settle before building. Settles every open decision by asking the user, locks the answers into one markdown plan file, then cuts the work into as few phases as it needs, each one the user can verify.
 argument-hint: "[<feature description> | <path to plan file>]"
 user-invocable: true
 ---
 
 # Plan a Feature
 
-Two failure modes: guessing at decisions that belong to the user, and slicing by layer so nothing is visible until the last phase. Settle decisions first, then cut vertical slices. Finish stage 1 before stage 2; a task list built around an open decision gets thrown away.
+Three failure modes: guessing at decisions that belong to the user, slicing by layer so nothing is visible until the last phase, and splitting work into more phases than it needs. Settle decisions first, then cut vertical slices. Finish stage 1 before stage 2; a task list built around an open decision gets thrown away.
 
 The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs elsewhere or the user names a directory. If a plan for this feature exists, resume it.
 
@@ -50,7 +50,6 @@ Bad — layer slices, nothing usable until the end
 Good — feature slices, each one usable
   Phase 1  Log in            [db][api][ui]   user has an account
   Phase 2  Generate an image [db][api][ui]   user makes an image
-  Phase 3  Animate it        [db][api][ui]   user makes a clip
 ```
 
 **Name phases by what the user gains.** "Log in and see an empty library", not "Auth layer".
@@ -66,7 +65,7 @@ Good — feature slices, each one usable
 
 **Defer Verify only when a phase has no local surface:** `**Verify:** deferred — <why>`, and the demo must cover it. Never defer work you have not thought through. Two deferrals in a row means the slices are wrong.
 
-**Size each phase to one build session:** write, verify, and review fixes in one context. Put the smallest visible thing first, each phase building on what already runs. Use your judgement on the count; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count.
+**Size each phase to one build session:** write, verify, and review fixes in one context. That is a limit, not a target: merge phases that fit one session unless the user needs to check something real between them. Keep guards and hardening in the phase that adds the behaviour. Each phase builds on what already runs. Use your judgement on the count; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count.
 
 **Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other and share no files, ask whether to run them as `2a`/`2b`.
 

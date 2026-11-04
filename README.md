@@ -163,11 +163,11 @@ Read, create, update, and comment on Linear issues through the Linear MCP server
 
 ### plan-feature
 
-Plan work too big for one session as a single markdown file under `plans/`.
+Plan a feature with decisions to settle as a single markdown file under `plans/`.
 
 - Settles every open decision first, asking the user in batches of up to four questions.
 - Reads the codebase to answer what it can, so it never asks what it could look up.
-- Cuts the work into phases you can prove work, each one a vertical slice — never a backend phase followed by a frontend phase.
+- Cuts the work into as few phases as it needs, each one a vertical slice you can prove works — never a backend phase followed by a frontend phase.
 - Every phase carries a verify line and unchecked task boxes.
 - Plans only — never implements.
 
