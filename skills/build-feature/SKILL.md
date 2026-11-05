@@ -32,7 +32,7 @@ merge ── W stopped
    - The spec verbatim and the branch `feat/<slug>` off `main`.
    - Scope: only the spec. Unrelated bugs and refactors go in its report.
    - Verify: rule 6. "It compiles" is not proof. If proof needs a deployed host, shared database, or credentials, stop and ask.
-   - PR to `main` via `gh-create-pr`, else an imperative title and `## Summary` only. Without `gh` or a GitHub remote, stop at the pushed branch.
+   - Open the PR to `main` with the `gh-create-pr` skill; without that skill, an imperative title and `## Summary` only. Without `gh` or a GitHub remote, stop at the pushed branch.
    - Report: PR number, what it ran, what it couldn't prove or run, and unrelated issues noted.
 
 6. **Run slow checks only where the change is.** Fast checks run after the build and every fix. Slow ones (E2E, Playwright, integration tests that boot services) run only the cases covering the change: before the PR and after fixes touching them. Before merge, run the full slow suite once if CI doesn't. Skipped for missing env or services is not a pass; report it. Reviewers don't run slow checks.

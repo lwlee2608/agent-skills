@@ -28,7 +28,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 - `<plan-name>` is the slug of the issue title. The route's first line names the issue.
 - Only you edit the body. Workers read it and put notes in their reports. Re-fetch it right before each edit, and write with `gh api repos/{owner}/{repo}/issues/<n> -X PATCH`, not `gh issue edit`; REST avoids the GraphQL bug that breaks `gh pr edit`.
 - Update `Active:` when a phase starts. Tick its boxes and update the task count when it merges, not in its commits. On resume, merged PRs outrank the boxes: tick any that lag.
-- Phase PRs say `Refs #<issue>`. Only the PR into `main` says `Fixes #<issue>`, so the issue closes when the feature lands.
+- Phase PRs say `Refs #<issue>`. Only the PR into `main` says `Closes #<issue>`, so the issue closes when the feature lands.
 
 **Branch as the diagram shows.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, or reuse it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. A one-phase plan skips it: branch `feat/<plan-name>` off `main`, and after the demo stop at the green PR for the user to merge.
 
@@ -97,7 +97,7 @@ phase N
 
 **Mind slow verification.** Fast checks run after the build and every fix commit. In a monorepo, scope them to the changed package, and run repo-wide checks once before the PR and again after any change that reaches other packages. Slow ones (E2E, Playwright, integration tests that boot services or sleep) run only the cases covering what changed, new ones included: the phase's before the PR, each fix's after it. Before merge, run the full slow suite once if CI doesn't. The plan's rules win. Reviewers don't run slow checks. Nor do they start background work: a reviewer's turn ends with its report. When a worker couldn't prove something, brief the reviewer to read for that risk, not to run it.
 
-**Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. A one-phase plan's PR targets `main` instead, titled with the plan's feature name and no phase prefix. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path or issue reference. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
+**Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path or issue reference. No test plan, checklist, or co-author line. A one-phase plan's PR is its final PR: it targets `main`, takes the plan's feature name as its title with no phase prefix, and its body follows the `gh-create-pr` skill, with the plan file path or issue reference. Without that skill, use the phase body. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
 **Review in a new subagent every round,** never reused and never the writer, who is the last to spot what it assumed. Use the repo's review skill if installed, as `review-code` with target `pr <number>`, without `--sub`: the subagent is already the fresh context, and nesting another adds nothing. Otherwise have the subagent review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Ask for plain prose; an output schema fails the task before the review starts. Block on the runtime's wait, never poll. Relay the report as-is.
 
@@ -113,7 +113,7 @@ phase N
 
 **Run the demo once at the end, exactly as the plan says.** After every phase merges, run `## Demo` and report what you saw. `none` skips to the final PR. If you can't run it yourself, hand the user the steps and wait. Never invent a demo or stage one per phase. Add every deferred user-only Verify step to the handoff. If the plan has no `## Demo` (older plans), ask, record the answer in the plan, then run it. A broken demo gets fixed in the phase that owns it, through the same branch, review, and merge cycle. When the fix changes something the user sees, show them the worker's real output and get a yes before any review round. If the user finds a demo result wrong, ask what's wrong first, and include options a locked decision rules out, marked as such.
 
-**Open the final PR from the integration branch to `main`** with the feature summary, the phase PRs, the demo and its result, any deferred Verify steps still unrun, commands the user can run, and any post-merge steps from the plan. If `main` moved, merge it in and re-run the checks. Then stop; the user merges that PR.
+**Open the final PR from the integration branch to `main` with the `gh-create-pr` skill.** Put the feature summary in Summary; the phase PRs, the demo and its result, any deferred Verify steps still unrun, and commands the user can run in Reviewer notes; and any post-merge steps from the plan in Deploy notes. Without that skill, put all of it under `## Summary`. If `main` moved, merge it in and re-run the checks. Then stop; the user merges that PR.
 
 ## Common mistakes to watch for
 
