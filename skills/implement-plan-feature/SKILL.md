@@ -1,7 +1,7 @@
 ---
 name: implement-plan-feature
-description: Use when implementing a phased feature plan file. Builds each phase on its own branch and PR into a feature integration branch, reviews and fixes in rounds, merges, then runs the plan's demo and leaves the final merge to main to the user.
-argument-hint: "[<path to plan file>]"
+description: Use when implementing a phased feature plan from a plan file or GitHub issue. Builds each phase on its own branch and PR into a feature integration branch, reviews and fixes in rounds, merges, then runs the plan's demo and leaves the final merge to main to the user.
+argument-hint: "[<path to plan file> | <issue # or URL>]"
 user-invocable: true
 disable-model-invocation: true
 ---
@@ -21,7 +21,14 @@ main
 one phase: feat/<plan> ──PR──▶ main          no integrate branch
 ```
 
-**Start from the plan file, never memory.** Take the path from the argument, or look under `plans/` and ask if several match. Re-read it each phase. If any decision is `_open_`, stop and send the user back to planning. Before phase 1, check every Verify line and `## Demo`: a phase with no proof and no deferral is a planning bug, cheapest to raise now.
+**Start from the plan, never memory.** Take the path or issue from the argument, or look under `plans/` and ask if several match. Re-read it each phase. If any decision is `_open_`, stop and send the user back to planning. Before phase 1, check every Verify line and `## Demo`: a phase with no proof and no deferral is a planning bug, cheapest to raise now.
+
+**A plan in a GitHub issue follows every rule here, with these changes.** An edit replaces the whole body, so parallel writers would erase each other's ticks.
+- The body is the plan; comments are not. A body with no `## Progress` is not a plan: stop and send the user to planning.
+- `<plan-name>` is the slug of the issue title. The route's first line names the issue.
+- Only you edit the body. Workers read it and put notes in their reports. Re-fetch it right before each edit, and write with `gh api repos/{owner}/{repo}/issues/<n> -X PATCH`, not `gh issue edit`; REST avoids the GraphQL bug that breaks `gh pr edit`.
+- Update `Active:` when a phase starts. Tick its boxes and update the task count when it merges, not in its commits. On resume, merged PRs outrank the boxes: tick any that lag.
+- Phase PRs say `Refs #<issue>`. Only the PR into `main` says `Fixes #<issue>`, so the issue closes when the feature lands.
 
 **Branch as the diagram shows.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, or reuse it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. A one-phase plan skips it: branch `feat/<plan-name>` off `main`, and after the demo stop at the green PR for the user to merge.
 
@@ -71,7 +78,7 @@ one context, grows each phase
 
 **No subagent tool?** Stop and tell the user to install one. Never build your own spawner. **On Pi,** read `pi.md` beside this file before asking how to build.
 
-**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan path, its phase, this skill's rules on scope, verifying, PRs, fixes, and locked decisions, and its common mistakes. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. An idle notice with no report means the reviewer stalled, whatever it says it's waiting on. Tell it to finish now, and don't report the round as running. In solo mode, you are the worker.
+**Workers build; you orchestrate.** A phase's code and verification stay with its worker: it cuts the phase branch, builds, verifies, opens the PR, and applies review fixes. You own the integration branch, reviews, merges, reports, and the demo. Brief the worker with the plan's path or issue, its phase, this skill's rules on scope, verifying, PRs, fixes, and locked decisions, and its common mistakes. Keep the same worker for every review round by messaging it (e.g. `SendMessage`); it already holds the diff. Relay each review report that has findings; a clean round needs no message. A reviewer's idle notice after its report needs no reply either. An idle notice with no report means the reviewer stalled, whatever it says it's waiting on. Tell it to finish now, and don't report the round as running. In solo mode, you are the worker.
 
 ```
 phase N
@@ -90,7 +97,7 @@ phase N
 
 **Mind slow verification.** Fast checks run after the build and every fix commit. In a monorepo, scope them to the changed package, and run repo-wide checks once before the PR and again after any change that reaches other packages. Slow ones (E2E, Playwright, integration tests that boot services or sleep) run only the cases covering what changed, new ones included: the phase's before the PR, each fix's after it. Before merge, run the full slow suite once if CI doesn't. The plan's rules win. Reviewers don't run slow checks. Nor do they start background work: a reviewer's turn ends with its report. When a worker couldn't prove something, brief the reviewer to read for that risk, not to run it.
 
-**Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
+**Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path or issue reference. No test plan, checklist, or co-author line. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
 **Review in a new subagent every round,** never reused and never the writer, who is the last to spot what it assumed. Use the repo's review skill if installed, as `review-code` with target `pr <number>`, without `--sub`: the subagent is already the fresh context, and nesting another adds nothing. Otherwise have the subagent review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Ask for plain prose; an output schema fails the task before the review starts. Block on the runtime's wait, never poll. Relay the report as-is.
 

@@ -1,7 +1,7 @@
 ---
 name: plan-feature
-description: Use when planning a feature that has decisions to settle before building. Settles every open decision by asking the user, locks the answers into one markdown plan file, then cuts the work into as few phases as it needs, each one the user can verify.
-argument-hint: "[<feature description> | <path to plan file>]"
+description: Use when planning a feature that has decisions to settle before building. Settles every open decision by asking the user, locks the answers into one markdown plan, in a plan file or GitHub issue, then cuts the work into as few phases as it needs, each one the user can verify.
+argument-hint: "[<feature description> | <path to plan file> | <issue # or URL>]"
 user-invocable: true
 ---
 
@@ -9,18 +9,20 @@ user-invocable: true
 
 Three failure modes: guessing at decisions that belong to the user, slicing by layer so nothing is visible until the last phase, and splitting work into more phases than it needs. Settle decisions first, then cut vertical slices. Finish stage 1 before stage 2; a task list built around an open decision gets thrown away.
 
-The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs elsewhere or the user names a directory. If a plan for this feature exists, resume it.
+The plan lives in one place, in the same format either way. A plan file sits at `plans/<feature-slug>.md`, unless the repo keeps design docs elsewhere or the user names a directory. A GitHub issue holds the plan in its body, with the feature name as its title. If a plan for this feature exists, resume it.
 
 ## Stage 1 — Settle every decision
 
 **Ask the intent first.** Ask what end goal or trigger is behind the request. Offer your best guesses as options. Never infer the Why from the request; a plausible guess is still a guess. If the goal points to a smaller or different fix, say so once, then follow.
 
-**Ask how deep to interview, next.** Record it as the first Decision. It governs every question in both stages, except intent, framing gaps, and deploys, which are always asked.
+**Ask how deep to interview, next.** Record it as the first Decision. It governs every question in both stages, except intent, plan location, framing gaps, and deploys, which are always asked.
 - **Key decisions only** (recommended): ask what is expensive to reverse; settle the rest as `agent`.
 - **Ask everything:** ask every decision, cheap ones included; make no `agent` picks.
 - **Agent decides:** settle everything else as `agent`, and show the list before stage 2.
 
 **Read the code first.** Learn the files touched, the patterns, and the libraries in use. Offer only options the codebase can take.
+
+**Ask where the plan lives,** unless the argument settles it. Size the feature from the code: recommend a GitHub issue for a small feature and a plan file for a bigger one. Without `gh` or a GitHub remote, use a plan file and say so.
 
 **Frame the feature.** Write the four framing lines from the format below, taking The Why from the intent answer. If you cannot write a line, ask about it first.
 
@@ -32,7 +34,7 @@ The plan lives at `plans/<feature-slug>.md`, unless the repo keeps design docs e
 
 **Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
 
-**Write the file as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open.
+**Write the plan as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open. Create an issue once the framing lines exist. Edit its body with `gh api repos/{owner}/{repo}/issues/<n> -X PATCH`, not `gh issue edit`; REST avoids the GraphQL bug that breaks `gh pr edit`.
 
 **Disagree once, then follow.** If you disagree with any pick in this skill, say why in two lines, then record the user's call.
 
@@ -65,7 +67,7 @@ Good — feature slices, each one usable
 
 **Defer Verify only when a phase has no local surface:** `**Verify:** deferred — <why>`, and the demo must cover it. Never defer work you have not thought through. Two deferrals in a row means the slices are wrong.
 
-**Size each phase to one build session:** write, verify, and review fixes in one context. That is a limit, not a target: merge phases that fit one session unless the user needs to check something real between them. Keep guards and hardening in the phase that adds the behaviour. Each phase builds on what already runs. Use your judgement on the count; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count.
+**Size each phase to one build session:** write, verify, and review fixes in one context. That is a limit, not a target: merge phases that fit one session unless the user needs to check something real between them. Keep guards and hardening in the phase that adds the behaviour. Each phase builds on what already runs. Use your judgement on the count; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count. For a plan in an issue, recommend one phase. If the slices need more, recommend moving to a plan file, and keep the issue if the user prefers it.
 
 **Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other and share no files, ask whether to run them as `2a`/`2b`.
 
@@ -75,7 +77,9 @@ Good — feature slices, each one usable
 
 **List stage 2's `agent` picks at the end** so the user can overturn any.
 
-## Plan file format
+## Plan format
+
+A plan file and an issue body use this format unchanged.
 
 ```markdown
 # <Feature>

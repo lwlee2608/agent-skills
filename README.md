@@ -163,8 +163,9 @@ Read, create, update, and comment on Linear issues through the Linear MCP server
 
 ### plan-feature
 
-Plan a feature with decisions to settle as a single markdown file under `plans/`.
+Plan a feature with decisions to settle as a single markdown plan, in a file under `plans/` or a GitHub issue.
 
+- Asks where the plan lives, recommending an issue for a small feature and a file for a bigger one.
 - Settles every open decision first, asking the user in batches of up to four questions.
 - Reads the codebase to answer what it can, so it never asks what it could look up.
 - Cuts the work into as few phases as it needs, each one a vertical slice you can prove works — never a backend phase followed by a frontend phase.
@@ -182,7 +183,7 @@ Build one feature end to end from a description, without a plan file.
 
 ### implement-plan-feature
 
-Implement a phased plan file one phase at a time, one PR per phase.
+Implement a phased plan from a file or GitHub issue one phase at a time, one PR per phase.
 
 - Builds only the phase's tasks, ticks its boxes, and proves the phase's verify line before opening the PR.
 - Reviews each PR twice in a subagent, fixing between rounds so the fixes are reviewed too.
