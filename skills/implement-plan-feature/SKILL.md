@@ -26,7 +26,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 **A plan in a GitHub issue follows every rule here, with these changes.** An edit replaces the whole body, so parallel writers would erase each other's ticks.
 - The body is the plan; comments are not. A body with no `## Progress` is not a plan: stop and send the user to planning.
 - `<plan-name>` is the slug of the issue title. The route's first line names the issue.
-- Only you edit the body. Workers read it and put notes in their reports. Re-fetch it right before each edit, and write with `gh api repos/{owner}/{repo}/issues/<n> -X PATCH`, not `gh issue edit`; REST avoids the GraphQL bug that breaks `gh pr edit`.
+- Only you edit the body. Workers read it and put notes in their reports. Re-fetch it right before each edit, and write with `gh issue edit --body-file`.
 - Update `Active:` when a phase starts. Tick its boxes and update the task count when it merges, not in its commits. On resume, merged PRs outrank the boxes: tick any that lag.
 - Phase PRs say `Refs #<issue>`. Only the PR into `main` says `Closes #<issue>`, so the issue closes when the feature lands.
 
