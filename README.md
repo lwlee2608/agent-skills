@@ -37,10 +37,6 @@ Create GitHub PRs with short, feature-focused descriptions.
 - Bullet points proportional to PR size.
 - Uses imperative mood for titles.
 
-### gh-update-pr
-
-Update only the requested PR title or body fields with `gh pr edit`. Needs gh 2.82.1 or newer.
-
 ### merge-pr
 
 Merge a GitHub PR, close the issues it fixes, and delete its branch.
