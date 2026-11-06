@@ -39,11 +39,7 @@ Create GitHub PRs with short, feature-focused descriptions.
 
 ### gh-update-pr
 
-Update PR title/body through `gh api` REST calls when `gh pr edit` is unreliable.
-
-- Uses `gh pr view` to detect PR context.
-- Uses `gh api repos/{owner}/{repo}/pulls/{number} -X PATCH` to update title/body.
-- Keeps `gh pr create` and `gh pr view` unchanged.
+Update only the requested PR title or body fields with `gh pr edit`. Needs gh 2.82.1 or newer.
 
 ### merge-pr
 
