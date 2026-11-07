@@ -211,6 +211,13 @@ Shared vocabulary and principles for designing deep modules — a lot of behavio
 - `DESIGN-IT-TWICE.md` fans out parallel sub-agents to design the same interface several radically different ways, then compares them.
 - Adapted from [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design).
 
+### drafting-messages
+
+Draft a message for the user to send to another person, ready to copy and paste.
+
+- Writes plain text, never `>` blockquotes, so the bars do not get copied.
+- Uses short, full sentences instead of a terse reply style.
+
 ## Why trust these skills
 
 - Small and auditable: each skill is plain text in `skills/*/SKILL.md`.
