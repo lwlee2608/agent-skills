@@ -34,7 +34,7 @@ The plan lives in one place, in the same format either way. A plan file sits at 
 
 **Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
 
-**Write the plan as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open. Create an issue once the framing lines exist. Edit its body with `gh api repos/{owner}/{repo}/issues/<n> -X PATCH`, not `gh issue edit`; REST avoids the GraphQL bug that breaks `gh pr edit`.
+**Write the plan as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open. Create an issue once the framing lines exist. Edit its body with `gh issue edit --body-file`.
 
 **Disagree once, then follow.** If you disagree with any pick in this skill, say why in two lines, then record the user's call.
 
