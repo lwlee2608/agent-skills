@@ -15,7 +15,7 @@ Maps build-feature's spawn, wait, fix, and retire steps to the `subagent` tool f
 
 **Start returns admission, not success.** Keep the `workerId` and `runId`, then `wait`. Pass the picked model and effort on every `start`; an unsupported pick fails instead of falling back.
 
-**Omit `cwd`.** The worker builds in your checkout, so reviewers there read the PR branch. Pi children can't delegate, so the review brief never passes `--sub`.
+**Omit `cwd`.** The worker builds in your checkout, so reviewers there read the PR branch. Pi children can't delegate, so the review brief passes `--no-sub`.
 
 **Wait, never poll.** `reason: "timeout"` is not failure; wait again. `reason: "attention"` means a worker asked a question: read `pendingQuestionIds`, `reply` if the answer is within your authority, else ask the user.
 

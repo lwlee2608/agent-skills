@@ -1,7 +1,7 @@
 ---
 name: review-loop
 description: Use only when the user explicitly asks to review and fix in a loop until clean. Not for plain reviews (use review-code); never invoke proactively.
-argument-hint: "[diff|pr <number>|all|<path>] [--commit each|end] [--second-opinion] [--merge]"
+argument-hint: "[diff|pr <number>|all|<path>] [--commit each|end] [-2o] [--merge]"
 user-invocable: true
 ---
 
@@ -11,9 +11,9 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 ## Rules
 
-1. **Review in a fresh subagent every round.** Invoke `review-code` with `<target> --sub` (default target `diff`). If `review-code` is missing, spawn a subagent to review for correctness, security, resource, and performance defects, rating each finding Yes / Judgment call / No for worth fixing. Never review your own fixes inline.
+1. **Review in a fresh subagent every round.** Invoke `review-code` with `<target>` (default `diff`). If `review-code` is missing, spawn a subagent to review for correctness, security, resource, and performance defects, rating each finding Yes / Judgment call / No for worth fixing. Never review your own fixes inline.
 
-2. **Pass `--second-opinion` to round 1 only.** Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
+2. **Pass `-2o` to round 1 only.** Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
 
 3. **Use `diff` from round 2 for every target, including paths.** GitHub does not see unpushed fixes, re-reviewing the whole codebase wastes context, and path-scoped reviews can miss fixes in related files. For `pr <number>`, check out the PR first.
 
@@ -21,7 +21,7 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 5. **Run the repo's checks after each round's fixes** (`make build` / `make test` / `make lint`, else native commands). Fix breakage before the next review.
 
-6. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings. When the loop stops, check every checklist item in the linked issue (`gh issue view`) against the code; an item not done is an open finding unless a stated reason drops it.
+6. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings. When the loop stops, check every checklist item in the linked issue against the code; find it from the target PR or the current branch's PR (`gh pr view --json closingIssuesReferences`), whatever the target; an item not done is an open finding unless a stated reason drops it.
 
 7. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push, except under `--merge` (rule 8). On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
 
