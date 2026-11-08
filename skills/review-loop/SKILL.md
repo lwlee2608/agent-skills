@@ -21,7 +21,7 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 5. **Run the repo's checks after each round's fixes** (`make build` / `make test` / `make lint`, else native commands). Fix breakage before the next review.
 
-6. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings.
+6. **Stop when a round has nothing new to fix.** Cap at 5 rounds; round 5 is review-only, even if it finds actionable issues. Do not edit after that review — hand the open findings to the user. If a fixed finding comes back in any round, stop fixing and report the open findings. When the loop stops, check every checklist item in the linked issue (`gh issue view`) against the code; an item not done is an open finding unless a stated reason drops it.
 
 7. **Commit each fix unless told otherwise.** `--commit each` (default) — one commit per fixed finding. `--commit end` — one commit after the loop stops. Never push, except under `--merge` (rule 8). On the default branch, branch before the first commit — otherwise `diff` anchors at HEAD and committed fixes drop out of the next review.
 
