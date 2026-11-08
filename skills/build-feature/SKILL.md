@@ -37,7 +37,7 @@ merge ── W stopped
 
 6. **Run slow checks only where the change is.** Fast checks run after the build and every fix. Slow ones (E2E, Playwright, integration tests that boot services) run only the cases covering the change: before the PR and after fixes touching them. Before merge, run the full slow suite once if CI doesn't. Skipped for missing env or services is not a pass; report it. Reviewers don't run slow checks.
 
-7. **Review in a new subagent every round,** never reused and never the worker. Use `review-code pr <number>` without `--sub`; the subagent is already fresh. Without `review-code`, review for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Block on the wait, never poll.
+7. **Review in a new subagent every round,** never reused and never the worker. Use `review-code pr <number> --no-sub`; the subagent is already fresh. Without `review-code`, review for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Block on the wait, never poll.
 
 8. **Run two or three rounds.** Round 2 always runs; a fresh reviewer catches what the first missed. Round 3 runs only if round 2 produced fixes. If round 3 leaves a worth-fixing High or Critical finding, ask the user before merge.
 

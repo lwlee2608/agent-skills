@@ -30,7 +30,7 @@ Assume the reviewer is installed, its default model is configured, and the `revi
 3. **Run the reviewer's command from the repo root**, substituting target and model. The prompt is the same for both:
 
    ```
-   Use the review-code skill to review <target> in this repo. Do not modify any files.
+   Use the review-code skill to review <target> --no-sub in this repo. Do not modify any files.
    ```
 
    pi:
