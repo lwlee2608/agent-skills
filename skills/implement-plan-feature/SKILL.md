@@ -118,7 +118,7 @@ phase N
 ## Common mistakes to watch for
 
 - **Chaining merge and branch delete with `;`.** A hung merge let the delete run and closed the PR.
-- **Tests or `git fetch` with no `timeout`.** A hang blocks the call until the tool gives up.
+- **Tests or `git fetch` with no timeout.** A hang blocks the call until the tool gives up. Set the shell tool's timeout parameter; macOS has no `timeout` command.
 - **Complex shell commands in a worktree.** The isolation guard rejects `cd /abs/worktree &&`, `git -C`, a `cd` to a path computed at runtime, chained or piped commands it can't trace, heredocs, and Python that starts other programs. Run one plain command per call from the worktree root; put a multi-step verify flow in a script file, and write scripts with the file tool.
 - **Probing a fresh worktree for dependencies.** It has none of the repo's ignored files. Run the repo's install command first.
 - **Relaying a cut-off review.** If a report ends mid-finding, ask the reviewer for the rest.
