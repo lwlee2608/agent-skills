@@ -75,5 +75,5 @@ Clean code reviews alone don't mean the issue is done. The checklist check catch
 ## Limits
 
 - **Reports undone checklist items, doesn't fix them.** The check runs after the loop stops, so the items go back to you. Missing checklist work is usually real work, not a review fix.
-- **No linked issue, no check.** A `diff` with no PR may have no issue to read.
+- **No linked issue, no check.** The issue comes from the branch's PR; no PR or no linked issue means no check.
 - **Plain `/merge-pr` doesn't block.** On its own, it ticks the items that are done and leaves the rest unticked, but it still merges.
