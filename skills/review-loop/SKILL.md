@@ -1,7 +1,7 @@
 ---
 name: review-loop
 description: Use only when the user explicitly asks to review and fix in a loop until clean. Not for plain reviews (use review-code); never invoke proactively.
-argument-hint: "[pr [<number>]|diff|all|<path>] [--commit each|end] [--second-opinion] [--merge]"
+argument-hint: "[pr [<number>]|diff|all|<path>] [--commit each|end] [-2o] [--merge]"
 user-invocable: true
 ---
 
@@ -13,7 +13,7 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 1. **Review in a fresh subagent every round.** Invoke `review-code` with `<target>` (default `pr`, the current branch's PR; `diff` if it has none). If `review-code` is missing, spawn a subagent to review for correctness, security, resource, and performance defects, rating each finding Yes / Judgment call / No for worth fixing. Never review your own fixes inline.
 
-2. **Pass `--second-opinion` to round 1 only.** Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
+2. **Pass `-2o` to round 1 only.** Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
 
 3. **Use `diff` from round 2 for every target, including paths.** GitHub does not see unpushed fixes, re-reviewing the whole codebase wastes context, and path-scoped reviews can miss fixes in related files. For `pr <number>`, check out the PR first.
 

@@ -10,7 +10,7 @@ Review, fix, repeat until a review finds nothing new. At the end, check the link
           ▼
  ┌──────────────────────┐
  │ Round N: review      │  new subagent each round (review-code)
- │ (round 1: full diff, │  round 1 may add --second-opinion
+ │ (round 1: full diff, │  round 1 may add -2o
  │  later: diff only)   │
  └─────────┬────────────┘
            ▼
