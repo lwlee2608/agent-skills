@@ -1,7 +1,7 @@
 # agent-skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/Skills-22-blue.svg)]()
+[![Skills](https://img.shields.io/badge/Skills-23-blue.svg)]()
 
 Reusable AI agent skills for Claude Code, OpenCode, and other skills-compatible agents.
 
@@ -210,6 +210,18 @@ Draft a message for the user to send to another person, ready to copy and paste.
 
 - Writes plain text, never `>` blockquotes, so the bars do not get copied.
 - Uses short, full sentences instead of a terse reply style.
+
+### polish-ui
+
+Improve an existing app's UI/UX without rewriting it.
+
+- Asks what to improve: UI, UX, aesthetic, or all.
+- Asks which pages, using routes found in the code.
+- Screenshots the running app at desktop and mobile widths.
+- Asks follow-ups with suggestions, its pick first.
+- Applies only picked fixes, reusing the design system.
+- Avoids the AI-generated look (cheap, generic, low effort) and aims for premium: no em dashes, no hero title punctuation, no buzzwords, stock gradients, or pills everywhere.
+- Shows before and after.
 
 ## Why trust these skills
 
