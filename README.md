@@ -203,6 +203,17 @@ Shared vocabulary and principles for designing deep modules — a lot of behavio
 - `DESIGN-IT-TWICE.md` fans out parallel sub-agents to design the same interface several radically different ways, then compares them.
 - Adapted from [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design).
 
+### improve-ui-ux
+
+Improve an existing app's UI/UX without rewriting it.
+
+- Asks what to improve: UI, UX, aesthetic, or all.
+- Asks which pages, using routes found in the code.
+- Screenshots the running app at desktop and mobile widths.
+- Asks follow-ups with suggestions, its pick first.
+- Applies only picked fixes, reusing the design system.
+- Shows before and after.
+
 ## Why trust these skills
 
 - Small and auditable: each skill is plain text in `skills/*/SKILL.md`.
