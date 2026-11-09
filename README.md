@@ -212,6 +212,7 @@ Improve an existing app's UI/UX without rewriting it.
 - Screenshots the running app at desktop and mobile widths.
 - Asks follow-ups with suggestions, its pick first.
 - Applies only picked fixes, reusing the design system.
+- Avoids the AI-generated look (cheap, generic, low effort) and aims for premium: no em dashes, no hero title punctuation, no buzzwords, stock gradients, or pills everywhere.
 - Shows before and after.
 
 ## Why trust these skills

@@ -29,6 +29,17 @@ Improve an existing app's interface without rewriting it. The user picks the foc
 
 6. **Make one change per finding.** Then the user can reject one and keep the rest.
 
+7. **Avoid the AI-generated look.** It reads as cheap, generic, and low effort. The goal is a design that looks premium and well thought out. Flag these in existing pages, and never add them:
+   - Em dashes in copy. Use a period, comma, or colon.
+   - Punctuation at the end of a hero title.
+   - Buzzwords like "unlock", "elevate", "seamless", "supercharge".
+   - Purple-blue gradients, glassmorphism, and glowing blobs.
+   - Emoji as icons or bullets.
+   - Pills everywhere: badges, tags, and buttons all rounded-full.
+   - Every section as a centered grid of icon, title, and blurb cards.
+
+   Prefer specific copy, real product screenshots, one accent color, and a clear visual hierarchy.
+
 ## Verification procedure
 
 1. Re-screenshot each changed page at the same widths. Show before and after.
