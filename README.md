@@ -211,7 +211,7 @@ Draft a message for the user to send to another person, ready to copy and paste.
 - Writes plain text, never `>` blockquotes, so the bars do not get copied.
 - Uses short, full sentences instead of a terse reply style.
 
-### improve-ui-ux
+### polish-ui
 
 Improve an existing app's UI/UX without rewriting it.
 

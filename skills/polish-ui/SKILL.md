@@ -1,10 +1,10 @@
 ---
-name: improve-ui-ux
+name: polish-ui
 description: Use when asked to improve, polish, or audit the UI, UX, or look of an existing app in the current repo. Asks what to improve and which pages, screenshots the running app, then applies the fixes the user picks.
 user-invocable: true
 ---
 
-# Improve UI/UX
+# Polish UI
 
 Improve an existing app's interface without rewriting it. The user picks the focus and scope. The agent brings screenshots and suggestions.
 
