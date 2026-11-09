@@ -99,7 +99,7 @@ phase N
 
 **Open the PR against the integration branch, never `main`.** Title it `Phase <n>: <imperative title>`. The body is a `## Summary` of what the user gains, bullets in proportion to the change, and the plan file path or issue reference. No test plan, checklist, or co-author line. A one-phase plan's PR is its final PR: it targets `main`, takes the plan's feature name as its title with no phase prefix, and its body follows the `gh-create-pr` skill, with the plan file path or issue reference. Without that skill, use the phase body. Without `gh` or a GitHub remote, stop at the pushed branch and say so; don't fake a review cycle.
 
-**Review in a new subagent every round,** never reused and never the writer, who is the last to spot what it assumed. Use the repo's review skill if installed, as `review-code` with target `pr <number>`, without `--sub`: the subagent is already the fresh context, and nesting another adds nothing. Otherwise have the subagent review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Ask for plain prose; an output schema fails the task before the review starts. Block on the runtime's wait, never poll. Relay the report as-is.
+**Review in a new subagent every round,** never reused and never the writer, who is the last to spot what it assumed. Use the repo's review skill if installed, as `review-code` with target `pr <number> --no-sub`: the subagent is already the fresh context, and nesting another adds nothing. Otherwise have the subagent review the diff for correctness, security, resource, and performance defects, rating severity, likelihood, and worth-fixing. Ask for plain prose; an output schema fails the task before the review starts. Block on the runtime's wait, never poll. Relay the report as-is.
 
 **Run two or three rounds** on the same PR, each after the previous fix commits land. Round 2 always runs, even after a clean round 1, because a fresh reviewer catches what the first missed. Round 3 runs only if round 2 produced fixes. Three is the cap: if round 3 leaves a worth-fixing High or Critical finding, stop before merging, since the phase is too big to converge. Report it with what you would do, and ask the user. Otherwise fix, re-verify, merge, and note in the phase report that those last fixes merged unreviewed.
 
@@ -118,7 +118,7 @@ phase N
 ## Common mistakes to watch for
 
 - **Chaining merge and branch delete with `;`.** A hung merge let the delete run and closed the PR.
-- **Tests or `git fetch` with no `timeout`.** A hang blocks the call until the tool gives up.
+- **Tests or `git fetch` with no timeout.** A hang blocks the call until the tool gives up. Set the shell tool's timeout parameter; macOS has no `timeout` command.
 - **Complex shell commands in a worktree.** The isolation guard rejects `cd /abs/worktree &&`, `git -C`, a `cd` to a path computed at runtime, chained or piped commands it can't trace, heredocs, and Python that starts other programs. Run one plain command per call from the worktree root; put a multi-step verify flow in a script file, and write scripts with the file tool.
 - **Probing a fresh worktree for dependencies.** It has none of the repo's ignored files. Run the repo's install command first.
 - **Relaying a cut-off review.** If a report ends mid-finding, ask the reviewer for the rest.

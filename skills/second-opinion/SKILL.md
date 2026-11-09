@@ -1,6 +1,6 @@
 ---
 name: second-opinion
-description: Use when the user asks for a second-opinion review from another agent (e.g., "get a second opinion", "review with pi", "review using gpt-6-astra", "/second-opinion"), or when review-code runs with `--second-opinion`. Runs a fresh pi session (or Claude Code, when already inside pi) on the review-code skill and relays its review.
+description: Use when the user asks for a second-opinion review from another agent (e.g., "get a second opinion", "review with pi", "review using gpt-6-astra", "/second-opinion"), or when review-code runs with `-2o`. Runs a fresh pi session (or Claude Code, when already inside pi) on the review-code skill and relays its review.
 argument-hint: "PR number, ref range, all, path, or model"
 user-invocable: true
 ---
@@ -9,7 +9,7 @@ user-invocable: true
 
 Get a code review from a different agent by running a fresh headless session of it. The user wants that agent's take, not yours — relay it, don't redo it.
 
-When `review-code --second-opinion` runs this skill, these rules govern only the relayed review. The caller's own review still runs, and a failure here does not stop it.
+When `review-code -2o` runs this skill, these rules govern only the relayed review. The caller's own review still runs, and a failure here does not stop it.
 
 ## Pick the reviewer
 
@@ -30,7 +30,7 @@ Assume the reviewer is installed, its default model is configured, and the `revi
 3. **Run the reviewer's command from the repo root**, substituting target and model. The prompt is the same for both:
 
    ```
-   Use the review-code skill to review <target> in this repo. Do not modify any files.
+   Use the review-code skill to review <target> --no-sub in this repo. Do not modify any files.
    ```
 
    pi:
@@ -60,7 +60,7 @@ Assume the reviewer is installed, its default model is configured, and the `revi
 
 4. **Never resume a session.** No `-c`, `-r`, `--resume`, `--session`, `--session-id`, or `--fork` — prior context pollutes the review.
 
-5. **Never inline the diff in the prompt, and never pass `--second-opinion` to the reviewer.** `review-code` resolves the target itself, a large diff breaks shell quoting, and the flag would make the reviewer spawn you back.
+5. **Never inline the diff in the prompt, and never pass `-2o` to the reviewer.** `review-code` resolves the target itself, a large diff breaks shell quoting, and the flag would make the reviewer spawn you back.
 
 6. **Relay the review verbatim.** Don't summarize, re-rate, or add your own findings.
 

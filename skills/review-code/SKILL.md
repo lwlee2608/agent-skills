@@ -2,7 +2,7 @@
 name: review-code
 description: Use when asked to review a local diff, a GitHub PR, or a whole codebase. Reports rated findings; never edits code.
 user-invocable: true
-argument-hint: "[diff|pr <number>|<base>...<head>|all|<path>] [--sub] [--second-opinion]"
+argument-hint: "[diff|pr <number>|<base>...<head>|all|<path>] [--no-sub] [-2o]"
 ---
 
 # Review Code
@@ -23,13 +23,13 @@ For a diff, PR, or range, review the changed lines **plus enough surrounding con
 
 ## Where to run the review
 
-Default is inline. With `--sub`, run the whole review in a subagent and relay its report verbatim — use it for `all`/`codebase` or a large diff, where reading the files would bloat the session. Never re-review or paste back what the subagent returns; the only exception is the final call under `--second-opinion`. If the harness has no subagents, say so and review inline.
+Default is a subagent: run the whole review in one and relay its report verbatim, so reading the files doesn't bloat the session. Review inline with `--no-sub`, or when you are already a subagent. Never re-review or paste back what the subagent returns; the only exception is the final call under `-2o`. If the harness has no subagents, say so and review inline.
 
 ## Second opinion
 
-With `--second-opinion`, also get a review from another agent: pi, or Claude Code when you are in pi.
+With `-2o`, also get a review from another agent: pi, or Claude Code when you are in pi.
 
-- **Start it first.** Run the `second-opinion` skill on the same target in the background, then review as normal without waiting. The main session starts it even with `--sub`, because a background job started by a subagent can die when the subagent exits. If the skill isn't available, say so and review alone.
+- **Start it first.** Run the `second-opinion` skill on the same target in the background, then review as normal without waiting. The main session starts it even when a subagent reviews, because a background job started by a subagent can die when the subagent exits. If the skill isn't available, say so and review alone.
 - **Append it verbatim.** After your report, add a `---` rule and a `## Second Opinion (<agent>)` section holding the other agent's review. Demote its headings one level (`##` → `###`) so it reads as nested; change nothing else. Don't merge, dedupe, or re-rate its findings. If it fails, put the error there; your review stands and you skip the final call.
 - **Make the final call.** Either review can be wrong, including your own subagent's. End with another `---` rule and a `## Final Call` section that decides which findings are actually worth fixing:
   - Pair up findings that describe the same issue across both reviews.

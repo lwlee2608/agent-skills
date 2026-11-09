@@ -127,6 +127,7 @@ Review a local diff, a GitHub PR, or a whole codebase and report findings.
 - Target is passed as an argument: `diff` (default), `pr <number>`, `<base>...<head>`, `all`, or a path.
 - Each finding gets a severity, a likelihood, a worth-fixing verdict, and a high-level fix.
 - Reports only — never edits code.
+- Runs in a subagent by default; `--no-sub` reviews inline; `-2o` adds a second opinion.
 
 ### review-loop
 
@@ -140,7 +141,7 @@ Review, fix, and re-review until nothing worth fixing is left.
 Get a second-opinion review from another agent: `pi`, or Claude Code when already running inside pi.
 
 - Runs a fresh headless session (`pi -p` / `claude -p`) on the reviewer's default model, or one you name.
-- Triggered by `review-code --second-opinion`, which runs it in the background alongside its own review.
+- Triggered by `review-code -2o`, which runs it in the background alongside its own review.
 - Delegates the rubric to the `review-code` skill rather than duplicating it.
 - Read-only: edit and write tools are excluded; the review is relayed verbatim.
 
@@ -202,6 +203,13 @@ Shared vocabulary and principles for designing deep modules — a lot of behavio
 - `DEEPENING.md` classifies dependencies (in-process, local-substitutable, remote-owned, true external) and picks the testing strategy.
 - `DESIGN-IT-TWICE.md` fans out parallel sub-agents to design the same interface several radically different ways, then compares them.
 - Adapted from [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design).
+
+### drafting-messages
+
+Draft a message for the user to send to another person, ready to copy and paste.
+
+- Writes plain text, never `>` blockquotes, so the bars do not get copied.
+- Uses short, full sentences instead of a terse reply style.
 
 ### improve-ui-ux
 
