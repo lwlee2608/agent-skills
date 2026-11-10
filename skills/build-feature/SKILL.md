@@ -41,8 +41,8 @@ merge ── W stopped
 
 8. **Run two or three rounds.** Round 2 always runs; a fresh reviewer catches what the first missed. Round 3 runs only if round 2 produced fixes. If round 3 leaves a worth-fixing High or Critical finding, ask the user before merge.
 
-9. **Relay every report with findings to the worker; a clean round sends nothing.** The worker fixes worth-fixing findings, judgment calls only if small and in scope, leaves nits, and commits each fix separately. Name every skipped finding in one line.
+9. **Relay every report with findings to the worker; a clean round sends nothing.** The reviewer hasn't seen the spec or this session, so skip any finding that contradicts a decision you can quote from either; if it is Critical or High, ask the user first. The worker fixes worth-fixing findings, judgment calls only if small and in scope, leaves nits, and commits each fix separately. Name every skipped finding in one line.
 
-10. **Merge only when** rule 6's checks pass after the last fix, the rounds ran, no worth-fixing finding is left, and CI is green (one blocking wait). Use a merge commit, never squash. Delete the branch only after GitHub reports the PR merged; a chained delete once ran after a hung merge and closed the PR. Then stop the worker and return to an up-to-date `main`.
+10. **Merge only when** rule 6's checks pass after the last fix, the rounds ran, no worth-fixing finding is left except rule 9's skips, and CI is green (one blocking wait). Use a merge commit, never squash. Delete the branch only after GitHub reports the PR merged; a chained delete once ran after a hung merge and closed the PR. Then stop the worker and return to an up-to-date `main`.
 
 11. **Report in one block:** PR link, what ran and was skipped, findings fixed and skipped per round, noted issues, and the merge result or why not.

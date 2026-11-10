@@ -17,7 +17,7 @@ Review, fix, re-review until a round finds nothing worth fixing. Fixes are new c
 
 3. **Use `diff` from round 2 for every target, including paths.** GitHub does not see unpushed fixes, re-reviewing the whole codebase wastes context, and path-scoped reviews can miss fixes in related files. For `pr <number>`, check out the PR first.
 
-4. **Fix every Yes; fix a Judgment call only if Trivial or Small.** Skip No. When a round has a Final Call, act on it instead: Fix → fix, Optional → fix only if Trivial or Small, Skip → skip. Do not re-fix or re-argue a skipped item when a later round raises it again.
+4. **Fix every Yes; fix a Judgment call only if Trivial or Small.** Skip No. When a round has a Final Call, act on it instead: Fix → fix, Optional → fix only if Trivial or Small, Skip → skip. The reviewer has not seen this session: skip a finding that contradicts a decision you can quote from the user, plan, or issue, never your own choice. Leave it open if Critical or High. Do not re-fix or re-argue a skipped item when a later round raises it again.
 
 5. **Run the repo's checks after each round's fixes** (`make build` / `make test` / `make lint`, else native commands). Fix breakage before the next review.
 
