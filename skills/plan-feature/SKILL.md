@@ -30,7 +30,7 @@ The plan lives in one place, in the same format either way. A plan file sits at 
 
 **Ask about what matters.** Under key decisions only, ask what is expensive to reverse, usually scope, data model, public API, or what the user sees, and settle cheap-to-reverse calls yourself. Use the Why to rank questions: ask what bears on it, settle what does not. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Batch independent questions, up to four per call; ask a follow-up only after the answer it depends on lands. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
 
-**Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a locked guess made before the code exists binds them to it. Leave branching to the build skill. Restate rules from other docs that bind the build; a fresh builder skips a pointer.
+**Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a locked guess made before the code exists binds them to it. Leave phase branching to the build skill. Restate rules from other docs that bind the build; a fresh builder skips a pointer.
 
 **Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
 
@@ -76,6 +76,8 @@ Good — feature slices, each one usable
 **Locked decisions stay locked.** If the build proves one wrong, amend Decisions explicitly and name the phases it affects. Never quietly re-plan around the user's choice.
 
 **List stage 2's `agent` picks at the end** so the user can overturn any.
+
+**Commit a plan file last,** on a new branch off the default branch. Propose the name first: `feat/<feature-slug>` for one phase, `integrate/<feature-slug>` for more. Commit only the plan file; never push.
 
 ## Plan format
 

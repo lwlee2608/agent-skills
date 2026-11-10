@@ -21,7 +21,7 @@ main
 one phase: feat/<plan> ──PR──▶ main          no integrate branch
 ```
 
-**Start from the plan, never memory.** Take the path or issue from the argument, or look under `plans/` and ask if several match. Re-read it each phase. If any decision is `_open_`, stop and send the user back to planning. Before phase 1, check every Verify line and `## Demo`: a phase with no proof and no deferral is a planning bug, cheapest to raise now.
+**Start from the plan, never memory.** Take the path or issue from the argument, or look under `plans/` and ask if several match. A plan file not on this branch may sit on `integrate/<plan-name>` or `feat/<plan-name>`; check that branch out. Re-read it each phase. If any decision is `_open_`, stop and send the user back to planning. Before phase 1, check every Verify line and `## Demo`: a phase with no proof and no deferral is a planning bug, cheapest to raise now.
 
 **A plan in a GitHub issue follows every rule here, with these changes.** An edit replaces the whole body, so parallel writers would erase each other's ticks.
 - The body is the plan; comments are not. A body with no `## Progress` is not a plan: stop and send the user to planning.
@@ -30,7 +30,7 @@ one phase: feat/<plan> ──PR──▶ main          no integrate branch
 - Update `Active:` when a phase starts. Tick its boxes and update the task count when it merges, not in its commits. On resume, merged PRs outrank the boxes: tick any that lag.
 - Phase PRs say `Refs #<issue>`. Only the PR into `main` says `Closes #<issue>`, so the issue closes when the feature lands.
 
-**Branch as the diagram shows.** Cut `integrate/<plan-name>` from up-to-date `main` and push it, or reuse it if it exists. Every phase branches from it and targets it, so `main` never holds half a feature. A one-phase plan skips it: branch `feat/<plan-name>` off `main`, and after the demo stop at the green PR for the user to merge.
+**Branch as the diagram shows.** Cut `integrate/<plan-name>` from up-to-date `main`, or reuse it if it exists, and push it. Every phase branches from it and targets it, so `main` never holds half a feature. A one-phase plan skips it: branch `feat/<plan-name>` off `main`, or reuse it, and after the demo stop at the green PR for the user to merge.
 
 **Start every phase with unchecked boxes whose `Blocked by:` phases have merged, and build only its tasks.** Solo takes them one at a time, in plan order. Never pull work forward from a phase not started, even three lines; the boundary keeps the PR reviewable. Unrelated bugs and tempting refactors become a one-line note in the plan. Tick boxes and update `## Progress` in the same commit as the work. `Active:` lists every phase in progress, e.g. `Active: 2a, 2b · 7/15 tasks`.
 
