@@ -43,6 +43,8 @@ Merge a GitHub PR, close the issues it fixes, and delete its branch.
 
 - Merges with a merge commit (not squash) and deletes the branch.
 - Closes linked issues GitHub left open (e.g. PR into a non-default branch).
+- Merges only when checks pass or are skipped.
+- Asks before merging a stack, and moves stacked PRs to the new base before deleting the branch.
 
 ### create-skill
 

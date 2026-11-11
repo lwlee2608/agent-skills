@@ -56,7 +56,7 @@ With no target or bare `pr` and no PR yet, it first asks whether to open one.
                                                   ▼
                                            merge PR, then tick
                                            the done checklist
-                                           items (merge-pr rule 3)
+                                           items (merge-pr rule 4)
 ```
 
 ## Example
