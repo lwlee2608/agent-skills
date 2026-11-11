@@ -2,6 +2,8 @@
 
 Review, fix, repeat until a review finds nothing new. At the end, check the linked issue's checklist. With `--merge`, merge only if nothing is open.
 
+With no target or bare `pr` and no PR yet, it first asks whether to open one.
+
 ## Flow
 
 ```
