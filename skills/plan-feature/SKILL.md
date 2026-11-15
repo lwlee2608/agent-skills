@@ -32,7 +32,7 @@ The plan lives in one place, in the same format either way. A plan file sits at 
 
 **Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a locked guess made before the code exists binds them to it. Leave phase branching to the build skill. Restate rules from other docs that bind the build; a fresh builder skips a pointer.
 
-**Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: steps they run, a walkthrough you run, or an end-to-end check. `none` is valid unless a phase defers its Verify.
+**Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: `User runs steps`, `Agent runs walkthrough`, or `End-to-end check`. `none` is valid unless a phase defers its Verify. In the question, name the actor as "user" or "agent", never "you" or "I".
 
 **Write the plan as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open. Create an issue once the framing lines exist. Edit its body with `gh issue edit --body-file`.
 

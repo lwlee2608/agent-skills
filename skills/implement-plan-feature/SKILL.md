@@ -54,23 +54,23 @@ main
 ```
 
 **Ask how to build before phase 1,** with `AskUserQuestion`. Record the answers as `**Build mode**` under Decisions so a resume keeps them. A one-phase plan skips this and builds solo.
-- **Orchestrator** `(Recommended)` — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Phases whose `Blocked by:` phases have merged run at once, each worker in its own git worktree. Without `Blocked by:` lines, run one at a time. Parallel workers tick only their own boxes; you update `## Progress` at each merge.
-- **Solo** — you build every phase, with a fresh reviewer subagent per round. Later phases run on a crowded context.
+- **Orchestrator** `(Recommended)` — a fresh worker subagent per phase, so phase 6 doesn't run on phase 1's context. Phases whose `Blocked by:` phases have merged run at once, each worker in its own git worktree. Without `Blocked by:` lines, run one at a time. Parallel workers tick only their own boxes; the agent updates `## Progress` at each merge.
+- **Solo** — the agent builds every phase, with a fresh reviewer subagent per round. Later phases run on a crowded context.
 
-Show each mode's diagram in its option's `preview`. If the question tool has no preview, print both diagrams before asking.
+Show each mode's diagram in its option's `preview`. In the question, name the actor as "user" or "agent", never "you" or "I". If the question tool has no preview, print both diagrams before asking.
 
 ```
 Orchestrator
-you ─┬─ worker 1 ── phase 1 ── reviewers
-     ├─ worker 2 ── phase 2 ── reviewers
-     └─ worker 3 ── phase 3 ── reviewers
+agent ─┬─ worker 1 ── phase 1 ── reviewers
+       ├─ worker 2 ── phase 2 ── reviewers
+       └─ worker 3 ── phase 3 ── reviewers
 fresh context per phase; unblocked
 phases run in parallel
 
 Solo
-you ─┬─ phase 1 ── reviewers
-     ├─ phase 2 ── reviewers
-     └─ phase 3 ── reviewers
+agent ─┬─ phase 1 ── reviewers
+       ├─ phase 2 ── reviewers
+       └─ phase 3 ── reviewers
 one context, grows each phase
 ```
 
