@@ -17,7 +17,7 @@ If the target is empty or bare `pr` and the branch has no PR, ask whether to pus
 
 1. **Review in a fresh subagent every round.** Invoke `review-code` with `<target>` (default `diff`). If `review-code` is missing, spawn a subagent to review for correctness, security, resource, and performance defects, rating each finding Yes / Judgment call / No for worth fixing. Never review your own fixes inline.
 
-2. **Pass `-2o` to round 1 only.** Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
+2. **Pass `-2o` only if the user passed it, and only to round 1.** Without it, no round gets a second opinion. Round 1 reviews the full change; later rounds review small fix diffs, where another agent adds cost but little coverage. Its Final Call reads code before any fixes exist, so it does not break rule 1.
 
 3. **Use `diff` from round 2 for every target, including paths.** GitHub does not see unpushed fixes, re-reviewing the whole codebase wastes context, and path-scoped reviews can miss fixes in related files. For `pr <number>`, check out the PR first.
 
