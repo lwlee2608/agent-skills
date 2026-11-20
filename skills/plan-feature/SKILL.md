@@ -71,11 +71,17 @@ Good — feature slices, each one usable
 
 **Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other and share no files, ask whether to run them as `2a`/`2b`.
 
-**Write tasks as unchecked imperatives, one sitting each, naming the file:** `- [ ] Add source_generation_id to generations (internal/db/migrations)`. Say what, not how: `Retry failed uploads`, not `Loop with exponential backoff, max 3`. If the user requires a specific way, record it as a Decision. The builder ticks the boxes.
+**Write tasks as unchecked imperatives, one sitting each, naming where the work lands:** `- [ ] Link each generation to its source image (internal/db)`. Say what, not how: `Retry failed uploads`, not `Loop with exponential backoff, max 3`. If the user requires a specific way, record it as a Decision. The builder ticks the boxes.
 
 **Locked decisions stay locked.** If the build proves one wrong, amend Decisions explicitly and name the phases it affects. Never quietly re-plan around the user's choice.
 
-**List stage 2's `agent` picks at the end** so the user can overturn any.
+## Stage 3 — Review and trim
+
+**Review the draft for critical flaws.** Reread the whole plan against the code, as a reviewer who did not write it. A flaw is critical if the built plan would break The Why, The Guardrail, or Done means: data lost or duplicated, a gap during a rolling deploy or a write that fails halfway, existing behaviour broken by a change the plan makes, decisions that contradict each other, or a Verify line that passes without the work. Skip nitpicks. Fix flaws in `agent` picks yourself. If a fix changes a user's decision, ask first. Tell the user each flaw found and how the plan now handles it.
+
+**Then cut the plan short.** The builder knows the stack and reads the code; every detail you lock takes a choice away from it. Keep the user's decisions, invariants, and contracts outside the code. Cut what the builder would find or choose alone: `research` lines, `agent` picks that bind nothing, how-to in tasks, and file paths below the package. Merge tasks that touch the same area, and update the task count in `## Progress`.
+
+**List the `agent` picks from stages 2 and 3 at the end** so the user can overturn any.
 
 **Commit a plan file last,** on a new branch off the default branch. Propose the name first: `feat/<feature-slug>` for one phase, `integrate/<feature-slug>` for more. Commit only the plan file; never push.
 
