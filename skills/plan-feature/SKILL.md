@@ -1,26 +1,26 @@
 ---
 name: plan-feature
-description: Use when planning a feature that has decisions to settle before building. Settles every open decision by asking the user, locks the answers into one markdown plan, in a plan file or GitHub issue, then cuts the work into as few phases as it needs, each one the user can verify.
+description: Use when planning a feature that has decisions to settle before building. Settles every open decision with the user, locks the answers into one markdown plan (plan file or GitHub issue), and cuts the work into as few user-verifiable phases as it needs.
 argument-hint: "[<feature description> | <path to plan file> | <issue # or URL>]"
 user-invocable: true
 ---
 
 # Plan a Feature
 
-Three failure modes: guessing at decisions that belong to the user, slicing by layer so nothing is visible until the last phase, and splitting work into more phases than it needs. Settle decisions first, then cut vertical slices. Finish stage 1 before stage 2; a task list built around an open decision gets thrown away.
+Three failure modes: guessing at decisions that belong to the user, slicing by layer so nothing is visible until the last phase, and splitting work into more phases than it needs. Settle decisions before cutting vertical slices; a task list built around an open decision gets thrown away.
 
-The plan lives in one place, in the same format either way. A plan file sits at `plans/<feature-slug>.md`, unless the repo keeps design docs elsewhere or the user names a directory. A GitHub issue holds the plan in its body, with the feature name as its title. If a plan for this feature exists, resume it.
+The plan lives in one place, in the format below. A plan file sits at `plans/<feature-slug>.md`, unless the repo keeps design docs elsewhere or the user names a directory. A GitHub issue holds the plan in its body, with the feature name as its title. If a plan for this feature exists, resume it.
 
 ## Stage 1 — Settle every decision
 
-**Ask the intent first.** Ask what end goal or trigger is behind the request. Offer your best guesses as options. Never infer the Why from the request; a plausible guess is still a guess. If the goal points to a smaller or different fix, say so once, then follow.
+**Ask the intent first.** Ask the end goal or trigger behind the request, with your best guesses as options. Never infer the Why; a plausible guess is still a guess. If the goal points to a smaller or different fix, say so once, then follow.
 
 **Ask how deep to interview, next.** Record it as the first Decision. It governs every question in both stages, except intent, plan location, framing gaps, and deploys, which are always asked.
-- **Key decisions only** (recommended): ask what is expensive to reverse; settle the rest as `agent`.
+- **Key decisions only** (recommended): ask what is expensive to reverse, usually scope, data model, public API, or what the user sees; settle the rest as `agent`.
 - **Ask everything:** ask every decision, cheap ones included; make no `agent` picks.
 - **Agent decides:** settle everything else as `agent`, and show the list before stage 2.
 
-**Read the code first.** Learn the files touched, the patterns, and the libraries in use. Offer only options the codebase can take.
+**Read the code before offering options.** Learn the files touched, patterns, and libraries; offer only options the codebase can take.
 
 **Ask where the plan lives,** unless the argument settles it. Size the feature from the code: recommend a GitHub issue for a small feature and a plan file for a bigger one. Without `gh` or a GitHub remote, use a plan file and say so.
 
@@ -28,13 +28,13 @@ The plan lives in one place, in the same format either way. A plan file sits at 
 
 **Answer what the code answers.** Library support, existing schema, and how a similar feature works are research, not decisions. Tag them `research`. Never ask what you could read.
 
-**Ask about what matters.** Under key decisions only, ask what is expensive to reverse, usually scope, data model, public API, or what the user sees, and settle cheap-to-reverse calls yourself. Use the Why to rank questions: ask what bears on it, settle what does not. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Batch independent questions, up to four per call; ask a follow-up only after the answer it depends on lands. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
+**Ask about what matters.** Rank questions by the Why: ask what bears on it, settle what does not. Tag every pick you make `agent`. Use `AskUserQuestion` with concrete options, your recommendation first, and the real trade-off in each. Batch independent questions, up to four per call; ask a follow-up only after the answer it depends on lands. Ask about decisions ("where do retries belong?"), not work ("add the retry handler").
 
-**Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a locked guess made before the code exists binds them to it. Leave phase branching to the build skill. Restate rules from other docs that bind the build; a fresh builder skips a pointer.
+**Plan only the technical detail that binds.** Keep invariants the reviewer must enforce, security rules, contracts outside the code (webhook URLs, flags flipped at rollout), and expensive-to-reverse choices, stated as properties ("prices per currency, in minor units"), not columns. Leave schema columns, endpoint paths, enum values, env names, and test cases to the builder and reviewer; a guess locked before the code exists binds them. Leave phase branching to the build skill. Restate rules from other docs that bind the build; a fresh builder skips a pointer.
 
 **Settle the demo.** One demo for the whole feature, run after every phase merges. Ask whether the user wants one and what it is: `User runs steps`, `Agent runs walkthrough`, or `End-to-end check`. `none` is valid unless a phase defers its Verify. In the question, name the actor as "user" or "agent", never "you" or "I".
 
-**Write the plan as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Each answer can expose a new question; keep going until none is open. Create an issue once the framing lines exist. Edit its body with `gh issue edit --body-file`.
+**Write the plan as you go.** Record answers as they land and mark unanswered ones `_open_`, so an interrupted session can resume. Ask the new questions each answer exposes. Create an issue once the framing lines exist. Edit its body with `gh issue edit --body-file`.
 
 **Disagree once, then follow.** If you disagree with any pick in this skill, say why in two lines, then record the user's call.
 
@@ -58,18 +58,18 @@ Good — feature slices, each one usable
 
 **Give every phase a Verify line** that fails without the phase's code: a command, URL, click path, or test. "Checks pass" is not one. State the steps and the observable result; name queries or flags only when nothing visible shows the result. If you cannot write one, it is not a phase.
 
-**Mind slow Verify steps.** The builder runs fast checks after every fix but slow ones (E2E, Playwright, integration tests that boot services or sleep) only for what changed, and in full before merge when CI doesn't. A Verify line that runs slow tests filters to the phase's cases by file or name, never the whole suite. Keep its proof fast where a test can show it; leave cross-repo runs to `## Demo`.
+**Mind slow Verify steps.** The builder runs fast checks after every fix, slow ones (E2E, Playwright, integration tests that boot services or sleep) only for what changed, and all before merge when CI doesn't. A Verify line that runs slow tests filters to the phase's cases by file or name. Keep proof fast where a test can show it; leave cross-repo runs to `## Demo`.
 
-**Verify locally,** with a dev server, test database, or scratch account. The builder must run every Verify line without stopping. If there is no local proof, add a fixture rather than target production.
-- A step that needs a deployed URL, shared database, or production credential is a rollout step. List it at the end of the plan for the user to run after merge.
+**Verify locally,** with a dev server, test database, or scratch account. The builder must run every Verify line without stopping. With no local proof, add a fixture rather than target production.
+- A step that needs a deployed URL, shared database, or production credential is a rollout step, listed at the end of the plan for the user to run after merge.
 - A step that needs the user's own device or personal account goes in `## Demo`.
 - Never plan a deploy for a Verify line or the demo unless the user explicitly agrees.
 
 **Defer Verify only when a phase has no local surface:** `**Verify:** deferred — <why>`, and the demo must cover it. Never defer work you have not thought through. Two deferrals in a row means the slices are wrong.
 
-**Size each phase to one build session:** write, verify, and review fixes in one context. That is a limit, not a target: merge phases that fit one session unless the user needs to check something real between them. Keep guards and hardening in the phase that adds the behaviour. Each phase builds on what already runs. Use your judgement on the count; one is fine if the feature fits one session. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. Never split just to hit a count. For a plan in an issue, recommend one phase. If the slices need more, recommend moving to a plan file, and keep the issue if the user prefers it.
+**Size each phase to one build session:** write, verify, and review fixes in one context. That is a limit, not a target: merge phases that fit one session unless the user needs to check something real between them; one phase is fine. Never split just to hit a count. Keep guards and hardening in the phase that adds the behaviour. Each phase builds on what already runs. Cut the slices, then ask the user how many phases they want, with your count first and what each option merges or splits. For a plan in an issue, recommend one phase; if the slices need more, recommend a plan file, and keep the issue if the user prefers it.
 
-**Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other and share no files, ask whether to run them as `2a`/`2b`.
+**Give every phase a Blocked by line:** phases that must merge first, or `none`. A phase is blocked when it needs their code, shares their files, or the user chose sequential. This graph, not plan order, decides what runs in parallel. If two phases do not block each other, ask whether to run them as `2a`/`2b`.
 
 **Write tasks as unchecked imperatives, one sitting each, naming where the work lands:** `- [ ] Link each generation to its source image (internal/db)`. Say what, not how: `Retry failed uploads`, not `Loop with exponential backoff, max 3`. If the user requires a specific way, record it as a Decision. The builder ticks the boxes.
 
@@ -79,15 +79,13 @@ Good — feature slices, each one usable
 
 **Review the draft for critical flaws.** Reread the whole plan against the code, as a reviewer who did not write it. A flaw is critical if the built plan would break The Why, The Guardrail, or Done means: data lost or duplicated, a gap during a rolling deploy or a write that fails halfway, existing behaviour broken by a change the plan makes, decisions that contradict each other, or a Verify line that passes without the work. Skip nitpicks. Fix flaws in `agent` picks yourself. If a fix changes a user's decision, ask first. Tell the user each flaw found and how the plan now handles it.
 
-**Then cut the plan short.** The builder knows the stack and reads the code; every detail you lock takes a choice away from it. Keep the user's decisions, invariants, and contracts outside the code. Cut what the builder would find or choose alone: `research` lines, `agent` picks that bind nothing, how-to in tasks, and file paths below the package. Merge tasks that touch the same area, and update the task count in `## Progress`.
+**Then cut the plan short.** The builder knows the stack and reads the code, so reapply "Plan only the technical detail that binds" to the whole draft. Also cut `research` lines, `agent` picks that bind nothing, how-to in tasks, and file paths below the package. Never cut a user's decision. Merge tasks in the same area and update the `## Progress` count.
 
 **List the `agent` picks from stages 2 and 3 at the end** so the user can overturn any.
 
 **Commit a plan file last,** on a new branch off the default branch. Propose the name first: `feat/<feature-slug>` for one phase, `integrate/<feature-slug>` for more. Commit only the plan file; never push.
 
 ## Plan format
-
-A plan file and an issue body use this format unchanged.
 
 ```markdown
 # <Feature>
